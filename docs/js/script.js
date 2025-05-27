@@ -25,7 +25,7 @@ const Constants = {
     MESSAGE_TIMEOUT_DEFAULT: 4000,
     MESSAGE_FADEOUT_DURATION: 300,
     MANUAL_URL: './manuale.html',
-    GITHUB_URL: 'https://github.com/marcofarina/proofdragons', // Placeholder GitHub URL
+    GITHUB_URL: 'https://github.com/marcofarina/proof_and_dragons', // Placeholder GitHub URL
 };
 
 // --- APPLICATION STATE ---

@@ -1,8 +1,4 @@
-# Proof & Dragons
-
-![Immagine di un drago stilizzato vicino a dei blocchi concatenati]
-
-## Descrizione
+![Proof & Dragons](/docs/static/logo_black.svg)
 
 **Proof & Dragons** è l'applicazione web interattiva progettata come companion app dell'omonimo gioco didattico. Attraverso diverse metafore ludiche, gli utenti possono sperimentare in modo semplificato come i miner competono per aggiungere blocchi a una blockchain.
 
