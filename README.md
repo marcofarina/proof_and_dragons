@@ -1,8 +1,6 @@
 ![Proof & Dragons](/docs/static/logo_black.svg)
 
-**Proof & Dragons** è l'applicazione web interattiva progettata come companion app dell'omonimo gioco didattico. Attraverso diverse metafore ludiche, gli utenti possono sperimentare in modo semplificato come i miner competono per aggiungere blocchi a una blockchain.
-
-L'applicazione è costruita interamente con HTML, CSS (Tailwind CSS) e JavaScript vanilla, rendendola un ottimo strumento didattico sia per studenti di informatica che per un pubblico più generico.
+**Proof & Dragons** è un'applicazione web interattiva progettata come companion app dell'omonimo gioco didattico. Attraverso diverse metafore ludiche, gli utenti possono sperimentare in modo semplificato come i miner competono per aggiungere blocchi a una blockchain.
 
 ## Contesto didattico
 
@@ -33,13 +31,13 @@ L'applicazione viene usata dal docente o dal facilitatore per verificare automat
 ## Come eseguire il progetto
 ### Online
 
-L'app è online sul sito [Rainbow Bits](https://rainbowbits.cloud/proof&dragons/).
+L'app è online sul sito [Rainbow Bits](https://rainbowbits.cloud/proof_and_dragons/).
 
 ### In locale
 1.  **Clonare il repository (o scaricare i file):**
     ```bash
-    git clone https://github.com/marcofarina/proof&dragons.git
-    cd TUO_REPOSITORY
+    git clone https://github.com/marcofarina/proof_and_dragons.git
+    cd proof_and_dragons
     ```
     Oppure, se non si ha familiarità con Git, è possibile scaricare il progetto come file ZIP da GitHub e decomprimerlo in una cartella a scelta.
 2.  **Assicurarsi che la struttura delle cartelle sia corretta:**
@@ -55,35 +53,36 @@ Non è richiesta alcuna installazione di dipendenze o build, poiché Tailwind CS
 Il gioco simula il processo di mining attraverso i seguenti passaggi:
 
 1.  **Inizializzazione:**
-    * Vengono generati 8 "divisori" casuali (numeri tra 11 e 22).
-    * La "mempool" viene popolata con transazioni predefinite.
-2.  **Selezione del divisore:** L'utente sceglie uno dei divisori disponibili. Questo rappresenta la difficoltà del blocco corrente.
-3.  **Input utente:** L'utente inserisce:
-    * `Nome Pool`: Una stringa (max 10 caratteri, no spazi).
-    * `Nonce`: Un numero intero (tra 2 e 32).
-4.  **Selezione transazioni (solo per il Blocco 3):** L'utente può selezionare fino a 2 transazioni dalla mempool.
-5.  **Calcolo del `WR` (Winning Requirement - base):**
+    * Vengono generati 8 "divisori" casuali (numeri tra 11 e 22 — equivalente a 1d12+10).
+    * La "mempool" viene popolata con transazioni predefinite che saranno visualizzate dopo aver minato il secondo blocco.
+Quando un gruppo vuole verificare un tentavivo di mining il docente inserisce i dati:
+
+2.  **Selezione del divisore:** si sceglie uno dei divisori disponibili. Questo rappresenta la difficoltà del blocco corrente.
+3.  **Input:** si inserisce:
+    * `Nome Pool`: una stringa (max 10 caratteri, no spazi).
+    * `Nonce`: un numero intero (tra 2 e 32).
+4.  **Selezione transazioni (solo per il Blocco 3):** ogni gruppo può selezionare fino a 2 transazioni dalla mempool.
+5.  **Calcolo del `WR` (Werkle Root - base):**
     * `WR = Somma dei valori ASCII delle lettere del Nome Pool (maiuscolo) + 1500`
 6.  **Calcolo del `Proof`:**
     * **Blocco 1:** `Proof = (WR + Nonce) * 3`
     * **Blocco 2:** `Proof = (WR + Nonce + RestoDelBloccoPrecedente) * 3`
     * **Blocco 3:** `Proof = (WR + Nonce + RestoDelBloccoPrecedente + ValoreTransazioni) * 3`
         * `ValoreTransazioni`: Somma delle lunghezze delle descrizioni delle transazioni selezionate.
-7.  **Verifica del `CalculatedRemainder` (Resto Calcolato):**
-    * `CalculatedRemainder = Proof % DivisoreSelezionato`
+7.  **Verifica del `CalculatedRemainder` (Resto calcolato dal gruppo):**
+    * `CalculatedRemainder = Proof % DivisoreSelezionato` (l'operatore modulo rappresenta il resto della divisione intera)
 8.  **Determinazione del successo:**
     * `TargetRemainder = DivisoreSelezionato - 3`
     * Se `CalculatedRemainder >= TargetRemainder`, il tentativo ha successo e il blocco viene "minato".
     * Altrimenti, il tentativo fallisce.
-9.  **Aggiunta alla Timewall:** Se il blocco è minato con successo, viene aggiunto alla Timewall con i suoi dettagli. Il `CalculatedRemainder` di questo blocco diventa il `RestoDelBloccoPrecedente` per il successivo.
-10. **Nuovo round:** Se non si è raggiunto il massimo di 3 blocchi, vengono generati nuovi divisori e l'utente può tentare di minare il blocco successivo.
-11. **Fine partita:** Dopo 3 blocchi minati, la partita termina. È possibile ricominciare tramite il menu.
+9.  **Aggiunta al Timewall:** se il blocco è minato con successo, viene aggiunto al Timewall con i suoi dettagli. Il `CalculatedRemainder` di questo blocco diventa il `RestoDelBloccoPrecedente` per il successivo.
+10. **Nuovo round:** se non si è raggiunto il massimo di 3 blocchi, vengono generati nuovi divisori e i gruppi possono tentare di minare il blocco successivo.
+11. **Fine partita:** dopo 3 blocchi minati, la partita termina. È possibile ricominciare tramite il menu.
 
-## Possibili miglioramenti futuri (per gli studenti)
+## Possibili miglioramenti futuri per chi volesse contribuire al progetto
 
 Questo progetto può essere esteso e migliorato in molti modi, offrendo spunti per ulteriori esercitazioni:
 
-* **Modal personalizzati:** Sostituire `window.confirm()` con un modale personalizzato per la conferma del reset, stilizzato in linea con l'applicazione.
 * **Difficoltà dinamica:** Introdurre un meccanismo per cui la difficoltà (valori dei divisori) si aggiusta automaticamente in base al "tempo" impiegato per minare i blocchi precedenti (simulando l'aggiustamento della difficoltà di Bitcoin).
 * **Visualizzazione più dettagliata della Timewall:** Aggiungere hash del blocco (simulati), hash del blocco precedente, merkle root (concettuale).
 * **Introduzione di "fee" variabili:** Associare valori di fee diversi alle transazioni e permettere al "miner" di selezionare le transazioni anche in base a queste.
@@ -97,5 +96,3 @@ Questo progetto può essere esteso e migliorato in molti modi, offrendo spunti p
 I contributi sono benvenuti! Se hai idee per migliorare il progetto, apri una issue o invia una pull request.
 
 ## Licenza
-
-Questo progetto è rilasciato sotto la licenza MIT (o un'altra licenza a tua scelta, es. Creative Commons per materiale didattico).
