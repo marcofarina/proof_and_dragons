@@ -27,17 +27,12 @@
           },
           animation: {
             'fadeInUp': 'fadeInUp 0.5s ease-out forwards',
-            'pulse-slow': 'pulse-slow 3s infinite ease-in-out',
           },
           keyframes: {
             fadeInUp: {
               '0%': { opacity: '0', transform: 'translateY(20px)' },
               '100%': { opacity: '1', transform: 'translateY(0)' },
             },
-            'pulse-slow': {
-              '0%, 100%': { opacity: '1', transform: 'scale(1)' },
-              '50%': { opacity: '.7', transform: 'scale(1.02)' },
-            }
           }
         }
       }
@@ -177,7 +172,7 @@
     <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-indigo dark:border-game-indigo-dark text-game-indigo dark:text-game-indigo-light">Svolgimento della partita</h2>
     <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">La partita si svolge in round, uno per ogni blocco da minare (massimo 3 blocchi).</p>
 
-    <div class="werkles-root-card bg-red-50 dark:bg-red-900/30 border-2 border-game-red dark:border-game-red-dark p-6 rounded-xl shadow-2xl my-6 animate-pulse-slow">
+    <div class="werkles-root-card bg-red-50 dark:bg-red-900/30 border-2 border-game-red dark:border-game-red-dark p-6 rounded-xl shadow-2xl my-6">
       <img src="static/werkle.png" alt="Immagine di Werkle, il drago crittografo" class="dragon-img" onerror="this.src='https://placehold.co/100x100/ef4444/ffffff?text=DRAGO&font=press-start-2p'; this.alt='Icona di un drago stilizzato';">
       <h3 class="font-game text-xl sm:text-2xl mt-6 mb-3 text-game-red dark:text-game-red-light">Fase 1: il nome del vostro "Dungeon Pool" e la Werkle's Root!</h3>
       <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">All'inizio della partita (solo una volta), ogni squadra deve:</p>
@@ -197,52 +192,56 @@
 
     <span class="flow-chart-arrow text-3xl text-game-teal dark:text-game-teal-light my-4 text-center block">↓</span>
 
-    <h3 class="font-game text-xl sm:text-2xl mt-6 mb-3 text-gray-800 dark:text-gray-200">Fase 2: tentativo di mining del blocco corrente</h3>
-    <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Per ogni blocco (Blocco 1, Blocco 2, Blocco 3):</p>
-    <ol class="list-decimal list-inside pl-6 space-y-3 text-gray-700 dark:text-gray-300">
-      <li><strong>Divisori attivi:</strong> i giocatori fanno riferimento agli otto <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Divisori Attivi</strong> per il blocco corrente. Ogni squadra usa ogni divisore UNA sola volta per tentativo del blocco corrente. I divisori sono otto, uno per ogni spaizo.</li>
-      <li><strong>Scelta del Nonce:</strong> Ogni squadra lancia i dadi (1d12 e 1d20) e somma i valori ottenuti. Questa somma rappresenta il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Nonce</strong> che va annotato sul proprio foglio di lavoro nell'apposito spazio. Dovete rilanciare il Nonce e selezionare un nuovo divisore per ogni tentativo fallito!</li>
-      <li><strong>Selezione Transazioni Magiche (Solo per il Blocco 3):</strong>
-        <p class="mb-1">Se state minando il Blocco 3, ogni squadra può scegliere fino a <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">due "Transazioni Magiche"</strong> da una lista fornita dall'app. Per ogni transazione, si considera il suo "valore" come la <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">lunghezza della sua descrizione</strong> (numero di caratteri, spazi inclusi). Per semplicità i valori sono indicati tra parentesi per ogni transazione.</p>
-        <p class="mb-1">Ogni transazione è associata a un'icona di un dolce, che rappresenta le 'fee' associate alla transazione e che viene guadagnata dalla Dungeon Pool che riesce a minare il blocco.</p>
-        <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">ValoreTransazioni = LunghezzaDescrizioneTX1 + LunghezzaDescrizioneTX2</p>
-        <p class="mt-1">Scrivete le lunghezze sul "Foglio di Lavoro - Blocco 3". Se non selezionate transazioni, il loro valore è 0.</p>
-      </li>
-      <li><strong>Calcolo del "Proof":</strong> Utilizzate il foglio di lavoro corretto per il blocco che state tentando di minare:
-        <ul class="list-disc list-inside pl-4 space-y-2 mt-2">
-          <li><strong>Blocco 1:</strong> (Foglio Blocco 1)
-            <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">Proof = (WR + Nonce) * 3</p>
-          </li>
-          <li><strong>Blocco 2:</strong> (Foglio Blocco 2) - Avrete bisogno del `RestoBloccoPrecedente` ottenuto dal vincitore del Blocco 1. Il valore è visibile nel blocco minato precedente.
-            <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">Proof = (WR + Nonce + RestoBloccoPrecedente) * 3</p>
-          </li>
-          <li><strong>Blocco 3:</strong> (Foglio Blocco 3) - Avrete bisogno del `RestoBloccoPrecedente` (dal Blocco 2) e del `ValoreTransazioni`.
-            <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">Proof = (WR + Nonce + RestoBloccoPrecedente + ValoreTransazioni) * 3</p>
-          </li>
-        </ul>
-      </li>
-      <li><strong>Calcolo del resto:</strong> eseguite la divisione intera del vostro `Proof` per il `DivisoreScelto`. Scrivete tutti i passaggi della divisione in colonna sul foglio di lavoro. Il numero che vi interessa è il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Resto</strong>.
-      </li>
-      <li><strong>Verifica della condizione di vittoria:</strong>
-        <p class="mb-1">Calcolate la <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">SogliaTarget</strong>:</p>
-        <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">SogliaTarget = DivisoreScelto - 3</p>
-        <p class="mt-1 mb-1">Confrontate il vostro `RestoCalcolato` con la `SogliaTarget`:</p>
-        <p class="text-center my-4"><strong class="text-2xl p-3 rounded-lg bg-game-green-light text-game-green-dark dark:bg-game-green-dark dark:text-white">Se RestoCalcolato ≥ SogliaTarget AVETE MINATO IL BLOCCO! <span class="dragon-icon">🎉</span></strong></p>
-        <p class="mt-1">Altrimenti, il tentativo è fallito. <span class="dragon-icon">🔥</span> Rilanciate il Nonce con i dadi, selezionate il divisore successivo e riprovate a minare il blocco!</p>
-      </li>
-    </ol>
+    <div class="bg-red-50 dark:bg-red-900/30 border-2 border-game-red dark:border-game-red-dark p-6 rounded-xl shadow-2xl my-6">
+      <h3 class="font-game text-xl sm:text-2xl mt-6 mb-3 text-game-red dark:text-game-red-light">Fase 2: tentativo di mining del blocco corrente</h3>
+      <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Per ogni blocco (Blocco 1, Blocco 2, Blocco 3):</p>
+      <ol class="list-decimal list-inside pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+        <li><strong>Divisori attivi:</strong> i giocatori fanno riferimento agli otto <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Divisori Attivi</strong> per il blocco corrente. Ogni squadra usa ogni divisore UNA sola volta per tentativo del blocco corrente. I divisori sono otto, uno per ogni spaizo.</li>
+        <li><strong>Scelta del Nonce:</strong> Ogni squadra lancia i dadi (1d12 e 1d20) e somma i valori ottenuti. Questa somma rappresenta il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Nonce</strong> che va annotato sul proprio foglio di lavoro nell'apposito spazio. Dovete rilanciare il Nonce e selezionare un nuovo divisore per ogni tentativo fallito!</li>
+        <li><strong>Selezione Transazioni Magiche (Solo per il Blocco 3):</strong>
+          <p class="mb-1">Se state minando il Blocco 3, ogni squadra può scegliere fino a <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">due "Transazioni Magiche"</strong> da una lista fornita dall'app. Per ogni transazione, si considera il suo "valore" come la <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">lunghezza della sua descrizione</strong> (numero di caratteri, spazi inclusi). Per semplicità i valori sono indicati tra parentesi per ogni transazione.</p>
+          <p class="mb-1">Ogni transazione è associata a un'icona di un dolce, che rappresenta le 'fee' associate alla transazione e che viene guadagnata dalla Dungeon Pool che riesce a minare il blocco.</p>
+          <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">ValoreTransazioni = LunghezzaDescrizioneTX1 + LunghezzaDescrizioneTX2</p>
+          <p class="mt-1">Scrivete le lunghezze sul "Foglio di Lavoro - Blocco 3". Se non selezionate transazioni, il loro valore è 0.</p>
+        </li>
+        <li><strong>Calcolo del "Proof":</strong> Utilizzate il foglio di lavoro corretto per il blocco che state tentando di minare:
+          <ul class="list-disc list-inside pl-4 space-y-2 mt-2">
+            <li><strong>Blocco 1:</strong> (Foglio Blocco 1)
+              <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">Proof = (WR + Nonce) * 3</p>
+            </li>
+            <li><strong>Blocco 2:</strong> (Foglio Blocco 2) - Avrete bisogno del `RestoBloccoPrecedente` ottenuto dal vincitore del Blocco 1. Il valore è visibile nel blocco minato precedente.
+              <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">Proof = (WR + Nonce + RestoBloccoPrecedente) * 3</p>
+            </li>
+            <li><strong>Blocco 3:</strong> (Foglio Blocco 3) - Avrete bisogno del `RestoBloccoPrecedente` (dal Blocco 2) e del `ValoreTransazioni`.
+              <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">Proof = (WR + Nonce + RestoBloccoPrecedente + ValoreTransazioni) * 3</p>
+            </li>
+          </ul>
+        </li>
+        <li><strong>Calcolo del resto:</strong> eseguite la divisione intera del vostro `Proof` per il `DivisoreScelto`. Scrivete tutti i passaggi della divisione in colonna sul foglio di lavoro. Il numero che vi interessa è il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Resto</strong>.
+        </li>
+        <li><strong>Verifica della condizione di vittoria:</strong>
+          <p class="mb-1">Calcolate la <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">SogliaTarget</strong>:</p>
+          <p class="formula bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md text-sm sm:text-base font-mono text-game-indigo dark:text-game-indigo-light break-words">SogliaTarget = DivisoreScelto - 3</p>
+          <p class="mt-1 mb-1">Confrontate il vostro `RestoCalcolato` con la `SogliaTarget`:</p>
+          <p class="text-center my-4"><strong class="text-2xl p-3 rounded-lg bg-game-green-light text-game-green-dark dark:bg-game-green-dark dark:text-white">Se RestoCalcolato ≥ SogliaTarget AVETE MINATO IL BLOCCO! <span class="dragon-icon">🎉</span></strong></p>
+          <p class="mt-1">Altrimenti, il tentativo è fallito. <span class="dragon-icon">🔥</span> Rilanciate il Nonce con i dadi, selezionate il divisore successivo e riprovate a minare il blocco!</p>
+        </li>
+      </ol>
+    </div>
 
     <span class="flow-chart-arrow text-3xl text-game-teal dark:text-game-teal-light my-4 text-center block">↓</span>
 
-    <h3 class="font-game text-xl sm:text-2xl mt-6 mb-3 text-gray-800 dark:text-gray-200">Fase 3: annuncio del vincitore del blocco</h3>
-    <ul class="list-disc list-inside pl-4 space-y-2 text-gray-700 dark:text-gray-300">
-      <li>La <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">prima squadra</strong> che calcola correttamente un `RestoCalcolato` che soddisfa la condizione di vittoria deve alzare la mano e annunciare "BLOCCO MINATO!".</li>
-      <li>L'insegnante verificherà i calcoli sul foglio di lavoro della squadra.</li>
-      <li>Se i calcoli sono corretti, quella squadra <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">vince il blocco</strong>! Se sono previsti dei premi (coinbase), vengono consegnati al gruppo che ha minato il blocco. Se il blocco minato è il terzo, oltre al premio del blocco vanno consegnati anche i dolci (fee) associati alle transazioni incluse nel blocco minato.</li>
-      <li>Il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoCalcolato`</strong> della squadra vincitrice diventa il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoBloccoPrecedente`</strong> che TUTTE le squadre useranno per tentare di minare il blocco successivo. L'insegnante lo annuncerà.</li>
-      <li>L'insegnante può cogliere l'occasione per spiegare come avviene nella realtà il concatenamento dei blocchi tramite hashing (tra il blocco 1 e il blocco 2), oppure il concetto di mempool, spazio del blocco e costruzione del template (tra il blocco 2 e il blocco 3.</li>
-      <li>Si passa al tentativo di mining del blocco successivo (se non si è ancora arrivati al Blocco 3). Vengono visualizzati i nuovi Divisori Attivi.</li>
-    </ul>
+    <div class="bg-red-50 dark:bg-red-900/30 border-2 border-game-red dark:border-game-red-dark p-6 rounded-xl shadow-2xl my-6">
+      <h3 class="font-game text-xl sm:text-2xl mt-6 mb-3 text-game-red dark:text-game-red-light">Fase 3: annuncio del vincitore del blocco</h3>
+      <ul class="list-disc list-inside pl-4 space-y-2 text-gray-700 dark:text-gray-300">
+        <li>La <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">prima squadra</strong> che calcola correttamente un `RestoCalcolato` che soddisfa la condizione di vittoria deve alzare la mano e annunciare "BLOCCO MINATO!".</li>
+        <li>L'insegnante verificherà i calcoli sul foglio di lavoro della squadra.</li>
+        <li>Se i calcoli sono corretti, quella squadra <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">vince il blocco</strong>! Se sono previsti dei premi (coinbase), vengono consegnati al gruppo che ha minato il blocco. Se il blocco minato è il terzo, oltre al premio del blocco vanno consegnati anche i dolci (fee) associati alle transazioni incluse nel blocco minato.</li>
+        <li>Il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoCalcolato`</strong> della squadra vincitrice diventa il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoBloccoPrecedente`</strong> che TUTTE le squadre useranno per tentare di minare il blocco successivo. L'insegnante lo annuncerà.</li>
+        <li>L'insegnante può cogliere l'occasione per spiegare come avviene nella realtà il concatenamento dei blocchi tramite hashing (tra il blocco 1 e il blocco 2), oppure il concetto di mempool, spazio del blocco e costruzione del template (tra il blocco 2 e il blocco 3.</li>
+        <li>Si passa al tentativo di mining del blocco successivo (se non si è ancora arrivati al Blocco 3). Vengono visualizzati i nuovi Divisori Attivi.</li>
+      </ul>
+    </div>
   </section>
 
   <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.6s;">
