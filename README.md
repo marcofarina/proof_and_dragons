@@ -44,10 +44,7 @@ L'app è online sul sito [Rainbow Bits](https://rainbowbits.cloud/proof_and_drag
     cd proof_and_dragons
     ```
     Oppure, se non si ha familiarità con Git, è possibile scaricare il progetto come file ZIP da GitHub e decomprimerlo in una cartella a scelta.
-2.  **Assicurarsi che la struttura delle cartelle sia corretta:**
-    Il file `index.html`, `style.css`, e `script.js` devono trovarsi nella directory principale del progetto.
-    La cartella `icons` (contenente `fee1.png`, `fee2.png`, ecc.) deve trovarsi anch'essa nella directory principale.
-3.  **Aprire `index.html` nel browser:**
+2. **Aprire `index.html` nel browser:**
     Fare doppio clic sul file `index.html` o aprirlo tramite il menu "File > Apri" del proprio browser web preferito (es. Chrome, Firefox, Edge, Safari).
 
 Non è richiesta alcuna installazione di dipendenze o build, poiché Tailwind CSS è caricato tramite CDN e il codice JavaScript è vanilla.
@@ -83,20 +80,12 @@ Quando un gruppo vuole verificare un tentavivo di mining il docente inserisce i 
 10. **Nuovo round:** se non si è raggiunto il massimo di 3 blocchi, vengono generati nuovi divisori e i gruppi possono tentare di minare il blocco successivo.
 11. **Fine partita:** dopo 3 blocchi minati, la partita termina. È possibile ricominciare tramite il menu.
 
-## Possibili miglioramenti futuri per chi volesse contribuire al progetto
-
-Questo progetto può essere esteso e migliorato in molti modi, offrendo spunti per ulteriori esercitazioni:
-
-* **Difficoltà dinamica:** Introdurre un meccanismo per cui la difficoltà (valori dei divisori) si aggiusta automaticamente in base al "tempo" impiegato per minare i blocchi precedenti (simulando l'aggiustamento della difficoltà di Bitcoin).
-* **Visualizzazione più dettagliata della Timewall:** Aggiungere hash del blocco (simulati), hash del blocco precedente, merkle root (concettuale).
-* **Introduzione di "fee" variabili:** Associare valori di fee diversi alle transazioni e permettere al "miner" di selezionare le transazioni anche in base a queste.
-* **Salvataggio dello stato:** Utilizzare `localStorage` per salvare lo stato della partita, permettendo all'utente di riprenderla in un secondo momento.
-* **Animazioni più complesse:** Migliorare le animazioni CSS o introdurre animazioni JavaScript per rendere l'esperienza più coinvolgente.
-* **Test unitari:** Scrivere test per le funzioni logiche principali in `script.js`.
-* **Internazionalizzazione (i18n):** Strutturare il codice per supportare facilmente più lingue.
-
 ## Contributi
 
 I contributi sono benvenuti! Se hai idee per migliorare il progetto, apri una issue o invia una pull request.
 
-## Licenza
+* **Internazionalizzazione (i18n):** strutturare il codice per supportare facilmente più lingue.
+* * **Difficoltà dinamica:** introdurre un meccanismo per cui la difficoltà (valori dei divisori) si aggiusta automaticamente in base al "tempo" impiegato per minare i blocchi precedenti (simulando l'aggiustamento della difficoltà di Bitcoin), oppure in base al numero di gruppi che partecipano al gioco (input manuale).
+* **Introduzione di "fee" variabili:** associare valori di fee diversi alle transazioni e permettere al "miner" di selezionare le transazioni anche in base a queste.
+* **Salvataggio dello stato:** utilizzare `localStorage` per salvare lo stato della partita, permettendo all'utente di riprenderla in un secondo momento.
+* **Animazioni più complesse:** migliorare le animazioni CSS o introdurre animazioni JavaScript per rendere l'esperienza più coinvolgente.
