@@ -1,6 +1,6 @@
 <picture>
-  <source srcset="/docs/static/logo_black.svg" media="(prefers-color-scheme: dark)">
-  <source srcset="/docs/static/logo_white.svg" media="(prefers-color-scheme: light)">
+  <source srcset="/docs/static/logo_white.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="/docs/static/logo_black.svg" media="(prefers-color-scheme: light)">
   <img src="/docs/static/logo_white.svg" alt="Logo">
 </picture>
 
