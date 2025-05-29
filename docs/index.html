@@ -41,7 +41,7 @@
         </button>
     </div>
     <div id="appMenu" class="hidden absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-300 dark:border-gray-700 z-20 p-4 space-y-3">
-        <a href="#" id="manualLink" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Manuale</a>
+        <a href="#" id="manualLink" target="_blank" rel="noopener noreferrer" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Manuale</a>
         <a href="#" id="githubLink" target="_blank" rel="noopener noreferrer" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Repository GitHub</a>
         <hr class="border-gray-300 dark:border-gray-600">
         <button id="resetGameButton" class="w-full bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
@@ -72,13 +72,13 @@
     <div id="divisorDisplayContainer" class="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-2">
         <h2 class="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-5 border-b-2 border-purple-500 dark:border-purple-600 pb-3 text-purple-600 dark:text-purple-400">Seleziona Divisore Attivo</h2>
         <div id="divisorGrid" class="grid grid-cols-4 gap-3 sm:gap-4 justify-center max-w-md mx-auto">
-        </div>
+            </div>
     </div>
 
     <div id="mempoolContainer" class="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-3 flex flex-col">
         <h2 class="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-5 border-b-2 border-teal-500 dark:border-teal-600 pb-3 text-teal-600 dark:text-teal-400">Mempool <span class="text-base text-gray-600 dark:text-gray-400">(Seleziona max 2 per Blocco 3)</span></h2>
         <div id="mempoolGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 flex-grow">
-        </div>
+            </div>
     </div>
 
     <section id="calculationDetailsContainer" class="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-xl shadow-2xl border-2 border-gray-300 dark:border-gray-700 lg:order-4">
@@ -92,14 +92,21 @@
         <h2 class="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-5 border-b-2 border-orange-500 dark:border-orange-600 pb-3 text-orange-600 dark:text-orange-400">Timewall</h2>
         <div id="timewallChainContainer" class="pb-3">
             <div id="timewallChain" class="flex space-x-4 overflow-x-auto h-full">
-            </div>
+                </div>
         </div>
     </div>
 </main>
 
 <div id="messageArea" class="fixed bottom-5 right-5 text-white p-4 sm:p-5 rounded-lg shadow-xl max-w-sm sm:max-w-md text-base sm:text-lg z-50 transition-opacity duration-300 ease-out opacity-0" style="display: none;" aria-live="assertive">
-</div>
+    </div>
 
-<script src="js/script.js"></script>
+<script type="module">
+  // 'ui.js' si occupa di importare la logica di cui ha bisogno.
+  import { UIManager } from './js/ui.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    UIManager.init();
+  });
+</script>
 </body>
 </html>
