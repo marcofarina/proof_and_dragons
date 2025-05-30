@@ -6,38 +6,7 @@
     <meta http-equiv="Content-Language" content="it">
     <title>Manuale di Gioco - Proof & Dragons Unplugged</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class', // Abilita la dark mode basata su classe
-            theme: {
-                extend: {
-                    colors: {
-                        'game-cyan': { DEFAULT: '#06b6d4', light: '#67e8f9', dark: '#0891b2' },
-                        'game-purple': { DEFAULT: '#8b5cf6', light: '#c084fc', dark: '#7c3aed' },
-                        'game-teal': { DEFAULT: '#14b8a6', light: '#5eead4', dark: '#0d9488' },
-                        'game-orange': { DEFAULT: '#f97316', light: '#fdba74', dark: '#ea580c' },
-                        'game-indigo': { DEFAULT: '#6366f1', light: '#a5b4fc', dark: '#4f46e5' },
-                        'game-red': { DEFAULT: '#ef4444', light: '#fca5a5', dark: '#dc2626' },
-                        'game-green': { DEFAULT: '#22c55e', light: '#86efac', dark: '#16a34a' },
-                        'game-yellow': { DEFAULT: '#eab308', light: '#fde047', dark: '#ca8a04' },
-                    },
-                    fontFamily: {
-                        'display': ['"Press Start 2P"', 'cursive'],
-                        'body': ['Inter', 'sans-serif'],
-                    },
-                    animation: {
-                        'fadeInUp': 'fadeInUp 0.5s ease-out forwards',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="./js/tailwind.config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         /* Stili CSS personalizzati che non sono classi Tailwind dirette o sono difficili da comporre */
