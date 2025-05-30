@@ -17,6 +17,27 @@ Questo progetto è stato sviluppato come risorsa educativa per studenti di scuol
 
 L'obiettivo è fornire una comprensione pratica e interattiva di concetti che possono apparire astratti, stimolando la curiosità verso Bitcoin.
 
+Per i docenti è disponibile un [manuale del gioco](https://rainbowbits.cloud/proof_and_dragons/manuale.html) che spiega come utilizzare l'applicazione e integrare il gioco nella didattica.
+
+
+<div align="center">
+  <a href="https://rainbowbits.cloud/proof_and_dragons/manuale.html" target="_blank" style="
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #4F46E5;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  " onmouseover="this.style.backgroundColor='#3730A3'" onmouseout="this.style.backgroundColor='#4F46E5'">
+    Vai al Manuale del gioco
+  </a>
+</div>
+
+
 ## Funzionalità principali
 L'applicazione viene usata dal docente o dal facilitatore per verificare automaticamente i calcoli degli studenti durante il gioco "Proof & Dragons" e fornire un feedback visivo su quello che succede durante la partita. Le funzionalità principali includono:
 
@@ -89,3 +110,33 @@ I contributi sono benvenuti! Se hai idee per migliorare il progetto, apri una is
 * **Introduzione di "fee" variabili:** associare valori di fee diversi alle transazioni e permettere al "miner" di selezionare le transazioni anche in base a queste.
 * **Salvataggio dello stato:** utilizzare `localStorage` per salvare lo stato della partita, permettendo all'utente di riprenderla in un secondo momento.
 * **Animazioni più complesse:** migliorare le animazioni CSS o introdurre animazioni JavaScript per rendere l'esperienza più coinvolgente.
+
+## Licenza
+
+Questo progetto è distribuito con licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
+
+Ciò significa che puoi **copiare, distribuire, modificare e riutilizzare** il materiale, **a condizione che**:
+
+- **Attribuzione**: venga sempre indicato in modo chiaro l'autore originale.
+- **Non commerciale**: non puoi utilizzare l’opera per scopi commerciali.
+- **Condividi allo stesso modo**: se modifichi o trasformi il materiale, devi distribuire il contributo con la **stessa licenza**.
+
+Per maggiori informazioni: [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it)
+
+### License (English)
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** license.
+
+You are free to **copy, distribute, remix, and reuse** the material, **under the following terms**:
+
+- **Attribution**: You must give appropriate credit to the original author.
+- **NonCommercial**: You may not use the material for commercial purposes.
+- **ShareAlike**: If you remix, transform, or build upon the material, you must distribute your contributions under the **same license**.
+
+More info: [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0)
+
+<div align="center">
+  <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+    <img alt="Licenza Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+  </a>
+</div>
