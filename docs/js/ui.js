@@ -1,5 +1,5 @@
 // js/ui.js
-// L'import di 'ValidationManager' è stato rimosso perché non utilizzato.
+
 import { GameLogic, GameConstants } from './logic.js';
 
 // --- UI CONSTANTS ---
