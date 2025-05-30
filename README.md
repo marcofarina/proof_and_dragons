@@ -17,6 +17,27 @@ Questo progetto è stato sviluppato come risorsa educativa per studenti di scuol
 
 L'obiettivo è fornire una comprensione pratica e interattiva di concetti che possono apparire astratti, stimolando la curiosità verso Bitcoin.
 
+Per i docenti è disponibile un [manuale del gioco](https://rainbowbits.cloud/proof_and_dragons/manuale.html) che spiega come utilizzare l'applicazione e integrare il gioco nella didattica.
+
+
+<div align="center">
+  <a href="https://rainbowbits.cloud/proof_and_dragons/manuale.html" target="_blank" style="
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #4F46E5;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  " onmouseover="this.style.backgroundColor='#3730A3'" onmouseout="this.style.backgroundColor='#4F46E5'">
+    Vai al Manuale del gioco
+  </a>
+</div>
+
+
 ## Funzionalità principali
 L'applicazione viene usata dal docente o dal facilitatore per verificare automaticamente i calcoli degli studenti durante il gioco "Proof & Dragons" e fornire un feedback visivo su quello che succede durante la partita. Le funzionalità principali includono:
 
