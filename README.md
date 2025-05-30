@@ -110,3 +110,33 @@ I contributi sono benvenuti! Se hai idee per migliorare il progetto, apri una is
 * **Introduzione di "fee" variabili:** associare valori di fee diversi alle transazioni e permettere al "miner" di selezionare le transazioni anche in base a queste.
 * **Salvataggio dello stato:** utilizzare `localStorage` per salvare lo stato della partita, permettendo all'utente di riprenderla in un secondo momento.
 * **Animazioni più complesse:** migliorare le animazioni CSS o introdurre animazioni JavaScript per rendere l'esperienza più coinvolgente.
+
+## Licenza
+
+Questo progetto è distribuito con licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
+
+Ciò significa che puoi **copiare, distribuire, modificare e riutilizzare** il materiale, **a condizione che**:
+
+- **Attribuzione**: venga sempre indicato in modo chiaro l'autore originale.
+- **Non commerciale**: non puoi utilizzare l’opera per scopi commerciali.
+- **Condividi allo stesso modo**: se modifichi o trasformi il materiale, devi distribuire il contributo con la **stessa licenza**.
+
+Per maggiori informazioni: [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it)
+
+### License (English)
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** license.
+
+You are free to **copy, distribute, remix, and reuse** the material, **under the following terms**:
+
+- **Attribution**: You must give appropriate credit to the original author.
+- **NonCommercial**: You may not use the material for commercial purposes.
+- **ShareAlike**: If you remix, transform, or build upon the material, you must distribute your contributions under the **same license**.
+
+More info: [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0)
+
+<div align="center">
+  <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+    <img alt="Licenza Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+  </a>
+</div>
