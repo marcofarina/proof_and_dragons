@@ -90,32 +90,37 @@ body {
     }
 }
 
-/* Stili per i Tooltip */
+/* Stili per i Tooltip (da aggiornare/aggiungere in style.css) */
 .tooltip {
     position: relative;
-    display: inline-block;
+    display: inline-block; /* o inline-flex, a seconda del contenuto */
 }
+
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: max-content;
-    max-width: 250px;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 10px;
+    width: max-content; /* Adatta la larghezza al contenuto */
+    max-width: 220px;   /* O la larghezza che preferisci */
+
     position: absolute;
-    z-index: 10;
-    bottom: 125%;
+    z-index: 10; /* Assicura che sia sopra altri elementi */
+
+    /* Posizionamento SOTTO l'icona */
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
+    margin-top: 0.5rem; /* Equivalente a mt-2 di Tailwind, per dare spazio */
+
     opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.875rem;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
+
+/* Mostra il tooltip all'hover o focus */
 .tooltip:hover .tooltiptext,
-.tooltip:focus .tooltiptext {
+.tooltip:focus-within .tooltiptext { /* :focus-within per bottoni/link interni */
     visibility: visible;
     opacity: 1;
 }
+
 
 /* Stili per le icone delle transazioni */
 .tx-icon {

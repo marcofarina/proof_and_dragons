@@ -7,21 +7,23 @@ const UIConstants = {
     MESSAGE_TIMEOUT_DEFAULT: 4000,
     MESSAGE_FADEOUT_DURATION: 300,
     MANUAL_URL: './manuale.html', // URL del manuale
-    GITHUB_URL: 'https://github.com/marcofarina/proof_and_dragons', // URL di GitHub
+    // GITHUB_URL rimosso, non più usato qui
 };
 
 // --- DOM ELEMENTS ---
-// Le chiavi qui devono corrispondere agli ID effettivi nell'HTML
 const DOMElements = {
     html: document.documentElement,
     body: document.body,
     themeToggle: null,
     themeIconSun: null,
     themeIconMoon: null,
+    fullscreenToggle: null, // Nuovo
+    fullscreenIconExpand: null, // Nuovo
+    fullscreenIconCompress: null, // Nuovo
     menuToggle: null,
     appMenu: null,
     manualLink: null,
-    githubLink: null,
+    // githubLink: null, // Rimosso
     resetGameButton: null,
     poolName: null,
     nonce: null,
@@ -40,6 +42,7 @@ const uiState = {
     messageTimeoutId: null,
     isDarkMode: false,
     isMenuOpen: false,
+    isFullscreen: false, // Nuovo
 };
 
 // --- UTILITY FUNCTIONS (UI Specific) ---
@@ -74,13 +77,13 @@ const ThemeManager = {
         uiState.isDarkMode = theme === 'dark';
         if (uiState.isDarkMode) {
             DOMElements.html.classList.add('dark');
-            DOMElements.themeIconSun.classList.remove('hidden');
-            DOMElements.themeIconMoon.classList.add('hidden');
+            DOMElements.themeIconSun.classList.remove('hidden'); // Mostra luna (o sole se logica invertita)
+            DOMElements.themeIconMoon.classList.add('hidden');   // Nascondi sole (o luna se logica invertita)
             DOMElements.themeToggle.setAttribute('aria-pressed', 'true');
         } else {
             DOMElements.html.classList.remove('dark');
-            DOMElements.themeIconSun.classList.add('hidden');
-            DOMElements.themeIconMoon.classList.remove('hidden');
+            DOMElements.themeIconSun.classList.add('hidden');    // Nascondi luna
+            DOMElements.themeIconMoon.classList.remove('hidden'); // Mostra sole
             DOMElements.themeToggle.setAttribute('aria-pressed', 'false');
         }
     },
@@ -97,27 +100,69 @@ const ThemeManager = {
     }
 };
 
+// --- FULLSCREEN MANAGER ---
+const FullscreenManager = {
+    init() {
+        DOMElements.fullscreenToggle = document.getElementById('fullscreenToggle');
+        DOMElements.fullscreenIconExpand = document.getElementById('fullscreenIconExpand');
+        DOMElements.fullscreenIconCompress = document.getElementById('fullscreenIconCompress');
+
+        if (!DOMElements.fullscreenToggle || !DOMElements.fullscreenIconExpand || !DOMElements.fullscreenIconCompress) {
+            UIUtils.logError("[FullscreenManager.init] Elementi DOM relativi al fullscreen non trovati.");
+            return;
+        }
+        DOMElements.fullscreenToggle.addEventListener('click', () => this.toggle());
+        document.addEventListener('fullscreenchange', () => this.updateIcon());
+        this.updateIcon(); // Set initial icon state
+    },
+    toggle() {
+        if (!document.fullscreenElement) {
+            DOMElements.html.requestFullscreen().catch(err => {
+                UIManager.displayMessage(`Fullscreen non disponibile o negato. (${err.message})`, "warn");
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(err => {
+                    UIManager.displayMessage(`Impossibile uscire dal fullscreen. (${err.message})`, "warn");
+                });
+            }
+        }
+    },
+    updateIcon() {
+        uiState.isFullscreen = !!document.fullscreenElement;
+        if (uiState.isFullscreen) {
+            DOMElements.fullscreenIconExpand.classList.add('hidden');
+            DOMElements.fullscreenIconCompress.classList.remove('hidden');
+        } else {
+            DOMElements.fullscreenIconExpand.classList.remove('hidden');
+            DOMElements.fullscreenIconCompress.classList.add('hidden');
+        }
+    }
+};
+
+
 // --- MENU MANAGER ---
 const MenuManager = {
     init() {
         DOMElements.menuToggle = document.getElementById('menuToggle');
         DOMElements.appMenu = document.getElementById('appMenu');
         DOMElements.manualLink = document.getElementById('manualLink');
-        DOMElements.githubLink = document.getElementById('githubLink');
+        // DOMElements.githubLink = document.getElementById('githubLink'); // Rimosso
         DOMElements.resetGameButton = document.getElementById('resetGameButton');
 
-        if (!DOMElements.menuToggle || !DOMElements.appMenu || !DOMElements.resetGameButton || !DOMElements.manualLink || !DOMElements.githubLink) {
-            UIUtils.logError("[MenuManager.init] Elementi DOM relativi al menu non trovati.");
-            return;
+        // Controllo elementi essenziali per il menu
+        if (!DOMElements.menuToggle || !DOMElements.appMenu || !DOMElements.manualLink || !DOMElements.resetGameButton) {
+            UIUtils.logError("[MenuManager.init] Elementi DOM essenziali per il menu non trovati.");
+            return; // Esce se gli elementi chiave mancano
         }
 
         DOMElements.manualLink.href = UIConstants.MANUAL_URL;
-        DOMElements.githubLink.href = UIConstants.GITHUB_URL;
+        // if (DOMElements.githubLink) DOMElements.githubLink.href = UIConstants.GITHUB_URL; // Rimosso
 
         DOMElements.menuToggle.addEventListener('click', () => this.toggleMenu());
         DOMElements.resetGameButton.addEventListener('click', () => {
             GameLogic.resetFullGameLogic();
-            UIManager.updateUIafterReset();
+            UIManager.updateUIafterReset(); // Questo chiamerà anche updateResetButtonVisibility
             this.closeMenu();
             UIManager.displayMessage("Nuova partita! Seleziona un divisore per iniziare.", "info", 5000);
         });
@@ -129,6 +174,7 @@ const MenuManager = {
                 this.closeMenu();
             }
         });
+        this.updateResetButtonVisibility(); // Imposta stato iniziale
     },
     toggleMenu() {
         uiState.isMenuOpen = !uiState.isMenuOpen;
@@ -145,7 +191,7 @@ const MenuManager = {
             DOMElements.appMenu.classList.add('menu-active');
         }
         if (DOMElements.menuToggle) DOMElements.menuToggle.setAttribute('aria-expanded', 'true');
-        this.updateResetButtonVisibility();
+        this.updateResetButtonVisibility(); // Aggiorna stato pulsante quando il menu si apre
     },
     closeMenu() {
         uiState.isMenuOpen = false;
@@ -155,20 +201,24 @@ const MenuManager = {
                 if (!uiState.isMenuOpen && DOMElements.appMenu) {
                     DOMElements.appMenu.classList.add('hidden');
                 }
-            }, 200);
+            }, 200); // Durata transizione CSS
         }
         if (DOMElements.menuToggle) DOMElements.menuToggle.setAttribute('aria-expanded', 'false');
     },
     updateResetButtonVisibility() {
         if (!DOMElements.resetGameButton) return;
         const currentState = GameLogic.getCurrentState();
-        if (currentState.timewall.length >= GameConstants.MAX_BLOCKS) {
-            DOMElements.resetGameButton.classList.remove('hidden');
-            DOMElements.resetGameButton.classList.add('visible');
+        const isGameEnd = currentState.timewall.length >= GameConstants.MAX_BLOCKS;
+
+        DOMElements.resetGameButton.disabled = !isGameEnd;
+        if (!isGameEnd) {
+            DOMElements.resetGameButton.classList.add('opacity-50', 'cursor-not-allowed');
+            DOMElements.resetGameButton.classList.remove('hover:bg-red-700', 'dark:hover:bg-red-700'); // Rimuovi hover se disabilitato
         } else {
-            DOMElements.resetGameButton.classList.add('hidden');
-            DOMElements.resetGameButton.classList.remove('visible');
+            DOMElements.resetGameButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            DOMElements.resetGameButton.classList.add('hover:bg-red-700', 'dark:hover:bg-red-700'); // Aggiungi hover se abilitato
         }
+        // La classe 'visible' o 'hidden' non è più gestita qui, il pulsante è sempre nel DOM del menu.
     }
 };
 
@@ -176,17 +226,18 @@ const MenuManager = {
 export const UIManager = {
     init() {
         Object.keys(DOMElements).forEach(key => {
-            if (key !== 'html' && key !== 'body') {
+            if (key !== 'html' && key !== 'body') { // Non sovrascrivere html e body
                 DOMElements[key] = document.getElementById(key);
             }
         });
 
         ThemeManager.init();
-        MenuManager.init();
+        FullscreenManager.init(); // Inizializza FullscreenManager
+        MenuManager.init(); // MenuManager ora è più indipendente
 
         this.setupEventListeners();
-        GameLogic.resetFullGameLogic();
-        this.updateUIafterReset();
+        GameLogic.resetFullGameLogic(); // Resetta la logica del gioco
+        this.updateUIafterReset(); // Aggiorna l'UI dopo il reset
         this.displayMessage("Benvenuto! Seleziona un divisore per iniziare.", "info", 5000);
     },
 
@@ -195,10 +246,11 @@ export const UIManager = {
         this.renderDivisors(currentState.availableDivisors, currentState.selectedDivisor);
         this.renderTimewall(currentState.timewall);
         this.updateMempoolDisplay(currentState.mempool, currentState.currentlySelectedTxs, currentState.timewall.length);
-        this.updateVerificationInputsState(currentState.timewall.length);
+        this.updateVerificationInputsState(currentState.timewall.length); // Questo aggiorna anche il pulsante di reset tramite MenuManager
         this.renderCalculationDetails({ initialState: true });
         if (DOMElements.poolName) DOMElements.poolName.value = '';
         if (DOMElements.nonce) DOMElements.nonce.value = '';
+        MenuManager.updateResetButtonVisibility(); // Assicura che lo stato del pulsante reset sia corretto
     },
 
     setupEventListeners() {
@@ -209,15 +261,19 @@ export const UIManager = {
         document.addEventListener('keydown', (event) => {
             if (event.key.toUpperCase() === 'F') {
                 if (document.activeElement === DOMElements.poolName || document.activeElement === DOMElements.nonce) {
-                    return;
+                    return; // Non fare nulla se l'utente sta scrivendo negli input
                 }
-                if (!event.ctrlKey && !event.metaKey && !event.altKey) {
+                if (!event.ctrlKey && !event.metaKey && !event.altKey) { // Evita conflitti con scorciatoie del browser
                     event.preventDefault();
-                    this.toggleFullScreen();
+                    FullscreenManager.toggle(); // Usa il metodo del FullscreenManager
                 }
             }
-            if (event.key === 'Escape' && uiState.isMenuOpen) {
-                MenuManager.closeMenu();
+            if (event.key === 'Escape') { // Gestione Escape
+                if (uiState.isFullscreen) { // Se in fullscreen, esci prima dal fullscreen
+                    FullscreenManager.toggle();
+                } else if (uiState.isMenuOpen) { // Altrimenti, chiudi il menu se aperto
+                    MenuManager.closeMenu();
+                }
             }
         });
 
@@ -266,7 +322,7 @@ export const UIManager = {
             const feeIconImg = document.createElement('img');
             feeIconImg.src = tx.feeIconPath;
             feeIconImg.alt = tx.description;
-            feeIconImg.className = 'tx-icon';
+            feeIconImg.className = 'tx-icon'; // Assicurati che questa classe sia definita in style.css
             feeIconImg.onerror = () => {
                 UIUtils.logError(`Impossibile caricare l'immagine: ${tx.feeIconPath}`);
                 feeIconImg.alt = "Icona non caricata";
@@ -302,25 +358,27 @@ export const UIManager = {
             if (timewall[i]) {
                 const block = timewall[i];
                 const blockCard = document.createElement('div');
+                // Assicurati che .block-card sia definita in style.css per dimensioni e animazione
                 blockCard.className = 'block-card bg-white dark:bg-gray-700 p-4 sm:p-5 rounded-lg shadow-lg border border-gray-300 dark:border-gray-600 flex-shrink-0 flex flex-col text-gray-800 dark:text-gray-100';
 
                 let transactionsHTML = 'N/A';
                 if (block.selectedTransactions && block.selectedTransactions.length > 0) {
                     transactionsHTML = block.selectedTransactions.map(tx =>
+                        // Assicurati che .tooltip e .tooltiptext siano definiti in style.css
                         `<span class="tooltip text-sm bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-md mr-1.5 mb-1.5 inline-block">${UIUtils.escapeHTML(tx.description.split(' ')[0])}...<span class="tooltiptext bg-gray-700 dark:bg-gray-800 text-white">${UIUtils.escapeHTML(tx.description)}</span></span>`
                     ).join('');
-                } else if (i + 1 === 3) {
+                } else if (i + 1 === 3) { // Blocco 3
                     transactionsHTML = 'Nessuna Selezionata';
                 }
 
                 let remainderHTML;
-                if (i < GameConstants.MAX_BLOCKS -1) {
+                if (i < GameConstants.MAX_BLOCKS -1) { // Non per l'ultimo blocco
                     remainderHTML = `
                         <div class="mt-2 mb-1 p-3 border-2 border-yellow-500 dark:border-yellow-400 rounded-lg bg-yellow-50 dark:bg-gray-600/50 shadow-inner">
                             <p class="text-base font-semibold text-gray-700 dark:text-gray-200 text-center">Resto per Blocco Successivo:</p>
                             <p class="text-3xl font-bold text-yellow-600 dark:text-yellow-300 text-center tracking-wider">${block.remainder}</p>
                         </div>`;
-                } else {
+                } else { // Per l'ultimo blocco
                     remainderHTML = `<p><strong class="text-gray-700 dark:text-gray-200">Resto Vincente:</strong> <span class="font-semibold text-orange-600 dark:text-orange-300">${block.remainder}</span></p>`;
                 }
 
@@ -341,6 +399,7 @@ export const UIManager = {
                 DOMElements.timewallChain.appendChild(blockCard);
             } else {
                 const placeholderSlot = document.createElement('div');
+                // Assicurati che .timewall-placeholder-slot sia definito in style.css
                 placeholderSlot.className = 'timewall-placeholder-slot flex-shrink-0 border-gray-400 dark:border-gray-600 bg-gray-100 dark:bg-gray-800/10 text-gray-500 dark:text-gray-500';
                 placeholderSlot.textContent = `Blocco #${i + 1} non ancora minato`;
                 DOMElements.timewallChain.appendChild(placeholderSlot);
@@ -356,7 +415,7 @@ export const UIManager = {
 
     renderCalculationDetails(details) {
         if (!DOMElements.calculationDetailsBox || !DOMElements.calculationDetailsContainer) return;
-        DOMElements.calculationDetailsBox.innerHTML = '';
+        DOMElements.calculationDetailsBox.innerHTML = ''; // Pulisci i dettagli precedenti
 
         if (details.initialState) {
             DOMElements.calculationDetailsBox.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Effettua una verifica per visualizzare i dettagli del calcolo qui.</p>';
@@ -371,7 +430,7 @@ export const UIManager = {
             strong.className = 'text-gray-700 dark:text-gray-200';
             strong.textContent = `${label}: `;
             const span = document.createElement('span');
-            span.className = 'text-gray-800 dark:text-gray-100';
+            span.className = 'text-gray-800 dark:text-gray-100'; // Colore del valore
             span.textContent = value;
             p.appendChild(strong);
             p.appendChild(span);
@@ -388,6 +447,7 @@ export const UIManager = {
             errorP.className = 'text-red-600 dark:text-red-400 font-semibold';
             errorP.textContent = `Errore: ${details.error}`;
             DOMElements.calculationDetailsBox.appendChild(errorP);
+            // Aggiungi altri dettagli se disponibili anche in caso di errore
             if (details.poolName !== undefined) DOMElements.calculationDetailsBox.appendChild(createDetailLine('Nome Pool Inserito', details.poolName || 'N/A'));
             if (details.nonceInput !== undefined) DOMElements.calculationDetailsBox.appendChild(createDetailLine('Nonce Inserito', details.nonceInput || 'N/A'));
             if (details.selectedDivisor !== undefined && details.selectedDivisor !== null) DOMElements.calculationDetailsBox.appendChild(createDetailLine('Divisore Selezionato', details.selectedDivisor));
@@ -404,6 +464,7 @@ export const UIManager = {
                 DOMElements.calculationDetailsBox.appendChild(createDetailLine('Transazioni Selezionate', details.selectedTransactionsForDisplay.join(', ') || 'Nessuna'));
                 DOMElements.calculationDetailsBox.appendChild(createDetailLine('Valore Transazioni (txValue)', details.txValue));
             }
+            // Assicurati che poolName sia una stringa prima di chiamare toUpperCase
             const poolNameForWR = (details.poolName && typeof details.poolName === 'string') ? details.poolName.toUpperCase() : 'N/D';
             DOMElements.calculationDetailsBox.appendChild(createFormulaLine('WR', `${details.asciiSum} (Somma ASCII di '${UIUtils.escapeHTML(poolNameForWR)}') + ${GameConstants.ASCII_SUM_OFFSET}`, details.WR));
             DOMElements.calculationDetailsBox.appendChild(createFormulaLine('Proof', details.proofFormula, details.proofValue));
@@ -415,39 +476,46 @@ export const UIManager = {
             DOMElements.calculationDetailsBox.appendChild(outcomeLine);
         }
 
+        // Aggiorna il bordo del contenitore
         DOMElements.calculationDetailsContainer.classList.remove('border-gray-300', 'dark:border-gray-700', 'border-green-400', 'dark:border-green-500', 'border-red-400', 'dark:border-red-500');
         if (details.isSuccess === true) {
             DOMElements.calculationDetailsContainer.classList.add('border-green-400', 'dark:border-green-500');
-        } else if (details.isSuccess === false) {
+        } else if (details.isSuccess === false) { // Errore di calcolo, non di input
             DOMElements.calculationDetailsContainer.classList.add('border-red-400', 'dark:border-red-500');
-        } else {
+        } else { // Errore di input o stato iniziale
             DOMElements.calculationDetailsContainer.classList.add('border-gray-300', 'dark:border-gray-700');
         }
     },
 
     displayMessage(message, type = 'info', duration = UIConstants.MESSAGE_TIMEOUT_DEFAULT) {
         if (!DOMElements.messageArea) return;
-        clearTimeout(uiState.messageTimeoutId);
+        clearTimeout(uiState.messageTimeoutId); // Pulisci timeout precedente
         DOMElements.messageArea.textContent = message;
+        // Classi base e di transizione
         DOMElements.messageArea.className = 'fixed bottom-5 right-5 text-white p-4 sm:p-5 rounded-lg shadow-xl max-w-sm sm:max-w-md text-base sm:text-lg z-50 transition-opacity duration-300 ease-out';
 
+        // Applica colore in base al tipo
         switch (type) {
             case 'success': DOMElements.messageArea.classList.add('bg-green-500', 'dark:bg-green-600'); break;
-            case 'warn': DOMElements.messageArea.classList.add('bg-yellow-400', 'dark:bg-yellow-500'); break;
+            case 'warn': DOMElements.messageArea.classList.add('bg-yellow-400', 'dark:bg-yellow-500'); break; // Testo scuro per leggibilità su giallo
             case 'error': DOMElements.messageArea.classList.add('bg-red-500', 'dark:bg-red-600'); break;
             default: DOMElements.messageArea.classList.add('bg-blue-500', 'dark:bg-blue-600'); break;
         }
+        // Gestisci visibilità e animazione fade-in
         DOMElements.messageArea.style.display = 'block';
-        DOMElements.messageArea.style.opacity = '0';
+        DOMElements.messageArea.style.opacity = '0'; // Inizia trasparente per fade-in
 
+        // Forza reflow per applicare transizione correttamente
         void DOMElements.messageArea.offsetWidth;
 
-        DOMElements.messageArea.style.opacity = '1';
+        DOMElements.messageArea.style.opacity = '1'; // Fade-in
 
+        // Imposta timeout per fade-out
         uiState.messageTimeoutId = setTimeout(() => {
             DOMElements.messageArea.style.opacity = '0';
+            // Nascondi elemento dopo che la transizione di fade-out è completata
             setTimeout(() => {
-                if (DOMElements.messageArea.style.opacity === '0') {
+                if (DOMElements.messageArea.style.opacity === '0') { // Controlla se è ancora 0 (non sovrascritto da un nuovo messaggio)
                     DOMElements.messageArea.style.display = 'none';
                 }
             }, UIConstants.MESSAGE_FADEOUT_DURATION);
@@ -460,7 +528,7 @@ export const UIManager = {
         if (nextBlockNumber === 3 && timewallLength < GameConstants.MAX_BLOCKS) {
             this.renderMempoolItems(mempool, currentlySelectedTxs);
         } else {
-            DOMElements.mempoolGrid.innerHTML = '';
+            DOMElements.mempoolGrid.innerHTML = ''; // Pulisci la griglia
             const placeholderMessage = document.createElement('p');
             placeholderMessage.className = 'text-gray-500 dark:text-gray-400 text-base text-center col-span-full h-full flex items-center justify-center';
             placeholderMessage.textContent = nextBlockNumber < 3 ? 'Disponibile per il Blocco 3' : 'Mempool non attiva per questo blocco';
@@ -482,28 +550,11 @@ export const UIManager = {
                 DOMElements.verifyAttempt.classList.add('hover:bg-cyan-600', 'dark:hover:bg-cyan-700');
             }
         }
-        MenuManager.updateResetButtonVisibility();
+        MenuManager.updateResetButtonVisibility(); // Aggiorna lo stato del pulsante di reset
     },
 
-    toggleFullScreen() {
-        if (!document.fullscreenElement) {
-            DOMElements.html.requestFullscreen().catch(err => {
-                this.displayMessage(`Fullscreen non disponibile o negato. (${err.message})`, "warn");
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(err => { // Aggiunto .catch() qui
-                    this.displayMessage(`Impossibile uscire dal fullscreen. (${err.message})`, "warn");
-                });
-            } else if (document.webkitExitFullscreen) { // Fallback per Safari/Chrome più vecchi
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) { // Fallback per Firefox
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) { // Fallback per IE/Edge più vecchi
-                document.msExitFullscreen();
-            }
-        }
-    },
+    // toggleFullScreen è ora gestito da FullscreenManager.toggle()
+    // La chiamata da 'F' key è stata aggiornata in setupEventListeners
 
     handleDivisorSelectUI(divisorValue) {
         const success = GameLogic.selectDivisorLogic(divisorValue);
@@ -515,12 +566,13 @@ export const UIManager = {
     },
 
     handleTransactionSelectUI(tx) {
-        const result = GameLogic.selectTransactionLogic(tx);
+        const result = GameLogic.selectTransactionLogic(tx); // Questo è un oggetto {success, message?, type?}
         const currentState = GameLogic.getCurrentState();
-        this.renderMempoolItems(currentState.mempool, currentState.currentlySelectedTxs);
+        this.renderMempoolItems(currentState.mempool, currentState.currentlySelectedTxs); // Aggiorna sempre la UI della mempool
         if (!result.success && result.message) {
             this.displayMessage(result.message, "warn");
         }
+        // Non c'è bisogno di mostrare un messaggio di successo per la selezione/deselezione
     },
 
     handleVerifyAttemptUI() {
@@ -529,51 +581,56 @@ export const UIManager = {
             const nonceStr = DOMElements.nonce ? DOMElements.nonce.value : '';
 
             const resultDetails = GameLogic.attemptMineBlock(poolName, nonceStr);
-            this.renderCalculationDetails(resultDetails);
+            this.renderCalculationDetails(resultDetails); // Mostra sempre i dettagli del calcolo
 
-            if (resultDetails.error) {
+            if (resultDetails.error) { // Errore di input o di logica prima del calcolo
                 this.displayMessage(resultDetails.error, "error");
+                // Focus sull'input errato se possibile
                 if (resultDetails.error.toLowerCase().includes("pool")) {
                     if(DOMElements.poolName) DOMElements.poolName.focus();
                 } else if (resultDetails.error.toLowerCase().includes("nonce")) {
                      if(DOMElements.nonce) DOMElements.nonce.focus();
+                } else if (resultDetails.error.toLowerCase().includes("divisore")) {
+                    // Potresti evidenziare la sezione dei divisori o mostrare un messaggio più specifico
                 }
-                return;
+                return; // Interrompi se c'è un errore di input
             }
 
-            const currentState = GameLogic.getCurrentState();
+            // Se siamo qui, i calcoli sono stati effettuati
+            const currentState = GameLogic.getCurrentState(); // Ottieni lo stato aggiornato DOPO attemptMineBlock
 
             if (resultDetails.isSuccess) {
                 this.displayMessage(`Blocco Minato con Successo! Resto Calcolato: ${resultDetails.calculatedRemainder} (Soglia: >= ${resultDetails.targetRemainderValue})`, "success");
 
-                if (!resultDetails.isGameEnd) {
-                    if (DOMElements.poolName) DOMElements.poolName.value = '';
+                if (!resultDetails.isGameEnd) { // Se il gioco non è finito
+                    if (DOMElements.poolName) DOMElements.poolName.value = ''; // Pulisci solo se il gioco continua
                     if (DOMElements.nonce) DOMElements.nonce.value = '';
                 }
 
                 this.renderTimewall(currentState.timewall);
-                this.renderDivisors(currentState.availableDivisors, currentState.selectedDivisor);
+                this.renderDivisors(currentState.availableDivisors, currentState.selectedDivisor); // Aggiorna i divisori
 
                 if (resultDetails.isGameEnd) {
                     this.displayMessage(`Tutti i ${GameConstants.MAX_BLOCKS} blocchi minati! Sessione di gioco completa. Apri il menu per ricominciare.`, "success", 6000);
                 } else {
                      this.displayMessage("Nuovi divisori generati. Seleziona un divisore per il prossimo blocco!", "info", 3000);
                 }
-            } else {
+            } else { // Tentativo fallito (calcoli corretti ma non ha raggiunto la soglia)
                 this.displayMessage(`Tentativo Fallito. Resto Calcolato (${resultDetails.calculatedRemainder}) è minore della Soglia Target (>= ${resultDetails.targetRemainderValue}). Prova un nuovo Nonce!`, "error");
             }
             this.updateMempoolDisplay(currentState.mempool, currentState.currentlySelectedTxs, currentState.timewall.length);
-            this.updateVerificationInputsState(currentState.timewall.length);
+            this.updateVerificationInputsState(currentState.timewall.length); // Aggiorna stato input e pulsante reset
 
         } catch (error) {
             UIUtils.logError("Errore imprevisto durante la verifica del tentativo (UI):", error);
             this.displayMessage("Si è verificato un errore imprevisto. Controlla la console per i dettagli.", "error");
+            // Mostra dettagli di errore generici se possibile
             this.renderCalculationDetails({
-                error: `Errore di sistema: ${error.message}`,
+                error: `Errore di sistema: ${error.message}`, // Messaggio di errore più generico
                 poolName: DOMElements.poolName ? DOMElements.poolName.value.trim() : '',
                 nonceInput: DOMElements.nonce ? DOMElements.nonce.value : '',
-                selectedDivisor: GameLogic.getCurrentState().selectedDivisor,
-                isSuccess: false
+                selectedDivisor: GameLogic.getCurrentState().selectedDivisor, // Prendi lo stato attuale del divisore
+                isSuccess: false // Indica fallimento
             });
         }
     }

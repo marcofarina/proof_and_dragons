@@ -5,39 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Language" content="it">
     <title>Proof & Dragons</title>
+    <script src="https://kit.fontawesome.com/6ace5e8adf.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./js/tailwind.config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="./css/tooltip.css"> <link rel="stylesheet" href="css/style.css"> </head>
 <body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 flex flex-col min-h-screen selection:bg-cyan-500 selection:text-black">
 
 <header class="p-4 sm:p-5 bg-gray-200 dark:bg-gray-800 shadow-lg flex justify-between items-center relative">
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-game text-cyan-600 dark:text-cyan-400">Proof & Dragons</h1>
-    <div class="flex items-center space-x-3">
-        <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Toggle Light/Dark Theme" aria-pressed="false">
-                <span id="themeIconSun" class="hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-6.364-.386l1.591-1.591M3 12h2.25m.386-6.364l1.591 1.591" />
-                    </svg>
-                </span>
-            <span id="themeIconMoon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                    </svg>
-                </span>
+    <div class="flex items-center space-x-2 sm:space-x-3">
+        <a href="https://github.com/marcofarina/proof_and_dragons" target="_blank" rel="noopener noreferrer" aria-label="Repository GitHub" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500">
+            <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                <i class="fa-brands fa-github text-xl"></i>
+            </span>
+            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs">Repository GitHub</span>
+        </a>
+        <a href="https://ko-fi.com/marcofarina" target="_blank" rel="noopener noreferrer" aria-label="Supporta il progetto" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500">
+            <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                <i class="fa-solid fa-heart-circle-bolt text-xl"></i>
+            </span>
+            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs">Offrimi una pinta di <strong><i>grog</i></strong> 🍺</span>
+        </a>
+
+        <button id="fullscreenToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 :ring-cyan-500" aria-label="Toggle Fullscreen">
+            <span id="fullscreenIconExpand" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                <i class="fa-solid fa-expand text-xl"></i>
+            </span>
+            <span id="fullscreenIconCompress" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                <i class="fa-solid fa-compress text-xl"></i>
+            </span>
+            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs">Attiva/disattiva schermo intero</span>
         </button>
-        <button id="menuToggle" class="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Apri menu" aria-expanded="false" aria-controls="appMenu">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
+
+        <button id="themeToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Toggle Light/Dark Theme" aria-pressed="false">
+            <span id="themeIconSun" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                <i class="fa-solid fa-moon text-xl"></i>
+            </span>
+            <span id="themeIconMoon" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                <i class="fa-regular fa-sun text-xl"></i>
+            </span>
+            <span class="tooltiptext tooltiptext-theme-light bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs">Nox!</span>
+            <span class="tooltiptext tooltiptext-theme-dark bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs">Lumos!</span>
+        </button>
+        <button id="menuToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Apri menu" aria-expanded="false" aria-controls="appMenu">
+            <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </span>
         </button>
     </div>
     <div id="appMenu" class="hidden absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-300 dark:border-gray-700 z-20 p-4 space-y-3">
-        <a href="#" id="manualLink" target="_blank" rel="noopener noreferrer" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Manuale</a>
-        <a href="#" id="githubLink" target="_blank" rel="noopener noreferrer" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Repository GitHub</a>
+        <a href="./manuale.html" id="manualLink" target="_blank" rel="noopener noreferrer" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Manuale</a>
+        <a href="https://www.rainbowbits.cloud" id="rainbowBitsLink" target="_blank" rel="noopener noreferrer" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Rainbow Bits</a>
         <hr class="border-gray-300 dark:border-gray-600">
-        <button id="resetGameButton" class="w-full bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
+        <button id="resetGameButton" class="w-full bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
             Ricomincia partita
         </button>
     </div>
@@ -94,9 +117,7 @@
     </div>
 
 <script type="module">
-  // 'ui.js' si occupa di importare la logica di cui ha bisogno.
   import { UIManager } from './js/ui.js';
-
   document.addEventListener('DOMContentLoaded', () => {
     UIManager.init();
   });

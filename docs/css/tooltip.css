@@ -1,0 +1,83 @@
+/* tooltip.css */
+
+/* Contenitore del tooltip */
+.tooltip {
+    position: relative; /* Necessario per il posizionamento assoluto del testo del tooltip */
+    display: inline-block;
+}
+
+/* Stile base per tutti i testi dei tooltip */
+.tooltip .tooltiptext {
+    visibility: hidden; /* Nascosto di default */
+    opacity: 0;         /* Trasparente di default */
+
+    width: max-content; /* Larghezza basata sul contenuto */
+    max-width: 220px;   /* Larghezza massima */
+
+    /* Stili visuali di base (possono essere sovrascritti da classi Tailwind sullo span specifico) */
+    background-color: #374151; /* Esempio: bg-gray-700 */
+    color: #ffffff;             /* Esempio: text-white */
+    text-align: center;
+    border-radius: 6px;      /* Esempio: rounded-md */
+    padding: 6px 10px;       /* Esempio: px-2.5 py-1.5 */
+    font-size: 0.75rem;      /* Esempio: text-xs */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Esempio: shadow-lg */
+
+    position: absolute;
+    z-index: 50; /* Assicura che sia sopra altri elementi (es. nav sticky con z-index 40) */
+
+    /* Posizionamento SOTTO l'elemento genitore */
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%); /* Centra il tooltip orizzontalmente */
+    margin-top: 8px; /* Spazio tra l'icona e il tooltip (es. mt-2) */
+
+    /* Transizione per l'effetto fade */
+    transition: opacity 0.25s ease-in-out, visibility 0s linear 0.25s;
+}
+
+/* Mostra il tooltip generico all'hover o focus */
+.tooltip:hover .tooltiptext,
+.tooltip:focus-within .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s; /* Rimuovi il ritardo della visibility quando diventa visibile */
+}
+
+/* Testi specifici per il tema (condivideranno gli stili di .tooltiptext) */
+/* Saranno nascosti/mostrati in base alle regole successive */
+.tooltip .tooltiptext-theme-light,
+.tooltip .tooltiptext-theme-dark {
+    display: none !important; /* Nascosti di default, !important per sovrascrivere il display:inline-block del :hover generico se necessario */
+}
+
+/* Mostra "Nox" (tooltiptext-theme-light) in tema CHIARO */
+html:not(.dark) .tooltip:hover .tooltiptext-theme-light,
+html:not(.dark) .tooltip:focus-within .tooltiptext-theme-light {
+    display: inline-block !important; /* Mostra questo specifico tooltip */
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Mostra "Lumos" (tooltiptext-theme-dark) in tema SCURO */
+html.dark .tooltip:hover .tooltiptext-theme-dark,
+html.dark .tooltip:focus-within .tooltiptext-theme-dark {
+    display: inline-block !important; /* Mostra questo specifico tooltip */
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Assicura che l'altro testo specifico del tema sia nascosto */
+html:not(.dark) .tooltip:hover .tooltiptext-theme-dark,
+html:not(.dark) .tooltip:focus-within .tooltiptext-theme-dark {
+    display: none !important;
+    visibility: hidden;
+    opacity: 0;
+}
+
+html.dark .tooltip:hover .tooltiptext-theme-light,
+html.dark .tooltip:focus-within .tooltiptext-theme-light {
+    display: none !important;
+    visibility: hidden;
+    opacity: 0;
+}

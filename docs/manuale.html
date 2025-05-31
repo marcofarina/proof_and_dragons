@@ -4,49 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Language" content="it">
-    <title>Manuale di Gioco - Proof & Dragons Unplugged</title>
+    <title>Manuale del Minatore - Proof & Dragons</title>
+    <script src="https://kit.fontawesome.com/6ace5e8adf.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./js/tailwind.config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/tooltip.css"> <style>
+        body {
+            overscroll-behavior: none;
+            scroll-padding-top: 120px;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+        /* Altri stili specifici del manuale, se necessari, rimangono qui.
+           Gli stili dei tooltip sono stati spostati in tooltip.css */
+    </style>
 </head>
 <body class="antialiased bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 selection:bg-game-cyan selection:text-black font-body">
 
-<header class="page-header py-8 sm:py-12 bg-gradient-to-br from-game-cyan to-game-purple text-white text-center shadow-lg animate-fadeInUp">
-    <h1 class="text-4xl sm:text-5xl md:text-6xl font-display">Proof & Dragons</h1>
-    <p class="text-lg sm:text-xl mt-2 opacity-90">Manuale di Gioco</p>
+<header class="page-header py-8 sm:py-12 bg-gradient-to-br from-game-cyan to-game-purple text-white shadow-lg animate-fadeInUp flex justify-between items-center px-4 sm:px-6 md:px-8 relative z-50">
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-display text-center flex-grow">Manuale del Minatore</h1>
+    <button id="themeToggleManual" class="tooltip p-2 rounded-full hover:bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-game-purple focus:ring-white" aria-label="Toggle Light/Dark Theme" aria-pressed="false">
+        <span id="themeIconSunManual" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+            <i class="fa-solid fa-moon text-xl"></i>
+        </span>
+        <span id="themeIconMoonManual" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+            <i class="fa-regular fa-sun text-xl"></i>
+        </span>
+        <span class="tooltiptext tooltiptext-theme-light">Nox!</span>
+        <span class="tooltiptext tooltiptext-theme-dark">Lumos!</span>
+    </button>
 </header>
+
+<nav id="manualNav" class="sticky-nav bg-white dark:bg-gray-800 shadow-md py-3 px-4 sm:px-6 md:px-8">
+    <ul class="container mx-auto max-w-5xl flex flex-wrap justify-center items-center gap-x-4 sm:gap-x-6 gap-y-2 text-sm sm:text-base">
+        <li><a href="#sezione-introduzione" class="font-semibold text-game-cyan hover:text-game-cyan-dark dark:text-game-cyan-light dark:hover:text-game-cyan transition-colors">Introduzione</a></li>
+        <li><a href="#sezione-materiali" class="font-semibold text-game-purple hover:text-game-purple-dark dark:text-game-purple-light dark:hover:text-game-purple transition-colors">Materiali</a></li>
+        <li><a href="#sezione-preparazione" class="font-semibold text-game-teal hover:text-game-teal-dark dark:text-game-teal-light dark:hover:text-game-teal transition-colors">Preparazione</a></li>
+        <li><a href="#sezione-obiettivo" class="font-semibold text-game-orange hover:text-game-orange-dark dark:text-game-orange-light dark:hover:text-game-orange transition-colors">Obiettivo</a></li>
+        <li><a href="#sezione-svolgimento" class="font-semibold text-game-indigo hover:text-game-indigo-dark dark:text-game-indigo-light dark:hover:text-game-indigo transition-colors">Svolgimento</a></li>
+        <li><a href="#sezione-fine" class="font-semibold text-game-red hover:text-game-red-dark dark:text-game-red-light dark:hover:text-game-red transition-colors">Fine Partita</a></li>
+        <li><a href="#sezione-faq" class="font-semibold text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">FAQ</a></li>
+    </ul>
+</nav>
 
 <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
 
-    <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.1s;">
+    <section id="sezione-introduzione" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.1s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-cyan dark:border-game-cyan-dark text-game-cyan dark:text-game-cyan-light font-display">Una quest per le Dungeon Pool</h2>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Benvenuti, intrepidi avventurieri, nel mondo di <strong>Proof & Dragons</strong>! In questo gioco educativo vi trasformerete in squadre di "minatori" con il compito di risolvere complessi enigmi matematici per "minare" blocchi e aggiungerli al leggendario Timewall. Chi riuscirà a sconfiggere la furia di Werkle, il Drago Cypherpunk e a convalidare più blocchi?</p>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Questo gioco è progettato per farvi comprendere, divertendovi, i concetti alla base del <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Proof-of-Work</strong>, il meccanismo che rende sicura la blockchain di Bitcoin. Preparate dadi, matite e fogli di lavoro: la caccia ai blocchi è aperta!</p>
     </section>
 
-    <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
+    <section id="sezione-materiali" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.2s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-purple dark:border-game-purple-dark text-game-purple dark:text-game-purple-light font-display">Materiali necessari</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-game-orange flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
+                    <i class="fa-regular fa-file-lines text-2xl"></i>
+                </span>
                 <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Fogli di lavoro "Proof & Dragons"</strong> (stampati, forniti dall'insegnante - almeno un set per squadra: <a href="static/worksheets_2.0.0.pdf" download class="text-game-cyan hover:underline">download</a>).</span>
             </div>
             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-game-orange flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
+                <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
+                    <i class="fa-solid fa-pencil text-2xl"></i>
+                </span>
                 <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Penne o matite</strong> (per i calcoli).</span>
             </div>
             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-game-orange flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75c0-.231-.035-.454-.1-.664M6.75 7.5H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M6.75 7.5V18a2.25 2.25 0 002.25 2.25h3.75m0-10.5H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M6.75 7.5h7.5m-7.5 3h7.5m-7.5 3h7.5m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M6.75 7.5V18a2.25 2.25 0 002.25 2.25h3.75m0-10.5h7.5m-7.5 3h7.5m-7.5 3h7.5M12 13.5v2.25m0-2.25H9m5.25 0h2.25" /></svg>
+                <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
+                    <i class="fa-solid fa-dice-d20 text-2xl"></i>
+                </span>
                 <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Dadi di Dungeons & Dragons</strong> 1d12 e 1d20 per gruppo.</span>
             </div>
             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-game-orange flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-4.5A3.375 3.375 0 0012.75 9H11.25A3.375 3.375 0 007.5 12.375V18.75m1.5.75h.008v.008H9v-.008zm0 0H9.75m0 0H10.5m0 0H11.25m0 0H12m0 0H12.75m0 0H13.5m0 0H14.25m0 0H15M12 9v-3.75A3.375 3.375 0 0115.375 1.5h.008A3.375 3.375 0 0118.75 4.875V9M6.25 9.375v-1.5A3.375 3.375 0 019.625 4.5h.008A3.375 3.375 0 0113.125 7.875v1.5m-3 .75h3.75M3.75 17.25V15m0 2.25a.75.75 0 001.5 0V15m0 0c0-.414.336-.75.75-.75h1.5a.75.75 0 00.75-.75V7.5a.75.75 0 00-.75-.75h-.503A3.001 3.001 0 004.5 9.75v1.5m0 0V15m15-7.5V7.5a.75.75 0 00-.75-.75h-.503a3.001 3.001 0 00-2.247 2.25v1.5m0 0V15m0 2.25a.75.75 0 001.5 0V15m0 0c0-.414.336-.75.75-.75h1.5a.75.75 0 00.75-.75V9.75a3.001 3.001 0 00-2.247-2.982h-.503a.75.75 0 00-.75.75v4.5" /></svg>
+                <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
+                     <i class="fa-solid fa-trophy text-2xl"></i>
+                </span>
                 <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Premi</strong> (opzionale, per la squadra vincitrice).</span>
             </div>
         </div>
     </section>
 
-    <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+    <section id="sezione-preparazione" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.3s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-teal dark:border-game-teal-dark text-game-teal dark:text-game-teal-light font-display">Preparazione</h2>
         <ol class="list-none space-y-4">
             <li class="flex items-start">
@@ -64,12 +110,12 @@
         </ol>
     </section>
 
-    <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.4s;">
+    <section id="sezione-obiettivo" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.4s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-orange dark:border-game-orange-dark text-game-orange dark:text-game-orange-light font-display">Obiettivo del gioco</h2>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">L'obiettivo è essere la squadra che <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">mina con successo il maggior numero di blocchi</strong> (massimo 3 blocchi per partita). Minare un blocco significa risolvere correttamente l'enigma matematico prima delle altre squadre e dimostrare il calcolo all'insegnante.</p>
     </section>
 
-    <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
+    <section id="sezione-svolgimento" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.5s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-indigo dark:border-game-indigo-dark text-game-indigo dark:text-game-indigo-light font-display">Svolgimento della partita</h2>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">La partita si svolge in round, uno per ogni blocco da minare (massimo 3 blocchi).</p>
 
@@ -93,8 +139,8 @@
 
         <span class="block text-center text-3xl my-4 text-game-teal dark:text-game-teal-light">↓</span>
 
-        <div class="bg-red-50 dark:bg-red-900/30 border-2 border-game-red dark:border-game-red-dark p-6 rounded-xl shadow-2xl my-6">
-            <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-red dark:text-game-red-light">Fase 2: tentativo di mining del blocco corrente</h3>
+        <div class="bg-cyan-50 dark:bg-cyan-900/30 border-2 border-game-cyan dark:border-game-cyan-dark p-6 rounded-xl shadow-2xl my-6">
+            <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-cyan dark:text-game-cyan-light">Fase 2: tentativo di mining del blocco corrente</h3>
             <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Per ogni blocco (Blocco 1, Blocco 2, Blocco 3):</p>
             <ol class="list-decimal list-inside pl-6 space-y-3 text-gray-700 dark:text-gray-300">
                 <li><strong>Divisori attivi:</strong> i giocatori fanno riferimento agli otto <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Divisori Attivi</strong> per il blocco corrente. Ogni squadra usa ogni divisore UNA sola volta per tentativo del blocco corrente. I divisori sono otto, uno per ogni spaizo.</li>
@@ -132,8 +178,8 @@
 
         <span class="block text-center text-3xl my-4 text-game-teal dark:text-game-teal-light">↓</span>
 
-        <div class="bg-red-50 dark:bg-red-900/30 border-2 border-game-red dark:border-game-red-dark p-6 rounded-xl shadow-2xl my-6">
-            <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-red dark:text-game-red-light">Fase 3: annuncio del vincitore del blocco</h3>
+        <div class="bg-green-50 dark:bg-green-900/30 border-2 border-game-green dark:border-game-green-dark p-6 rounded-xl shadow-2xl my-6">
+            <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-green dark:text-game-green-light">Fase 3: annuncio del vincitore del blocco</h3>
             <ul class="list-disc list-inside pl-4 space-y-2 text-gray-700 dark:text-gray-300">
                 <li>La <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">prima squadra</strong> che calcola correttamente un `RestoCalcolato` che soddisfa la condizione di vittoria deve alzare la mano e annunciare "BLOCCO MINATO!".</li>
                 <li>L'insegnante verificherà i calcoli sul foglio di lavoro della squadra.</li>
@@ -145,13 +191,13 @@
         </div>
     </section>
 
-    <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.6s;">
+    <section id="sezione-fine" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.6s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-red dark:border-game-red-dark text-game-red dark:text-game-red-light font-display">Fine della partita</h2>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">La partita termina quando <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">tutti e 3 i blocchi sono stati minati</strong>.</p>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">L'insegnante conta quanti blocchi ha vinto ciascuna squadra. La squadra (o le squadre, in caso di parità) con il maggior numero di blocchi vinti è proclamata <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Campione di Proof & Dragons</strong>! <span class="inline-block mx-1 text-2xl">👑</span></p>
     </section>
 
-    <section class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.8s;">
+    <section id="sezione-faq" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.8s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-gray-500 dark:border-gray-400 text-gray-700 dark:text-gray-300 font-display">Domande frequenti (FAQ)</h2>
         <ul class="list-disc list-inside pl-4 space-y-2 text-gray-700 dark:text-gray-300">
             <li><strong class="font-semibold text-gray-800 dark:text-gray-100">Cosa succede se più squadre minano un blocco contemporaneamente?</strong> L'insegnante deciderà chi è stato il primo ad annunciare e a presentare calcoli corretti. Spirito sportivo! È un buon momento per spiegare il concetto della catena che ha accumulato più lavoro e cosa avviene nella realtà in questo caso.</li>
@@ -162,13 +208,14 @@
 
 </div>
 
+<button id="scrollToTopBtn" class="hidden fixed bottom-5 right-5 bg-game-purple hover:bg-game-purple-dark text-white p-3 rounded-full shadow-lg transition-opacity duration-300 focus:outline-none focus:ring-2 focus:ring-game-purple-light">
+    <i class="fa-solid fa-arrow-up text-xl"></i>
+</button>
+
 <footer class="text-center p-6 mt-8 border-t border-gray-300 dark:border-gray-700">
   <p class="text-sm text-gray-600 dark:text-gray-400"><span id="currentYear"></span> Proof & Dragons - Un progetto didattico per imparare i concetti chiave dell'algoritmo Proof-of-Work e del mining in Bitcoin.</p>
 </footer>
 
-<script>
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-</script>
-
+<script src="./js/manual.js"></script>
 </body>
 </html>
