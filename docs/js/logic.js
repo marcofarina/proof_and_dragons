@@ -18,21 +18,34 @@ export const GameConstants = {
         { id: 'tx5', description: 'Golden Pickaxe Efficiency' },
         { id: 'tx6', description: 'Dragonscale Ledger' },
     ],
-    TX_ICON_PATHS: [ // Questi potrebbero essere più legati all'UI, ma li teniamo con BASE_TX_DATA per coerenza
+    TX_ICON_PATHS: [
         './icons/fee1.png', './icons/fee2.png', './icons/fee3.png',
         './icons/fee4.png', './icons/fee5.png', './icons/fee6.png'
     ],
+    // Costanti per la difficoltà base dei divisori
+    BASE_MIN_DIVISOR: 11, // Min divisore per il numero base di gruppi
+    // BASE_MAX_DIVISOR non è più usata direttamente per generare il range, si usa DIVISOR_RANGE_SPAN
+    MIN_DIVISOR_ABSOLUTE: 8,  // Valore minimo assoluto che un divisore può assumere
+    MAX_DIVISOR_ABSOLUTE: 40, // Valore massimo assoluto che un divisore può assumere
+    DIVISOR_RANGE_SPAN: 11,   // Ampiezza del range dei divisori (MAX - MIN)
+    NUM_DIVISORS_TO_GENERATE: 8,
+
+    // Nuove costanti per lo scaling della difficoltà
+    BASE_GROUPS_FOR_DIFFICULTY: 5, // Numero di gruppi per cui BASE_MIN_DIVISOR è ottimale
+    DIFFICULTY_ADJUSTMENT_PER_GROUP: 1, // Quanto cambia min_divisor per ogni gruppo in più/meno da BASE_GROUPS_FOR_DIFFICULTY
 };
 
 // --- APPLICATION STATE ---
-// Stato interno del gioco, non direttamente manipolabile dall'esterno se non tramite le funzioni di GameLogic
 let gameState = {
     availableDivisors: [],
     selectedDivisor: null,
-    mempool: [], // Contiene gli oggetti transazione completi (con iconPath)
-    currentlySelectedTxs: [], // Contiene gli oggetti transazione selezionati
+    mempool: [],
+    currentlySelectedTxs: [],
     timewall: [],
     lastWinningRemainder: null,
+    numberOfGroups: 1,
+    currentMinDivisor: GameConstants.BASE_MIN_DIVISOR,
+    currentMaxDivisor: GameConstants.BASE_MIN_DIVISOR + GameConstants.DIVISOR_RANGE_SPAN,
 };
 
 // --- UTILITY FUNCTIONS (Logica Pura) ---
@@ -43,7 +56,6 @@ const Utils = {
             [array[i], array[j]] = [array[j], array[i]];
         }
     },
-    // logError è più un'utility di debugging, potrebbe stare anche in ui.js se usata solo lì
     logError(message, error) {
         console.error(message, error);
     }
@@ -68,11 +80,9 @@ export const ValidationManager = {
 
 // --- GAME LOGIC ---
 export const GameLogic = {
-    // Funzione per ottenere una copia dello stato corrente (per evitare modifiche dirette)
     getCurrentState() {
         return {
             ...gameState,
-            // Restituisce copie degli array per evitare mutazioni esterne dirette
             availableDivisors: [...gameState.availableDivisors],
             mempool: gameState.mempool.map(tx => ({...tx})),
             currentlySelectedTxs: gameState.currentlySelectedTxs.map(tx => ({...tx})),
@@ -89,15 +99,85 @@ export const GameLogic = {
         }));
     },
 
+    adjustDifficulty(numGroups) {
+        gameState.numberOfGroups = numGroups;
+        let minDivTarget;
+
+        // Calcola il minDiv target in base al numero di gruppi
+        minDivTarget = GameConstants.BASE_MIN_DIVISOR +
+                       (numGroups - GameConstants.BASE_GROUPS_FOR_DIFFICULTY) * GameConstants.DIFFICULTY_ADJUSTMENT_PER_GROUP;
+
+        // Limita minDivTarget in modo che minDivTarget + SPAN non superi MAX_DIVISOR_ABSOLUTE,
+        // e minDivTarget non sia inferiore a MIN_DIVISOR_ABSOLUTE.
+        let actualMinDiv = Math.max(GameConstants.MIN_DIVISOR_ABSOLUTE, minDivTarget);
+        actualMinDiv = Math.min(actualMinDiv, GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN);
+
+        // Se MAX_DIVISOR_ABSOLUTE - DIVISOR_RANGE_SPAN è inferiore a MIN_DIVISOR_ABSOLUTE (range assoluto troppo piccolo per lo span)
+        // allora actualMinDiv deve essere MIN_DIVISOR_ABSOLUTE.
+        if (GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN < GameConstants.MIN_DIVISOR_ABSOLUTE) {
+            actualMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
+        }
+
+
+        let actualMaxDiv = actualMinDiv + GameConstants.DIVISOR_RANGE_SPAN;
+        // Assicurati che actualMaxDiv non superi MAX_DIVISOR_ABSOLUTE.
+        // Questo potrebbe accadere se MIN_DIVISOR_ABSOLUTE + SPAN > MAX_DIVISOR_ABSOLUTE
+        actualMaxDiv = Math.min(actualMaxDiv, GameConstants.MAX_DIVISOR_ABSOLUTE);
+
+        // Se, a causa dei clamp, minDiv finisce per essere >= maxDiv (es. se SPAN è 0 o negativo, o range assoluto è 1)
+        // imposta un range minimo valido.
+        if (actualMinDiv >= actualMaxDiv) {
+            actualMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
+            actualMaxDiv = Math.min(GameConstants.MIN_DIVISOR_ABSOLUTE + 1, GameConstants.MAX_DIVISOR_ABSOLUTE);
+            if (actualMinDiv >= actualMaxDiv) { // Se ancora problematico (es. MIN_ABS == MAX_ABS)
+                actualMaxDiv = GameConstants.MAX_DIVISOR_ABSOLUTE;
+                actualMinDiv = GameConstants.MAX_DIVISOR_ABSOLUTE; // Range di un solo numero
+            }
+        }
+
+        gameState.currentMinDivisor = actualMinDiv;
+        gameState.currentMaxDivisor = actualMaxDiv;
+
+        console.log(`Difficoltà aggiustata per ${numGroups} gruppi: Range Divisori [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
+    },
+
     generateRandomDivisors() {
         const divisors = new Set();
-        while (divisors.size < 8) { // Genera 8 divisori unici
-            divisors.add(Math.floor(Math.random() * (22 - 11 + 1)) + 11); // Range 11-22
+        const min = gameState.currentMinDivisor;
+        const max = gameState.currentMaxDivisor;
+
+        if (min > max) { // Sanity check se il range non è valido (min non può essere > max)
+            Utils.logError("Range dei divisori non valido (min > max):", `Min: ${min}, Max: ${max}. Uso fallback.`);
+            // Fallback a un range sicuro
+            gameState.availableDivisors = [GameConstants.BASE_MIN_DIVISOR];
+            return;
+        }
+
+        const uniqueNumbersInRange = max - min + 1;
+        const numToGenerate = Math.min(GameConstants.NUM_DIVISORS_TO_GENERATE, uniqueNumbersInRange);
+
+        // Se uniqueNumbersInRange è 0 (min === max + 1, impossibile con logica precedente) o negativo, numToGenerate sarà <=0
+        if (numToGenerate <= 0) {
+             Utils.logError("Non ci sono numeri unici nel range per generare divisori:", `Min: ${min}, Max: ${max}.`);
+             // Se min e max sono uguali (uniqueNumbersInRange == 1), numToGenerate sarà 1.
+             if (min === max) {
+                 divisors.add(min);
+             } else {
+                // Caso di errore imprevisto, fornisci un fallback
+                divisors.add(GameConstants.BASE_MIN_DIVISOR);
+             }
+        } else {
+            while (divisors.size < numToGenerate) {
+                divisors.add(Math.floor(Math.random() * uniqueNumbersInRange) + min);
+            }
         }
         gameState.availableDivisors = Array.from(divisors);
     },
 
-    resetGameForNextBlockLogic(isFullReset = false) {
+    resetGameForNextBlockLogic(isFullReset = false, numGroupsForReset = null) {
+        if (isFullReset && numGroupsForReset !== null) {
+            this.adjustDifficulty(numGroupsForReset);
+        }
         this.generateRandomDivisors();
         gameState.selectedDivisor = null;
         gameState.currentlySelectedTxs = [];
@@ -105,16 +185,19 @@ export const GameLogic = {
         if (isFullReset) {
             gameState.timewall = [];
             gameState.lastWinningRemainder = null;
-            this.initializeMempoolData(); // Reinizializza mempool solo su reset completo
+            this.initializeMempoolData();
         }
     },
 
-    resetFullGameLogic() {
-        this.resetGameForNextBlockLogic(true);
+    resetFullGameLogic(numGroups) {
+        if (numGroups === undefined || numGroups === null) {
+            numGroups = gameState.numberOfGroups || 1;
+        }
+        this.resetGameForNextBlockLogic(true, numGroups);
     },
 
     selectDivisorLogic(divisorValue) {
-        if (gameState.timewall.length >= GameConstants.MAX_BLOCKS) return false; // Non fare nulla se il gioco è finito
+        if (gameState.timewall.length >= GameConstants.MAX_BLOCKS) return false;
         gameState.selectedDivisor = divisorValue;
         return true;
     },
@@ -168,7 +251,8 @@ export const GameLogic = {
             isSuccess: null,
             error: null,
             WR: 0, asciiSum: 0, proofFormula: '', proofValue: 0,
-            calculatedRemainder: 0, targetRemainderValue: 0, txValue: 0
+            calculatedRemainder: 0, targetRemainderValue: 0, txValue: 0,
+            isGameEnd: false,
         };
 
         if (currentBlockNumberForAttempt > GameConstants.MAX_BLOCKS) {
@@ -216,14 +300,14 @@ export const GameLogic = {
             Proof = (WR + nonce) * GameConstants.PROOF_MULTIPLIER;
             proofFormula = `(${WR} + ${nonce}) * ${GameConstants.PROOF_MULTIPLIER}`;
         } else if (currentBlockNumberForAttempt === 2) {
-            if (gameState.lastWinningRemainder === null) { // Sanity check
+            if (gameState.lastWinningRemainder === null) {
                  calculationDetails.error = "Errore: Resto del blocco precedente non disponibile per il Blocco 2.";
                  return calculationDetails;
             }
             Proof = (WR + nonce + gameState.lastWinningRemainder) * GameConstants.PROOF_MULTIPLIER;
             proofFormula = `(${WR} + ${nonce} + ${gameState.lastWinningRemainder}) * ${GameConstants.PROOF_MULTIPLIER}`;
         } else { // Blocco 3
-             if (gameState.lastWinningRemainder === null) { // Sanity check
+             if (gameState.lastWinningRemainder === null) {
                  calculationDetails.error = "Errore: Resto del blocco precedente non disponibile per il Blocco 3.";
                  return calculationDetails;
             }
@@ -237,7 +321,9 @@ export const GameLogic = {
         calculationDetails.calculatedRemainder = CalculatedRemainder;
 
         let TargetRemainder = gameState.selectedDivisor - GameConstants.TARGET_REMAINDER_OFFSET;
+        TargetRemainder = Math.max(0, TargetRemainder);
         calculationDetails.targetRemainderValue = TargetRemainder;
+
 
         const isSuccess = (CalculatedRemainder >= TargetRemainder);
         calculationDetails.isSuccess = isSuccess;
@@ -260,12 +346,11 @@ export const GameLogic = {
             if (gameState.timewall.length < GameConstants.MAX_BLOCKS) {
                 this.resetGameForNextBlockLogic(false);
             } else {
-                calculationDetails.isGameEnd = true; // Segnala la fine del gioco
+                calculationDetails.isGameEnd = true;
             }
         }
         return calculationDetails;
     }
 };
 
-// Inizializza lo stato del gioco la prima volta che il modulo viene caricato
-GameLogic.resetFullGameLogic();
+GameLogic.initializeMempoolData();
