@@ -1,6 +1,5 @@
 // js/logic.js
 
-// --- CONSTANTS ---
 export const GameConstants = {
     MAX_BLOCKS: 3,
     ASCII_SUM_OFFSET: 1500,
@@ -29,14 +28,11 @@ export const GameConstants = {
     NUM_DIVISORS_TO_GENERATE: 8,
     BASE_GROUPS_FOR_DIFFICULTY: 5,
     DIFFICULTY_ADJUSTMENT_PER_GROUP: 1,
-
-    // Nuove costanti per l'aggiustamento basato sul tempo
     TARGET_TIME_PER_BLOCK_MINUTES: 5,
-    TIME_ADJUSTMENT_SENSITIVITY_PER_MINUTE: 1, // Punti di difficoltà (min_divisor shift) per minuto di deviazione
-    MAX_TIME_BASED_DIFFICULTY_SHIFT: 5,      // Massimo +/- shift del min_divisor dovuto al tempo
+    TIME_ADJUSTMENT_SENSITIVITY_PER_MINUTE: 1,
+    MAX_TIME_BASED_DIFFICULTY_SHIFT: 5,
 };
 
-// --- APPLICATION STATE ---
 let gameState = {
     availableDivisors: [],
     selectedDivisor: null,
@@ -47,12 +43,12 @@ let gameState = {
     numberOfGroups: 1,
     currentMinDivisor: GameConstants.BASE_MIN_DIVISOR,
     currentMaxDivisor: GameConstants.BASE_MIN_DIVISOR + GameConstants.DIVISOR_RANGE_SPAN,
-    blockStartTimestamp: null, // Timestamp di inizio del mining del blocco corrente
-    lastTimeAdjustmentAmount: 0, // Ultimo aggiustamento applicato a min_divisor a causa del tempo
-    timeTakenForLastBlockSeconds: null, // Tempo impiegato per l'ultimo blocco (per UI)
+    blockStartTimestamp: null,
+    lastTimeAdjustmentAmount: 0,
+    timeTakenForLastBlockSeconds: null,
+    divisorsRevealedAndTimerStarted: false, // traccia se i divisori sono stati rivelati e il timer avviato per il round corrente
 };
 
-// --- UTILITY FUNCTIONS (Logica Pura) ---
 const Utils = {
     shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -65,7 +61,6 @@ const Utils = {
     }
 };
 
-// --- VALIDATION MANAGER ---
 export const ValidationManager = {
     validatePoolName(name) {
         if (!name) return "Nome Pool mancante.";
@@ -82,16 +77,9 @@ export const ValidationManager = {
     }
 };
 
-// --- GAME LOGIC ---
 export const GameLogic = {
     getCurrentState() {
-        return {
-            ...gameState,
-            availableDivisors: [...gameState.availableDivisors],
-            mempool: gameState.mempool.map(tx => ({...tx})),
-            currentlySelectedTxs: gameState.currentlySelectedTxs.map(tx => ({...tx})),
-            timewall: gameState.timewall.map(block => ({...block})),
-        };
+        return { ...gameState, /* deep copies se necessario per array/oggetti */ };
     },
 
     initializeMempoolData() {
@@ -103,12 +91,9 @@ export const GameLogic = {
         }));
     },
 
-    // Imposta la difficoltà iniziale basata sul numero di gruppi
     setInitialDifficultyByGroups(numGroups) {
         gameState.numberOfGroups = numGroups;
-        let minDivTarget;
-
-        minDivTarget = GameConstants.BASE_MIN_DIVISOR +
+        let minDivTarget = GameConstants.BASE_MIN_DIVISOR +
                        (numGroups - GameConstants.BASE_GROUPS_FOR_DIFFICULTY) * GameConstants.DIFFICULTY_ADJUSTMENT_PER_GROUP;
 
         let actualMinDiv = Math.max(GameConstants.MIN_DIVISOR_ABSOLUTE, minDivTarget);
@@ -132,39 +117,28 @@ export const GameLogic = {
 
         gameState.currentMinDivisor = actualMinDiv;
         gameState.currentMaxDivisor = actualMaxDiv;
-        gameState.lastTimeAdjustmentAmount = 0; // Nessun aggiustamento di tempo all'inizio
+        gameState.lastTimeAdjustmentAmount = 0;
         gameState.timeTakenForLastBlockSeconds = null;
-
-
         console.log(`Difficoltà iniziale per ${numGroups} gruppi: Range Divisori [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
     },
 
-    // Applica un aggiustamento alla difficoltà basato sul tempo impiegato per l'ultimo blocco
     applyTimedDifficultyShift(timeTakenSeconds) {
         const targetSeconds = GameConstants.TARGET_TIME_PER_BLOCK_MINUTES * 60;
         const deviationMinutes = (timeTakenSeconds - targetSeconds) / 60;
-
-        // Calcola di quanto il min_divisor dovrebbe cambiare.
-        // Se deviationMinutes è positivo (troppo tempo), difficultyShift è positivo.
         let difficultyShift = Math.round(deviationMinutes * GameConstants.TIME_ADJUSTMENT_SENSITIVITY_PER_MINUTE);
         difficultyShift = Math.max(-GameConstants.MAX_TIME_BASED_DIFFICULTY_SHIFT, Math.min(GameConstants.MAX_TIME_BASED_DIFFICULTY_SHIFT, difficultyShift));
-
-        // Applica lo shift: se si è impiegato troppo tempo (difficultyShift > 0), si vuole rendere più facile, quindi si sottrae lo shift.
         let newMinDivisor = gameState.currentMinDivisor - difficultyShift;
 
-        // Clamping del newMinDivisor
         let actualNewMinDiv = Math.max(GameConstants.MIN_DIVISOR_ABSOLUTE, newMinDivisor);
         actualNewMinDiv = Math.min(actualNewMinDiv, GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN);
-
         if (GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN < GameConstants.MIN_DIVISOR_ABSOLUTE) {
             actualNewMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
         }
 
         gameState.currentMinDivisor = actualNewMinDiv;
         gameState.currentMaxDivisor = gameState.currentMinDivisor + GameConstants.DIVISOR_RANGE_SPAN;
-        // Assicura che anche currentMaxDivisor sia clampato
         gameState.currentMaxDivisor = Math.min(gameState.currentMaxDivisor, GameConstants.MAX_DIVISOR_ABSOLUTE);
-         if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) { // Ulteriore fallback se il clamping crea problemi
+         if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) {
             gameState.currentMinDivisor = GameConstants.MIN_DIVISOR_ABSOLUTE;
             gameState.currentMaxDivisor = Math.min(GameConstants.MIN_DIVISOR_ABSOLUTE + 1, GameConstants.MAX_DIVISOR_ABSOLUTE);
              if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) {
@@ -172,15 +146,10 @@ export const GameLogic = {
                 gameState.currentMinDivisor = GameConstants.MAX_DIVISOR_ABSOLUTE;
             }
         }
-
-
-        gameState.lastTimeAdjustmentAmount = -difficultyShift; // Memorizza l'impatto effettivo sul valore del divisore (positivo se più difficile)
+        gameState.lastTimeAdjustmentAmount = -difficultyShift;
         gameState.timeTakenForLastBlockSeconds = timeTakenSeconds;
-
-
         console.log(`Tempo impiegato: ${timeTakenSeconds.toFixed(1)}s. Deviazione: ${deviationMinutes.toFixed(1)}min. Shift difficoltà (su min_divisor): ${-difficultyShift}. Nuovo range: [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
     },
-
 
     generateRandomDivisors() {
         const divisors = new Set();
@@ -211,13 +180,21 @@ export const GameLogic = {
         gameState.availableDivisors = Array.from(divisors);
     },
 
-    // Chiamato dopo che un blocco è stato minato (e non è l'ultimo) o per un reset completo.
-    // Se isFullReset è true, numGroupsForReset DEVE essere fornito per impostare la difficoltà iniziale.
+    // Chiamata dalla UI quando si preme "Rivela Divisori"
+    startRoundTimerAndRevealDivisors() {
+        if (!gameState.divisorsRevealedAndTimerStarted) {
+            gameState.blockStartTimestamp = Date.now();
+            gameState.divisorsRevealedAndTimerStarted = true;
+            console.log("Timer del round avviato e divisori rivelati.");
+            return true; // Indica che l'azione è stata eseguita
+        }
+        return false; // Timer già avviato per questo round
+    },
+
     resetGameForNextBlockLogic(isFullReset = false, numGroupsForReset = null) {
         if (isFullReset) {
             if (numGroupsForReset === null) {
                 Utils.logError("numGroupsForReset è necessario per un reset completo.");
-                // Fallback, anche se non dovrebbe accadere se la UI lo gestisce correttamente
                 this.setInitialDifficultyByGroups(gameState.numberOfGroups || 1);
             } else {
                 this.setInitialDifficultyByGroups(numGroupsForReset);
@@ -226,23 +203,16 @@ export const GameLogic = {
             gameState.lastWinningRemainder = null;
             this.initializeMempoolData();
         }
-        // In entrambi i casi (reset completo o solo per il blocco successivo),
-        // i divisori vengono generati usando currentMin/MaxDivisor che sono stati
-        // appena impostati da setInitialDifficultyByGroups (per full reset)
-        // o da applyTimedDifficultyShift (prima di chiamare questo per il blocco successivo).
         this.generateRandomDivisors();
         gameState.selectedDivisor = null;
         gameState.currentlySelectedTxs = [];
 
-        // Resetta il timestamp di inizio blocco per il nuovo round di mining
-        gameState.blockStartTimestamp = Date.now();
+        // NON resettare blockStartTimestamp qui. Verrà impostato da startRoundTimerAndRevealDivisors()
+        gameState.divisorsRevealedAndTimerStarted = false; // Resetta lo stato per il nuovo round
+
         if (!isFullReset) {
-            // Se non è un reset completo, significa che un blocco è appena stato minato.
-            // lastTimeAdjustmentAmount e timeTakenForLastBlockSeconds sono già stati impostati da applyTimedDifficultyShift.
-            // Non li resettiamo qui, perché la UI li userà per mostrare il messaggio.
-            // Verranno resettati/aggiornati al prossimo aggiustamento o reset completo.
+            // Mantieni lastTimeAdjustmentAmount e timeTakenForLastBlockSeconds per la UI
         } else {
-            // Per un reset completo, azzeriamo questi valori.
             gameState.lastTimeAdjustmentAmount = 0;
             gameState.timeTakenForLastBlockSeconds = null;
         }
@@ -253,20 +223,17 @@ export const GameLogic = {
     },
 
     selectDivisorLogic(divisorValue) {
-        if (gameState.timewall.length >= GameConstants.MAX_BLOCKS) return false;
+        if (gameState.timewall.length >= GameConstants.MAX_BLOCKS || !gameState.divisorsRevealedAndTimerStarted) return false;
         gameState.selectedDivisor = divisorValue;
         return true;
     },
 
     selectTransactionLogic(tx) {
-        // ... (invariato)
-        if (gameState.timewall.length >= GameConstants.MAX_BLOCKS) return { success: false, message: "Gioco terminato." };
-
+        if (gameState.timewall.length >= GameConstants.MAX_BLOCKS || !gameState.divisorsRevealedAndTimerStarted) return { success: false, message: "Gioco terminato o round non iniziato." };
         const currentBlockNumber = gameState.timewall.length + 1;
         if (currentBlockNumber !== 3) {
             return { success: false, message: "Le transazioni possono essere selezionate solo per il Blocco 3." };
         }
-
         const index = gameState.currentlySelectedTxs.findIndex(selected => selected.id === tx.id);
         if (index > -1) {
             gameState.currentlySelectedTxs.splice(index, 1);
@@ -282,7 +249,6 @@ export const GameLogic = {
     },
 
     calculateWR(poolName) {
-        // ... (invariato)
         if (!poolName) return 0;
         const upperPoolName = poolName.toUpperCase();
         let asciiSum = 0;
@@ -293,15 +259,17 @@ export const GameLogic = {
     },
 
     calculateTxValue() {
-        // ... (invariato)
         if (gameState.currentlySelectedTxs.length === 0) return 0;
         return gameState.currentlySelectedTxs.reduce((sum, tx) => sum + tx.description.length, 0);
     },
 
     attemptMineBlock(poolName, nonceStr) {
+        if (!gameState.divisorsRevealedAndTimerStarted) {
+            return { error: "Devi prima rivelare i divisori e iniziare il round!", isSuccess: false };
+        }
+
         const currentBlockNumberForAttempt = gameState.timewall.length + 1;
         let calculationDetails = {
-            // ... (definizione iniziale invariata)
             poolName: poolName || '',
             nonceInput: nonceStr || '',
             selectedDivisor: gameState.selectedDivisor,
@@ -315,7 +283,6 @@ export const GameLogic = {
             isGameEnd: false,
         };
 
-        // ... (validazioni input invariate)
         if (currentBlockNumberForAttempt > GameConstants.MAX_BLOCKS) {
             calculationDetails.error = `Massimo di ${GameConstants.MAX_BLOCKS} blocchi già minati. Sessione di gioco completa.`;
             calculationDetails.isGameEnd = true;
@@ -342,8 +309,6 @@ export const GameLogic = {
             return calculationDetails;
         }
 
-
-        // ... (calcolo WR, txValue, Proof, CalculatedRemainder, TargetRemainder invariati)
         const WR = this.calculateWR(poolName);
         calculationDetails.WR = WR;
         calculationDetails.asciiSum = WR - GameConstants.ASCII_SUM_OFFSET;
@@ -382,11 +347,10 @@ export const GameLogic = {
 
         if (isSuccess) {
             const timeTakenSeconds = (Date.now() - gameState.blockStartTimestamp) / 1000;
-            gameState.timeTakenForLastBlockSeconds = timeTakenSeconds; // Salva per UI
+            gameState.timeTakenForLastBlockSeconds = timeTakenSeconds;
 
             const winningRemainderForBlock = CalculatedRemainder;
             const newBlockEntry = {
-                // ... (dettagli blocco invariati)
                 id: `block-${Date.now()}-${gameState.timewall.length + 1}`,
                 poolName: poolName,
                 nonce: nonce,
@@ -400,14 +364,13 @@ export const GameLogic = {
             gameState.lastWinningRemainder = winningRemainderForBlock;
 
             if (gameState.timewall.length < GameConstants.MAX_BLOCKS) {
-                // Applica l'aggiustamento della difficoltà basato sul tempo PRIMA di resettare per il prossimo blocco
                 this.applyTimedDifficultyShift(timeTakenSeconds);
-                this.resetGameForNextBlockLogic(false); // Questo rigenererà i divisori con la nuova difficoltà
-                                                      // e resetterà blockStartTimestamp
+                this.resetGameForNextBlockLogic(false);
             } else {
                 calculationDetails.isGameEnd = true;
-                gameState.lastTimeAdjustmentAmount = 0; // Nessun aggiustamento dopo l'ultimo blocco
+                gameState.lastTimeAdjustmentAmount = 0;
                 gameState.timeTakenForLastBlockSeconds = null;
+                gameState.divisorsRevealedAndTimerStarted = false; // Assicura che sia false a fine partita
             }
         }
         return calculationDetails;

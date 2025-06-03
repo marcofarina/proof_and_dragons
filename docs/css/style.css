@@ -1,202 +1,159 @@
 /* Stili generali e fallback font */
 body {
     font-family: 'Inter', sans-serif;
-    overscroll-behavior: none; /* Evita pull-to-refresh e overscroll glow */
+    overscroll-behavior: none;
 }
 
 .font-game {
     font-family: 'Press Start 2P', cursive;
 }
 
-/* Scrollbar personalizzate per WebKit (Chrome, Safari, Edge) */
-.dark #timewallChain::-webkit-scrollbar-track {
-    background: #1f2937;
-}
-.dark #timewallChain::-webkit-scrollbar-thumb {
-    background: #374151;
-}
-.dark #timewallChain::-webkit-scrollbar-thumb:hover {
-    background: #4b5563;
-}
+/* Scrollbar personalizzate */
+.dark #timewallChain::-webkit-scrollbar-track { background: #1f2937; }
+.dark #timewallChain::-webkit-scrollbar-thumb { background: #374151; }
+.dark #timewallChain::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+#timewallChain::-webkit-scrollbar { height: 8px; }
+#timewallChain::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 10px; }
+#timewallChain::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 10px; }
+#timewallChain::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
-#timewallChain::-webkit-scrollbar {
-    height: 8px; /* Mantenuta per lo scroll orizzontale */
-}
-#timewallChain::-webkit-scrollbar-track {
-    background: #e5e7eb;
-    border-radius: 10px;
-}
-#timewallChain::-webkit-scrollbar-thumb {
-    background: #9ca3af;
-    border-radius: 10px;
-}
-#timewallChain::-webkit-scrollbar-thumb:hover {
-    background: #6b7280;
-}
-
-/* Stili per gli elementi interattivi */
+/* Stili elementi interattivi */
 .divisor-item {
     transition: all 0.2s ease-in-out;
-    /* Padding e font size dei divisori potrebbero essere ridotti se necessario,
-       ma per ora li lascio come sono e agisco sul min-height dei box principali */
+    /* Ripristino padding e font-size per i divisori come erano prima,
+       le classi Tailwind p-3 sm:p-4 e text-2xl sm:text-3xl in ui.js
+       dovrebbero già garantire la dimensione corretta.
+       Se necessario, si possono forzare qui, ma preferisco Tailwind. */
 }
 .divisor-item.active {
     transform: scale(1.1);
 }
-
 .tx-item.selected {
     transform: scale(1.05);
 }
 
-/* Stili per le card dei blocchi e placeholder */
+/* Card blocchi e placeholder */
 .block-card, .timewall-placeholder-slot {
-    min-width: 280px; /* Leggermente ridotto se necessario per più spazio orizzontale */
-    max-width: 320px; /* Leggermente ridotto */
+    min-width: 280px;
+    max-width: 320px;
     width: 100%;
-    height: 100%; /* Questo farà sì che prenda l'altezza del genitore .timewallChain */
-    min-height: 260px; /* Modifica: Ridotto da 300px per renderli più bassi */
-    display: flex; /* Aggiunto per controllare meglio il contenuto interno se necessario */
-    flex-direction: column; /* Aggiunto */
+    height: 100%;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
 }
-
 .block-card {
     animation: fadeInSlideIn 0.5s ease-out forwards;
     will-change: transform, opacity;
 }
-
 @keyframes fadeInSlideIn {
-    from {
-        opacity: 0;
-        transform: translateX(30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
+    from { opacity: 0; transform: translateX(30px) scale(0.95); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
 }
 
-/* Layout responsivo per schermi grandi (lg) */
+/* Layout responsivo per schermi grandi */
 @media (min-width: 1024px) {
-    html, body {
-        height: 100%;
-        overflow: hidden;
-    }
-    main {
-        height: calc(100vh - 110px); /* Altezza header stimata, potrebbe essere necessario aggiustarla se l'header cambia */
-    }
-    /* I box della prima riga e calculationDetailsContainer prenderanno l'altezza dal contenuto.
-       timewallContainer prenderà l'altezza rimanente nella griglia. */
-    #calculationDetailsContainer, #timewallContainer {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden; /* Aggiunto per evitare che il contenuto interno causi scroll al contenitore del grid */
-    }
-    #calculationDetailsBox { /* Scroll interno per i dettagli se troppo lunghi */
-        flex-grow: 1;
-        overflow-y: auto;
-        padding-right: 0.5rem; /* Spazio per la scrollbar */
-    }
-    #timewallChainContainer { /* Scroll orizzontale per la catena di blocchi */
-        flex-grow: 1;
-        /* overflow-y: hidden; /* Assicura che non ci sia scroll verticale qui */
-        /* overflow-x: auto; /* Già gestito da #timewallChain */
-    }
-    #timewallChain {
-        /* h-full fa sì che prenda l'altezza di timewallChainContainer */
-        /* overflow-x-auto è già applicato via Tailwind */
-        /* overflow-y-hidden importante per evitare che le card sforino verticalmente la chain */
-        overflow-y: hidden;
-    }
+    html, body { height: 100%; overflow: hidden; }
+    main { height: calc(100vh - 110px); }
+    #calculationDetailsContainer, #timewallContainer { display: flex; flex-direction: column; overflow: hidden; }
+    #calculationDetailsBox { flex-grow: 1; overflow-y: auto; padding-right: 0.5rem; }
+    #timewallChainContainer { flex-grow: 1; }
+    #timewallChain { overflow-y: hidden; }
 }
 
-/* Stili per i Tooltip */
-.tooltip {
-    position: relative;
-    display: inline-block;
-}
-
+/* Tooltip */
+.tooltip { position: relative; display: inline-block; }
 .tooltip .tooltiptext {
-    visibility: hidden;
-    width: max-content;
-    max-width: 220px;
-    position: absolute;
-    z-index: 10;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 0.5rem;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    visibility: hidden; width: max-content; max-width: 220px;
+    position: absolute; z-index: 10; top: 100%; left: 50%;
+    transform: translateX(-50%); margin-top: 0.5rem;
+    opacity: 0; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
+.tooltip:hover .tooltiptext, .tooltip:focus-within .tooltiptext { visibility: visible; opacity: 1; }
 
-.tooltip:hover .tooltiptext,
-.tooltip:focus-within .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-}
-
-
-/* Stili per le icone delle transazioni */
+/* Icone transazioni */
 .tx-icon {
-    width: 28px; /* Ridotto */
-    height: 28px; /* Ridotto */
-    margin-top: 4px; /* Ridotto */
-    object-fit: contain;
+    width: 28px; height: 28px; margin-top: 4px; object-fit: contain;
 }
-@media (min-width: 640px) { /* sm breakpoint */
-    .tx-icon {
-        width: 32px; /* Ridotto */
-        height: 32px; /* Ridotto */
-    }
+@media (min-width: 640px) {
+    .tx-icon { width: 32px; height: 32px; }
 }
 
-/* Stili per il box dei dettagli di calcolo */
+/* Box dettagli calcolo - Aumentata dimensione font */
 #calculationDetailsBox {
-    font-size: 0.9rem; /* Ridotto leggermente */
-    line-height: 1.4; /* Ridotto leggermente */
+    font-size: 1.0rem; /* Aumentato da 0.9rem */
+    line-height: 1.45; /* Leggermente aumentato per leggibilità */
 }
-#calculationDetailsBox p {
-    margin-bottom: 0.25rem; /* Ridotto */
-    word-break: break-all;
-}
-#calculationDetailsBox p strong {
-    font-weight: 600;
+#calculationDetailsBox p { margin-bottom: 0.35rem; word-break: break-all; } /* Aumentato leggermente margin-bottom */
+#calculationDetailsBox p strong { font-weight: 600; }
+
+/* Slot placeholder timewall */
+.timewall-placeholder-slot {
+    border-width: 2px; border-style: dashed;
+    align-items: center; justify-content: center;
+    font-size: 1rem; text-align: center;
+    padding: 0.75rem; border-radius: 0.5rem;
 }
 
-/* Stili per gli slot placeholder nella timewall */
-.timewall-placeholder-slot {
-    border-width: 2px;
-    border-style: dashed;
-    /* display: flex; già impostato sopra */
+/* Menu hamburger */
+#appMenu.menu-active { display: block; opacity: 1; transform: translateY(0); transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
+#appMenu { opacity: 0; transform: translateY(-10px); transition: opacity 0.2s ease-out, transform 0.2s ease-out, display 0s 0.2s; }
+#resetGameButton.visible { display: block; }
+
+.block-card > div:first-of-type {
+    flex-grow: 1; overflow-y: auto; padding-bottom: 0.5rem;
+}
+
+/* Stili aggiuntivi per il modale */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem; /* Ridotto */
-    text-align: center;
-    padding: 0.75rem; /* Ridotto */
-    border-radius: 0.5rem;
-}
-
-/* Stili per il menu hamburger */
-#appMenu.menu-active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-}
-
-#appMenu {
+    z-index: 100;
     opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out, display 0s 0.2s;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-
-#resetGameButton.visible { /* Questa classe non è più usata per la visibilità, ma la lascio se serve per altro */
-    display: block;
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
 }
-
-/* Assicurarsi che il contenuto delle card dei blocchi non causi overflow verticale */
-.block-card > div:first-of-type { /* Il div che contiene i dettagli del blocco */
-    flex-grow: 1;
-    overflow-y: auto; /* Permette scroll interno se il contenuto è troppo */
-    padding-bottom: 0.5rem; /* Spazio per non tagliare l'ultimo elemento */
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 400px;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.dark .modal-content {
+    background-color: #1f2937; /* gray-800 */
+}
+/* Stile per il messaggio di aggiustamento difficoltà */
+#difficultyAdjustmentMessage.positive-adjustment {
+    color: #16a34a; /* Tailwind green-600 */
+}
+html.dark #difficultyAdjustmentMessage.positive-adjustment {
+    color: #4ade80; /* Tailwind green-400 */
+}
+#difficultyAdjustmentMessage.negative-adjustment {
+    color: #dc2626; /* Tailwind red-600 */
+}
+html.dark #difficultyAdjustmentMessage.negative-adjustment {
+    color: #f87171; /* Tailwind red-400 */
+}
+/* Nascondi la griglia dei divisori di default */
+#divisorGrid.hidden-initial {
+    display: none;
 }
