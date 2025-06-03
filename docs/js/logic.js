@@ -22,17 +22,18 @@ export const GameConstants = {
         './icons/fee1.png', './icons/fee2.png', './icons/fee3.png',
         './icons/fee4.png', './icons/fee5.png', './icons/fee6.png'
     ],
-    // Costanti per la difficoltà base dei divisori
-    BASE_MIN_DIVISOR: 11, // Min divisore per il numero base di gruppi
-    // BASE_MAX_DIVISOR non è più usata direttamente per generare il range, si usa DIVISOR_RANGE_SPAN
-    MIN_DIVISOR_ABSOLUTE: 8,  // Valore minimo assoluto che un divisore può assumere
-    MAX_DIVISOR_ABSOLUTE: 40, // Valore massimo assoluto che un divisore può assumere
-    DIVISOR_RANGE_SPAN: 11,   // Ampiezza del range dei divisori (MAX - MIN)
+    BASE_MIN_DIVISOR: 11,
+    MIN_DIVISOR_ABSOLUTE: 8,
+    MAX_DIVISOR_ABSOLUTE: 40,
+    DIVISOR_RANGE_SPAN: 11,
     NUM_DIVISORS_TO_GENERATE: 8,
+    BASE_GROUPS_FOR_DIFFICULTY: 5,
+    DIFFICULTY_ADJUSTMENT_PER_GROUP: 1,
 
-    // Nuove costanti per lo scaling della difficoltà
-    BASE_GROUPS_FOR_DIFFICULTY: 5, // Numero di gruppi per cui BASE_MIN_DIVISOR è ottimale
-    DIFFICULTY_ADJUSTMENT_PER_GROUP: 1, // Quanto cambia min_divisor per ogni gruppo in più/meno da BASE_GROUPS_FOR_DIFFICULTY
+    // Nuove costanti per l'aggiustamento basato sul tempo
+    TARGET_TIME_PER_BLOCK_MINUTES: 5,
+    TIME_ADJUSTMENT_SENSITIVITY_PER_MINUTE: 1, // Punti di difficoltà (min_divisor shift) per minuto di deviazione
+    MAX_TIME_BASED_DIFFICULTY_SHIFT: 5,      // Massimo +/- shift del min_divisor dovuto al tempo
 };
 
 // --- APPLICATION STATE ---
@@ -46,6 +47,9 @@ let gameState = {
     numberOfGroups: 1,
     currentMinDivisor: GameConstants.BASE_MIN_DIVISOR,
     currentMaxDivisor: GameConstants.BASE_MIN_DIVISOR + GameConstants.DIVISOR_RANGE_SPAN,
+    blockStartTimestamp: null, // Timestamp di inizio del mining del blocco corrente
+    lastTimeAdjustmentAmount: 0, // Ultimo aggiustamento applicato a min_divisor a causa del tempo
+    timeTakenForLastBlockSeconds: null, // Tempo impiegato per l'ultimo blocco (per UI)
 };
 
 // --- UTILITY FUNCTIONS (Logica Pura) ---
@@ -99,56 +103,92 @@ export const GameLogic = {
         }));
     },
 
-    adjustDifficulty(numGroups) {
+    // Imposta la difficoltà iniziale basata sul numero di gruppi
+    setInitialDifficultyByGroups(numGroups) {
         gameState.numberOfGroups = numGroups;
         let minDivTarget;
 
-        // Calcola il minDiv target in base al numero di gruppi
         minDivTarget = GameConstants.BASE_MIN_DIVISOR +
                        (numGroups - GameConstants.BASE_GROUPS_FOR_DIFFICULTY) * GameConstants.DIFFICULTY_ADJUSTMENT_PER_GROUP;
 
-        // Limita minDivTarget in modo che minDivTarget + SPAN non superi MAX_DIVISOR_ABSOLUTE,
-        // e minDivTarget non sia inferiore a MIN_DIVISOR_ABSOLUTE.
         let actualMinDiv = Math.max(GameConstants.MIN_DIVISOR_ABSOLUTE, minDivTarget);
         actualMinDiv = Math.min(actualMinDiv, GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN);
 
-        // Se MAX_DIVISOR_ABSOLUTE - DIVISOR_RANGE_SPAN è inferiore a MIN_DIVISOR_ABSOLUTE (range assoluto troppo piccolo per lo span)
-        // allora actualMinDiv deve essere MIN_DIVISOR_ABSOLUTE.
         if (GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN < GameConstants.MIN_DIVISOR_ABSOLUTE) {
             actualMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
         }
 
-
         let actualMaxDiv = actualMinDiv + GameConstants.DIVISOR_RANGE_SPAN;
-        // Assicurati che actualMaxDiv non superi MAX_DIVISOR_ABSOLUTE.
-        // Questo potrebbe accadere se MIN_DIVISOR_ABSOLUTE + SPAN > MAX_DIVISOR_ABSOLUTE
         actualMaxDiv = Math.min(actualMaxDiv, GameConstants.MAX_DIVISOR_ABSOLUTE);
 
-        // Se, a causa dei clamp, minDiv finisce per essere >= maxDiv (es. se SPAN è 0 o negativo, o range assoluto è 1)
-        // imposta un range minimo valido.
         if (actualMinDiv >= actualMaxDiv) {
             actualMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
             actualMaxDiv = Math.min(GameConstants.MIN_DIVISOR_ABSOLUTE + 1, GameConstants.MAX_DIVISOR_ABSOLUTE);
-            if (actualMinDiv >= actualMaxDiv) { // Se ancora problematico (es. MIN_ABS == MAX_ABS)
+            if (actualMinDiv >= actualMaxDiv) {
                 actualMaxDiv = GameConstants.MAX_DIVISOR_ABSOLUTE;
-                actualMinDiv = GameConstants.MAX_DIVISOR_ABSOLUTE; // Range di un solo numero
+                actualMinDiv = GameConstants.MAX_DIVISOR_ABSOLUTE;
             }
         }
 
         gameState.currentMinDivisor = actualMinDiv;
         gameState.currentMaxDivisor = actualMaxDiv;
+        gameState.lastTimeAdjustmentAmount = 0; // Nessun aggiustamento di tempo all'inizio
+        gameState.timeTakenForLastBlockSeconds = null;
 
-        console.log(`Difficoltà aggiustata per ${numGroups} gruppi: Range Divisori [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
+
+        console.log(`Difficoltà iniziale per ${numGroups} gruppi: Range Divisori [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
     },
+
+    // Applica un aggiustamento alla difficoltà basato sul tempo impiegato per l'ultimo blocco
+    applyTimedDifficultyShift(timeTakenSeconds) {
+        const targetSeconds = GameConstants.TARGET_TIME_PER_BLOCK_MINUTES * 60;
+        const deviationMinutes = (timeTakenSeconds - targetSeconds) / 60;
+
+        // Calcola di quanto il min_divisor dovrebbe cambiare.
+        // Se deviationMinutes è positivo (troppo tempo), difficultyShift è positivo.
+        let difficultyShift = Math.round(deviationMinutes * GameConstants.TIME_ADJUSTMENT_SENSITIVITY_PER_MINUTE);
+        difficultyShift = Math.max(-GameConstants.MAX_TIME_BASED_DIFFICULTY_SHIFT, Math.min(GameConstants.MAX_TIME_BASED_DIFFICULTY_SHIFT, difficultyShift));
+
+        // Applica lo shift: se si è impiegato troppo tempo (difficultyShift > 0), si vuole rendere più facile, quindi si sottrae lo shift.
+        let newMinDivisor = gameState.currentMinDivisor - difficultyShift;
+
+        // Clamping del newMinDivisor
+        let actualNewMinDiv = Math.max(GameConstants.MIN_DIVISOR_ABSOLUTE, newMinDivisor);
+        actualNewMinDiv = Math.min(actualNewMinDiv, GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN);
+
+        if (GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN < GameConstants.MIN_DIVISOR_ABSOLUTE) {
+            actualNewMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
+        }
+
+        gameState.currentMinDivisor = actualNewMinDiv;
+        gameState.currentMaxDivisor = gameState.currentMinDivisor + GameConstants.DIVISOR_RANGE_SPAN;
+        // Assicura che anche currentMaxDivisor sia clampato
+        gameState.currentMaxDivisor = Math.min(gameState.currentMaxDivisor, GameConstants.MAX_DIVISOR_ABSOLUTE);
+         if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) { // Ulteriore fallback se il clamping crea problemi
+            gameState.currentMinDivisor = GameConstants.MIN_DIVISOR_ABSOLUTE;
+            gameState.currentMaxDivisor = Math.min(GameConstants.MIN_DIVISOR_ABSOLUTE + 1, GameConstants.MAX_DIVISOR_ABSOLUTE);
+             if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) {
+                gameState.currentMaxDivisor = GameConstants.MAX_DIVISOR_ABSOLUTE;
+                gameState.currentMinDivisor = GameConstants.MAX_DIVISOR_ABSOLUTE;
+            }
+        }
+
+
+        gameState.lastTimeAdjustmentAmount = -difficultyShift; // Memorizza l'impatto effettivo sul valore del divisore (positivo se più difficile)
+        gameState.timeTakenForLastBlockSeconds = timeTakenSeconds;
+
+
+        console.log(`Tempo impiegato: ${timeTakenSeconds.toFixed(1)}s. Deviazione: ${deviationMinutes.toFixed(1)}min. Shift difficoltà (su min_divisor): ${-difficultyShift}. Nuovo range: [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
+    },
+
 
     generateRandomDivisors() {
         const divisors = new Set();
         const min = gameState.currentMinDivisor;
         const max = gameState.currentMaxDivisor;
 
-        if (min > max) { // Sanity check se il range non è valido (min non può essere > max)
+        if (min > max) {
             Utils.logError("Range dei divisori non valido (min > max):", `Min: ${min}, Max: ${max}. Uso fallback.`);
-            // Fallback a un range sicuro
             gameState.availableDivisors = [GameConstants.BASE_MIN_DIVISOR];
             return;
         }
@@ -156,14 +196,11 @@ export const GameLogic = {
         const uniqueNumbersInRange = max - min + 1;
         const numToGenerate = Math.min(GameConstants.NUM_DIVISORS_TO_GENERATE, uniqueNumbersInRange);
 
-        // Se uniqueNumbersInRange è 0 (min === max + 1, impossibile con logica precedente) o negativo, numToGenerate sarà <=0
         if (numToGenerate <= 0) {
              Utils.logError("Non ci sono numeri unici nel range per generare divisori:", `Min: ${min}, Max: ${max}.`);
-             // Se min e max sono uguali (uniqueNumbersInRange == 1), numToGenerate sarà 1.
              if (min === max) {
                  divisors.add(min);
              } else {
-                // Caso di errore imprevisto, fornisci un fallback
                 divisors.add(GameConstants.BASE_MIN_DIVISOR);
              }
         } else {
@@ -174,25 +211,44 @@ export const GameLogic = {
         gameState.availableDivisors = Array.from(divisors);
     },
 
+    // Chiamato dopo che un blocco è stato minato (e non è l'ultimo) o per un reset completo.
+    // Se isFullReset è true, numGroupsForReset DEVE essere fornito per impostare la difficoltà iniziale.
     resetGameForNextBlockLogic(isFullReset = false, numGroupsForReset = null) {
-        if (isFullReset && numGroupsForReset !== null) {
-            this.adjustDifficulty(numGroupsForReset);
-        }
-        this.generateRandomDivisors();
-        gameState.selectedDivisor = null;
-        gameState.currentlySelectedTxs = [];
-
         if (isFullReset) {
+            if (numGroupsForReset === null) {
+                Utils.logError("numGroupsForReset è necessario per un reset completo.");
+                // Fallback, anche se non dovrebbe accadere se la UI lo gestisce correttamente
+                this.setInitialDifficultyByGroups(gameState.numberOfGroups || 1);
+            } else {
+                this.setInitialDifficultyByGroups(numGroupsForReset);
+            }
             gameState.timewall = [];
             gameState.lastWinningRemainder = null;
             this.initializeMempoolData();
         }
+        // In entrambi i casi (reset completo o solo per il blocco successivo),
+        // i divisori vengono generati usando currentMin/MaxDivisor che sono stati
+        // appena impostati da setInitialDifficultyByGroups (per full reset)
+        // o da applyTimedDifficultyShift (prima di chiamare questo per il blocco successivo).
+        this.generateRandomDivisors();
+        gameState.selectedDivisor = null;
+        gameState.currentlySelectedTxs = [];
+
+        // Resetta il timestamp di inizio blocco per il nuovo round di mining
+        gameState.blockStartTimestamp = Date.now();
+        if (!isFullReset) {
+            // Se non è un reset completo, significa che un blocco è appena stato minato.
+            // lastTimeAdjustmentAmount e timeTakenForLastBlockSeconds sono già stati impostati da applyTimedDifficultyShift.
+            // Non li resettiamo qui, perché la UI li userà per mostrare il messaggio.
+            // Verranno resettati/aggiornati al prossimo aggiustamento o reset completo.
+        } else {
+            // Per un reset completo, azzeriamo questi valori.
+            gameState.lastTimeAdjustmentAmount = 0;
+            gameState.timeTakenForLastBlockSeconds = null;
+        }
     },
 
     resetFullGameLogic(numGroups) {
-        if (numGroups === undefined || numGroups === null) {
-            numGroups = gameState.numberOfGroups || 1;
-        }
         this.resetGameForNextBlockLogic(true, numGroups);
     },
 
@@ -203,6 +259,7 @@ export const GameLogic = {
     },
 
     selectTransactionLogic(tx) {
+        // ... (invariato)
         if (gameState.timewall.length >= GameConstants.MAX_BLOCKS) return { success: false, message: "Gioco terminato." };
 
         const currentBlockNumber = gameState.timewall.length + 1;
@@ -225,6 +282,7 @@ export const GameLogic = {
     },
 
     calculateWR(poolName) {
+        // ... (invariato)
         if (!poolName) return 0;
         const upperPoolName = poolName.toUpperCase();
         let asciiSum = 0;
@@ -235,6 +293,7 @@ export const GameLogic = {
     },
 
     calculateTxValue() {
+        // ... (invariato)
         if (gameState.currentlySelectedTxs.length === 0) return 0;
         return gameState.currentlySelectedTxs.reduce((sum, tx) => sum + tx.description.length, 0);
     },
@@ -242,6 +301,7 @@ export const GameLogic = {
     attemptMineBlock(poolName, nonceStr) {
         const currentBlockNumberForAttempt = gameState.timewall.length + 1;
         let calculationDetails = {
+            // ... (definizione iniziale invariata)
             poolName: poolName || '',
             nonceInput: nonceStr || '',
             selectedDivisor: gameState.selectedDivisor,
@@ -255,23 +315,21 @@ export const GameLogic = {
             isGameEnd: false,
         };
 
+        // ... (validazioni input invariate)
         if (currentBlockNumberForAttempt > GameConstants.MAX_BLOCKS) {
             calculationDetails.error = `Massimo di ${GameConstants.MAX_BLOCKS} blocchi già minati. Sessione di gioco completa.`;
             calculationDetails.isGameEnd = true;
             return calculationDetails;
         }
-
         const poolNameError = ValidationManager.validatePoolName(poolName);
         if (poolNameError) {
             calculationDetails.error = poolNameError;
             return calculationDetails;
         }
-
         if (gameState.selectedDivisor === null) {
             calculationDetails.error = "Per favore, seleziona un Divisore.";
             return calculationDetails;
         }
-
         const nonceError = ValidationManager.validateNonce(nonceStr);
         if (nonceError) {
             calculationDetails.error = nonceError;
@@ -279,23 +337,20 @@ export const GameLogic = {
         }
         const nonce = parseInt(nonceStr, 10);
         calculationDetails.nonce = nonce;
-
-
         if (currentBlockNumberForAttempt === 3 && gameState.currentlySelectedTxs.length > GameConstants.MAX_TX_FOR_BLOCK_3) {
             calculationDetails.error = `Per favore, seleziona un massimo di ${GameConstants.MAX_TX_FOR_BLOCK_3} Transazioni per il Blocco 3.`;
             return calculationDetails;
         }
 
+
+        // ... (calcolo WR, txValue, Proof, CalculatedRemainder, TargetRemainder invariati)
         const WR = this.calculateWR(poolName);
         calculationDetails.WR = WR;
         calculationDetails.asciiSum = WR - GameConstants.ASCII_SUM_OFFSET;
-
         const txValue = (currentBlockNumberForAttempt === 3) ? this.calculateTxValue() : 0;
         calculationDetails.txValue = txValue;
-
         let Proof;
         let proofFormula = "";
-
         if (currentBlockNumberForAttempt === 1) {
             Proof = (WR + nonce) * GameConstants.PROOF_MULTIPLIER;
             proofFormula = `(${WR} + ${nonce}) * ${GameConstants.PROOF_MULTIPLIER}`;
@@ -306,7 +361,7 @@ export const GameLogic = {
             }
             Proof = (WR + nonce + gameState.lastWinningRemainder) * GameConstants.PROOF_MULTIPLIER;
             proofFormula = `(${WR} + ${nonce} + ${gameState.lastWinningRemainder}) * ${GameConstants.PROOF_MULTIPLIER}`;
-        } else { // Blocco 3
+        } else {
              if (gameState.lastWinningRemainder === null) {
                  calculationDetails.error = "Errore: Resto del blocco precedente non disponibile per il Blocco 3.";
                  return calculationDetails;
@@ -316,21 +371,22 @@ export const GameLogic = {
         }
         calculationDetails.proofFormula = proofFormula;
         calculationDetails.proofValue = Proof;
-
         const CalculatedRemainder = Proof % gameState.selectedDivisor;
         calculationDetails.calculatedRemainder = CalculatedRemainder;
-
         let TargetRemainder = gameState.selectedDivisor - GameConstants.TARGET_REMAINDER_OFFSET;
         TargetRemainder = Math.max(0, TargetRemainder);
         calculationDetails.targetRemainderValue = TargetRemainder;
-
 
         const isSuccess = (CalculatedRemainder >= TargetRemainder);
         calculationDetails.isSuccess = isSuccess;
 
         if (isSuccess) {
+            const timeTakenSeconds = (Date.now() - gameState.blockStartTimestamp) / 1000;
+            gameState.timeTakenForLastBlockSeconds = timeTakenSeconds; // Salva per UI
+
             const winningRemainderForBlock = CalculatedRemainder;
             const newBlockEntry = {
+                // ... (dettagli blocco invariati)
                 id: `block-${Date.now()}-${gameState.timewall.length + 1}`,
                 poolName: poolName,
                 nonce: nonce,
@@ -344,9 +400,14 @@ export const GameLogic = {
             gameState.lastWinningRemainder = winningRemainderForBlock;
 
             if (gameState.timewall.length < GameConstants.MAX_BLOCKS) {
-                this.resetGameForNextBlockLogic(false);
+                // Applica l'aggiustamento della difficoltà basato sul tempo PRIMA di resettare per il prossimo blocco
+                this.applyTimedDifficultyShift(timeTakenSeconds);
+                this.resetGameForNextBlockLogic(false); // Questo rigenererà i divisori con la nuova difficoltà
+                                                      // e resetterà blockStartTimestamp
             } else {
                 calculationDetails.isGameEnd = true;
+                gameState.lastTimeAdjustmentAmount = 0; // Nessun aggiustamento dopo l'ultimo blocco
+                gameState.timeTakenForLastBlockSeconds = null;
             }
         }
         return calculationDetails;

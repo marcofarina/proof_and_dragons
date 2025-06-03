@@ -13,13 +13,13 @@ const UIConstants = {
 const DOMElements = {
     html: document.documentElement,
     body: document.body,
-    // Elementi per il modale di input gruppi
     groupInputModal: null,
     numGroupsInput: null,
     startGameButton: null,
     numGroupsError: null,
-    mainContent: null, // Riferimento al <main> per mostrarlo/nasconderlo
-    divisorRangeInfo: null, // Per mostrare il range dei divisori
+    mainContent: null,
+    divisorRangeInfo: null,
+    difficultyAdjustmentMessage: null, // NUOVO: per il messaggio di aggiustamento
 
     themeToggle: null,
     themeIconSun: null,
@@ -49,11 +49,12 @@ const uiState = {
     isDarkMode: false,
     isMenuOpen: false,
     isFullscreen: false,
-    hasGameStarted: false, // Nuovo stato per tracciare se il gioco è iniziato (dopo input gruppi)
+    hasGameStarted: false,
 };
 
 // --- UTILITY FUNCTIONS (UI Specific) ---
 const UIUtils = {
+    // ... (invariato)
     escapeHTML(str) {
         if (typeof str !== 'string') return '';
         return str.replace(/[&<>"']/g, match => ({
@@ -68,6 +69,7 @@ const UIUtils = {
 
 // --- THEME MANAGER ---
 const ThemeManager = {
+    // ... (invariato)
     init() {
         DOMElements.themeToggle = document.getElementById('themeToggle');
         DOMElements.themeIconSun = document.getElementById('themeIconSun');
@@ -109,6 +111,7 @@ const ThemeManager = {
 
 // --- FULLSCREEN MANAGER ---
 const FullscreenManager = {
+    // ... (invariato)
     init() {
         DOMElements.fullscreenToggle = document.getElementById('fullscreenToggle');
         DOMElements.fullscreenIconExpand = document.getElementById('fullscreenIconExpand');
@@ -150,6 +153,7 @@ const FullscreenManager = {
 
 // --- MENU MANAGER ---
 const MenuManager = {
+    // ... (invariato)
     init() {
         DOMElements.menuToggle = document.getElementById('menuToggle');
         DOMElements.appMenu = document.getElementById('appMenu');
@@ -165,10 +169,8 @@ const MenuManager = {
 
         DOMElements.menuToggle.addEventListener('click', () => this.toggleMenu());
         DOMElements.resetGameButton.addEventListener('click', () => {
-            // Invece di resettare direttamente, ora mostriamo di nuovo il modale dei gruppi
             UIManager.showGroupInputModal();
             this.closeMenu();
-            // Il messaggio di "Nuova partita" verrà mostrato dopo aver inserito i gruppi
         });
 
         document.addEventListener('click', (event) => {
@@ -211,9 +213,6 @@ const MenuManager = {
     },
     updateResetButtonVisibility() {
         if (!DOMElements.resetGameButton) return;
-        // Il pulsante "Ricomincia partita" è sempre abilitato se il gioco è iniziato.
-        // La sua azione ora è mostrare il modale per i gruppi.
-        // Disabilitato solo se il gioco non è ancora iniziato affatto (modale gruppi ancora non superato).
         DOMElements.resetGameButton.disabled = !uiState.hasGameStarted;
         if (!uiState.hasGameStarted) {
             DOMElements.resetGameButton.classList.add('opacity-50', 'cursor-not-allowed');
@@ -233,26 +232,28 @@ export const UIManager = {
                 DOMElements[key] = document.getElementById(key);
             }
         });
-        // Aggiungi il riferimento a mainContent
         DOMElements.mainContent = document.querySelector('main');
 
 
         ThemeManager.init();
         FullscreenManager.init();
-        MenuManager.init(); // MenuManager ora è più indipendente
+        MenuManager.init();
 
         this.setupEventListeners();
-        this.showGroupInputModal(); // Mostra il modale all'inizio invece di inizializzare il gioco
+        this.showGroupInputModal();
     },
 
     showGroupInputModal() {
-        uiState.hasGameStarted = false; // Il gioco non è (ancora/più) iniziato
-        MenuManager.updateResetButtonVisibility(); // Aggiorna stato pulsante reset
+        uiState.hasGameStarted = false;
+        MenuManager.updateResetButtonVisibility();
 
         if (DOMElements.groupInputModal) DOMElements.groupInputModal.classList.add('active');
-        if (DOMElements.mainContent) DOMElements.mainContent.style.visibility = 'hidden'; // Nascondi contenuto principale
-        if (DOMElements.numGroupsInput) DOMElements.numGroupsInput.focus();
-        if (DOMElements.numGroupsError) DOMElements.numGroupsError.classList.add('hidden'); // Nascondi errore
+        if (DOMElements.mainContent) DOMElements.mainContent.style.visibility = 'hidden';
+        if (DOMElements.numGroupsInput) {
+            DOMElements.numGroupsInput.value = GameLogic.getCurrentState().numberOfGroups || 5; // Precompila con l'ultimo valore o default
+            DOMElements.numGroupsInput.focus();
+        }
+        if (DOMElements.numGroupsError) DOMElements.numGroupsError.classList.add('hidden');
     },
 
     hideGroupInputModalAndStartGame() {
@@ -270,30 +271,37 @@ export const UIManager = {
 
         if (DOMElements.numGroupsError) DOMElements.numGroupsError.classList.add('hidden');
         if (DOMElements.groupInputModal) DOMElements.groupInputModal.classList.remove('active');
-        if (DOMElements.mainContent) DOMElements.mainContent.style.visibility = 'visible'; // Mostra contenuto principale
+        if (DOMElements.mainContent) DOMElements.mainContent.style.visibility = 'visible';
 
-        // Inizializza/Resetta la logica del gioco con il numero di gruppi
-        GameLogic.resetFullGameLogic(numGroups);
-        uiState.hasGameStarted = true; // Il gioco è ufficialmente iniziato
-        this.updateUIafterReset();
+        GameLogic.resetFullGameLogic(numGroups); // Questo ora imposta anche blockStartTimestamp
+        uiState.hasGameStarted = true;
+        this.updateUIafterReset(); // Questo chiamerà renderDivisors che mostrerà il messaggio di aggiustamento
         this.displayMessage(`Nuova partita con ${numGroups} gruppi! Seleziona un divisore per iniziare.`, "info", 5000);
-        MenuManager.updateResetButtonVisibility(); // Aggiorna stato pulsante reset
+        MenuManager.updateResetButtonVisibility();
     },
 
 
     updateUIafterReset() {
         const currentState = GameLogic.getCurrentState();
-        this.renderDivisors(currentState.availableDivisors, currentState.selectedDivisor, currentState.currentMinDivisor, currentState.currentMaxDivisor);
+        // Passa anche lastTimeAdjustmentAmount e timeTakenForLastBlockSeconds a renderDivisors
+        this.renderDivisors(
+            currentState.availableDivisors,
+            currentState.selectedDivisor,
+            currentState.currentMinDivisor,
+            currentState.currentMaxDivisor,
+            currentState.lastTimeAdjustmentAmount, // Aggiunto
+            currentState.timeTakenForLastBlockSeconds // Aggiunto
+        );
         this.renderTimewall(currentState.timewall);
         this.updateMempoolDisplay(currentState.mempool, currentState.currentlySelectedTxs, currentState.timewall.length);
         this.updateVerificationInputsState(currentState.timewall.length);
         this.renderCalculationDetails({ initialState: true });
         if (DOMElements.poolName) DOMElements.poolName.value = '';
         if (DOMElements.nonce) DOMElements.nonce.value = '';
-        // MenuManager.updateResetButtonVisibility(); // Già chiamato da hideGroupInputModalAndStartGame o reset handler
     },
 
     setupEventListeners() {
+        // ... (event listener per modale e tasti invariati)
         if (DOMElements.startGameButton) {
             DOMElements.startGameButton.addEventListener('click', () => this.hideGroupInputModalAndStartGame());
         }
@@ -322,7 +330,7 @@ export const UIManager = {
             }
             if (event.key === 'Escape') {
                 if (DOMElements.groupInputModal && DOMElements.groupInputModal.classList.contains('active')) {
-                    // Non fare nulla se il modale dei gruppi è attivo, l'utente deve interagire con esso
+                    // Non fare nulla
                 } else if (uiState.isFullscreen) {
                     FullscreenManager.toggle();
                 } else if (uiState.isMenuOpen) {
@@ -339,11 +347,12 @@ export const UIManager = {
         }
     },
 
-    renderDivisors(availableDivisors, selectedDivisor, minDivisor, maxDivisor) {
+    renderDivisors(availableDivisors, selectedDivisor, minDivisor, maxDivisor, lastTimeAdjustment, timeTakenSeconds) {
         if (!DOMElements.divisorGrid) return;
         DOMElements.divisorGrid.innerHTML = '';
         availableDivisors.forEach(value => {
             const item = document.createElement('div');
+            // ... (creazione item divisore invariata)
             item.className = `divisor-item p-3 sm:p-4 aspect-square bg-gray-200 dark:bg-gray-700 border-2 border-purple-400 dark:border-purple-500 rounded-lg flex items-center justify-center text-2xl sm:text-3xl font-bold cursor-pointer hover:bg-purple-300 dark:hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 text-gray-800 dark:text-gray-100`;
             item.textContent = value;
             item.dataset.value = value;
@@ -358,13 +367,29 @@ export const UIManager = {
             item.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') this.handleDivisorSelectUI(value); });
             DOMElements.divisorGrid.appendChild(item);
         });
-        // Mostra il range dei divisori corrente
+
         if (DOMElements.divisorRangeInfo) {
             DOMElements.divisorRangeInfo.textContent = `${minDivisor} - ${maxDivisor}`;
+        }
+
+        // Mostra il messaggio di aggiustamento difficoltà
+        if (DOMElements.difficultyAdjustmentMessage) {
+            if (lastTimeAdjustment && lastTimeAdjustment !== 0 && timeTakenSeconds !== null) {
+                const verb = lastTimeAdjustment > 0 ? "aumentata" : "diminuita";
+                const absAdjustment = Math.abs(lastTimeAdjustment);
+                const timeMinutes = Math.round(timeTakenSeconds / 60);
+                DOMElements.difficultyAdjustmentMessage.textContent = `Difficoltà ${verb} di ${absAdjustment} (tempo blocco: ~${timeMinutes} min).`;
+                DOMElements.difficultyAdjustmentMessage.className = 'text-center mt-1 text-gray-600 dark:text-gray-400'; // Reset classi
+                DOMElements.difficultyAdjustmentMessage.classList.add(lastTimeAdjustment > 0 ? 'positive-adjustment' : 'negative-adjustment');
+
+            } else {
+                DOMElements.difficultyAdjustmentMessage.textContent = ''; // Pulisci se non c'è aggiustamento
+            }
         }
     },
 
     renderMempoolItems(mempool, currentlySelectedTxs) {
+        // ... (invariato)
         if (!DOMElements.mempoolGrid) return;
         DOMElements.mempoolGrid.innerHTML = '';
         mempool.forEach(tx => {
@@ -409,6 +434,7 @@ export const UIManager = {
     },
 
     renderTimewall(timewall) {
+        // ... (invariato)
         if (!DOMElements.timewallChain) return;
         DOMElements.timewallChain.innerHTML = '';
 
@@ -469,6 +495,7 @@ export const UIManager = {
     },
 
     renderCalculationDetails(details) {
+        // ... (invariato)
         if (!DOMElements.calculationDetailsBox || !DOMElements.calculationDetailsContainer) return;
         DOMElements.calculationDetailsBox.innerHTML = '';
 
@@ -540,6 +567,7 @@ export const UIManager = {
     },
 
     displayMessage(message, type = 'info', duration = UIConstants.MESSAGE_TIMEOUT_DEFAULT) {
+        // ... (invariato)
         if (!DOMElements.messageArea) return;
         clearTimeout(uiState.messageTimeoutId);
         DOMElements.messageArea.textContent = message;
@@ -569,6 +597,7 @@ export const UIManager = {
     },
 
     updateMempoolDisplay(mempool, currentlySelectedTxs, timewallLength) {
+        // ... (invariato)
         if (!DOMElements.mempoolGrid) return;
         const nextBlockNumber = timewallLength + 1;
         if (nextBlockNumber === 3 && timewallLength < GameConstants.MAX_BLOCKS) {
@@ -583,6 +612,7 @@ export const UIManager = {
     },
 
     updateVerificationInputsState(timewallLength) {
+        // ... (invariato)
         const isGameOver = timewallLength >= GameConstants.MAX_BLOCKS;
         if (DOMElements.poolName) DOMElements.poolName.disabled = isGameOver;
         if (DOMElements.nonce) DOMElements.nonce.disabled = isGameOver;
@@ -600,17 +630,26 @@ export const UIManager = {
     },
 
     handleDivisorSelectUI(divisorValue) {
-        if (!uiState.hasGameStarted) return; // Non permettere selezione se il gioco non è iniziato
+        // ... (chiamata a renderDivisors aggiornata)
+        if (!uiState.hasGameStarted) return;
         const success = GameLogic.selectDivisorLogic(divisorValue);
         if (success) {
             const currentState = GameLogic.getCurrentState();
-            this.renderDivisors(currentState.availableDivisors, currentState.selectedDivisor, currentState.currentMinDivisor, currentState.currentMaxDivisor);
+            this.renderDivisors(
+                currentState.availableDivisors,
+                currentState.selectedDivisor,
+                currentState.currentMinDivisor,
+                currentState.currentMaxDivisor,
+                currentState.lastTimeAdjustmentAmount, // Passa per eventuale visualizzazione
+                currentState.timeTakenForLastBlockSeconds
+            );
             this.displayMessage(`Divisore ${currentState.selectedDivisor} selezionato.`, 'info', 2000);
         }
     },
 
     handleTransactionSelectUI(tx) {
-        if (!uiState.hasGameStarted) return; // Non permettere selezione se il gioco non è iniziato
+        // ... (invariato)
+        if (!uiState.hasGameStarted) return;
         const result = GameLogic.selectTransactionLogic(tx);
         const currentState = GameLogic.getCurrentState();
         this.renderMempoolItems(currentState.mempool, currentState.currentlySelectedTxs);
@@ -620,7 +659,8 @@ export const UIManager = {
     },
 
     handleVerifyAttemptUI() {
-        if (!uiState.hasGameStarted) { // Controllo aggiuntivo
+        // ... (chiamata a renderDivisors aggiornata)
+        if (!uiState.hasGameStarted) {
             this.displayMessage("Il gioco non è ancora iniziato. Inserisci il numero di gruppi.", "warn");
             return;
         }
@@ -641,7 +681,7 @@ export const UIManager = {
                 return;
             }
 
-            const currentState = GameLogic.getCurrentState();
+            const currentState = GameLogic.getCurrentState(); // Ottieni stato DOPO attemptMineBlock
 
             if (resultDetails.isSuccess) {
                 this.displayMessage(`Blocco Minato con Successo! Resto Calcolato: ${resultDetails.calculatedRemainder} (Soglia: >= ${resultDetails.targetRemainderValue})`, "success");
@@ -652,12 +692,22 @@ export const UIManager = {
                 }
 
                 this.renderTimewall(currentState.timewall);
-                this.renderDivisors(currentState.availableDivisors, currentState.selectedDivisor, currentState.currentMinDivisor, currentState.currentMaxDivisor);
+                // Aggiorna i divisori, mostrando anche l'eventuale messaggio di aggiustamento difficoltà
+                this.renderDivisors(
+                    currentState.availableDivisors,
+                    currentState.selectedDivisor,
+                    currentState.currentMinDivisor,
+                    currentState.currentMaxDivisor,
+                    currentState.lastTimeAdjustmentAmount,
+                    currentState.timeTakenForLastBlockSeconds
+                );
+
 
                 if (resultDetails.isGameEnd) {
                     this.displayMessage(`Tutti i ${GameConstants.MAX_BLOCKS} blocchi minati! Sessione di gioco completa. Apri il menu per ricominciare.`, "success", 6000);
                 } else {
-                     this.displayMessage("Nuovi divisori generati. Seleziona un divisore per il prossimo blocco!", "info", 3000);
+                     // Il messaggio sull'aggiustamento della difficoltà è ora in renderDivisors
+                     // this.displayMessage("Nuovi divisori generati. Seleziona un divisore per il prossimo blocco!", "info", 3000);
                 }
             } else {
                 this.displayMessage(`Tentativo Fallito. Resto Calcolato (${resultDetails.calculatedRemainder}) è minore della Soglia Target (>= ${resultDetails.targetRemainderValue}). Prova un nuovo Nonce!`, "error");

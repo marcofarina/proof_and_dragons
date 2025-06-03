@@ -48,6 +48,24 @@
         .dark .modal-content {
             background-color: #1f2937; /* gray-800 */
         }
+        /* Stile per il messaggio di aggiustamento difficoltà */
+        #difficultyAdjustmentMessage {
+            font-style: italic;
+            font-size: 0.8rem; /* Un po' più piccolo */
+        }
+        .positive-adjustment {
+            color: #16a34a; /* green-600 */
+        }
+        .dark .positive-adjustment {
+            color: #4ade80; /* green-400 */
+        }
+        .negative-adjustment {
+            color: #dc2626; /* red-600 */
+        }
+        .dark .negative-adjustment {
+            color: #f87171; /* red-400 */
+        }
+
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 flex flex-col min-h-screen selection:bg-cyan-500 selection:text-black">
@@ -125,9 +143,11 @@
 <main class="flex-grow grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 p-4 sm:p-5" style="visibility: hidden;">
 
     <div id="verificationModule" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-1">
-        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-cyan-500 dark:border-cyan-600 pb-2 text-cyan-600 dark:text-cyan-400">Verifica Tentativo</h2> <form id="verifyForm" class="space-y-3 sm:space-y-4">
+        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-cyan-500 dark:border-cyan-600 pb-2 text-cyan-600 dark:text-cyan-400">Verifica Tentativo</h2>
+        <form id="verifyForm" class="space-y-3 sm:space-y-4">
             <div>
-                <label for="poolName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome Pool (max 10, no spazi):</label> <input type="text" id="poolName" name="poolName" required maxlength="10" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-500 dark:placeholder-gray-400" placeholder="Es. Satoshi">
+                <label for="poolName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome Pool (max 10, no spazi):</label>
+                <input type="text" id="poolName" name="poolName" required maxlength="10" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-500 dark:placeholder-gray-400" placeholder="Es. Satoshi">
             </div>
             <div>
                 <label for="nonce" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nonce (2-32):</label>
@@ -140,24 +160,31 @@
     </div>
 
     <div id="divisorDisplayContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-2">
-        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-purple-500 dark:border-purple-600 pb-2 text-purple-600 dark:text-purple-400">Seleziona Divisore</h2> <div id="divisorGrid" class="grid grid-cols-4 gap-2 sm:gap-3 justify-center max-w-md mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-purple-500 dark:border-purple-600 pb-2 text-purple-600 dark:text-purple-400">Seleziona Divisore</h2>
+        <div id="divisorGrid" class="grid grid-cols-4 gap-2 sm:gap-3 justify-center max-w-md mx-auto">
             </div>
          <p class="text-xs text-center mt-2 text-gray-500 dark:text-gray-400">Range Divisori: <span id="divisorRangeInfo">N/D</span></p>
+         <p id="difficultyAdjustmentMessage" class="text-center mt-1 text-gray-600 dark:text-gray-400"></p>
     </div>
 
     <div id="mempoolContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-3 flex flex-col">
-        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-teal-500 dark:border-teal-600 pb-2 text-teal-600 dark:text-teal-400">Mempool <span class="text-sm text-gray-600 dark:text-gray-400">(max 2 per Blocco 3)</span></h2> <div id="mempoolGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 flex-grow">
+        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-teal-500 dark:border-teal-600 pb-2 text-teal-600 dark:text-teal-400">Mempool <span class="text-sm text-gray-600 dark:text-gray-400">(max 2 per Blocco 3)</span></h2>
+        <div id="mempoolGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 flex-grow">
             </div>
     </div>
 
     <section id="calculationDetailsContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border-2 border-gray-300 dark:border-gray-700 lg:order-4">
-        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-indigo-500 dark:border-indigo-600 pb-2 text-indigo-600 dark:text-indigo-400">Dettaglio Calcoli</h2> <div id="calculationDetailsBox" class="space-y-1 text-gray-800 dark:text-gray-100" aria-live="polite"> <p class="text-gray-500 dark:text-gray-400">Effettua una verifica per visualizzare i dettagli del calcolo qui.</p>
+        <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-indigo-500 dark:border-indigo-600 pb-2 text-indigo-600 dark:text-indigo-400">Dettaglio Calcoli</h2>
+        <div id="calculationDetailsBox" class="space-y-1 text-gray-800 dark:text-gray-100" aria-live="polite">
+            <p class="text-gray-500 dark:text-gray-400">Effettua una verifica per visualizzare i dettagli del calcolo qui.</p>
         </div>
     </section>
 
     <div id="timewallContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:col-span-2 lg:order-5 min-h-[320px] lg:min-h-0">
         <h2 class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-orange-500 dark:border-orange-600 pb-2 text-orange-600 dark:text-orange-400">Timewall</h2>
-        <div id="timewallChainContainer" class="pb-2"> <div id="timewallChain" class="flex space-x-3 overflow-x-auto h-full"> </div>
+        <div id="timewallChainContainer" class="pb-2">
+            <div id="timewallChain" class="flex space-x-3 overflow-x-auto h-full">
+                </div>
         </div>
     </div>
 </main>
