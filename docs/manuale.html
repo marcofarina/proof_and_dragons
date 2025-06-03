@@ -9,22 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./js/tailwind.config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/tooltip.css"> <style>
-        body {
-            overscroll-behavior: none;
-            scroll-padding-top: 120px;
-        }
-        html {
-            scroll-behavior: smooth;
-        }
-        .sticky-nav {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-        }
-        /* Altri stili specifici del manuale, se necessari, rimangono qui.
-           Gli stili dei tooltip sono stati spostati in tooltip.css */
-    </style>
+    <link rel="stylesheet" href="./css/tooltip.css">
+    <link rel="stylesheet" href="./css/manuale.css">
 </head>
 <body class="antialiased bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 selection:bg-game-cyan selection:text-black font-body">
 
@@ -49,7 +35,7 @@
         <li><a href="#sezione-preparazione" class="font-semibold text-game-teal hover:text-game-teal-dark dark:text-game-teal-light dark:hover:text-game-teal transition-colors">Preparazione</a></li>
         <li><a href="#sezione-obiettivo" class="font-semibold text-game-orange hover:text-game-orange-dark dark:text-game-orange-light dark:hover:text-game-orange transition-colors">Obiettivo</a></li>
         <li><a href="#sezione-svolgimento" class="font-semibold text-game-indigo hover:text-game-indigo-dark dark:text-game-indigo-light dark:hover:text-game-indigo transition-colors">Svolgimento</a></li>
-        <li><a href="#sezione-fine" class="font-semibold text-game-red hover:text-game-red-dark dark:text-game-red-light dark:hover:text-game-red transition-colors">Fine Partita</a></li>
+        <li><a href="#sezione-fine" class="font-semibold text-game-red hover:text-game-red-dark dark:text-game-red-light dark:hover:text-game-red transition-colors">Fine partita</a></li>
         <li><a href="#sezione-faq" class="font-semibold text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">FAQ</a></li>
     </ul>
 </nav>
@@ -57,7 +43,7 @@
 <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
 
     <section id="sezione-introduzione" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.1s;">
-        <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-cyan dark:border-game-cyan-dark text-game-cyan dark:text-game-cyan-light font-display">Una quest per le Dungeon Pool</h2>
+        <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-cyan dark:border-game-cyan-dark text-game-cyan dark:text-game-cyan-light font-display">Una quest per le dungeon pool</h2>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Benvenuti, intrepidi avventurieri, nel mondo di <strong>Proof & Dragons</strong>! In questo gioco educativo vi trasformerete in squadre di "minatori" con il compito di risolvere complessi enigmi matematici per "minare" blocchi e aggiungerli al leggendario Timewall. Chi riuscirà a sconfiggere la furia di Werkle, il Drago Cypherpunk e a convalidare più blocchi?</p>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Questo gioco è progettato per farvi comprendere, divertendovi, i concetti alla base del <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Proof-of-Work</strong>, il meccanismo che rende sicura la blockchain di Bitcoin. Preparate dadi, matite e fogli di lavoro: la caccia ai blocchi è aperta!</p>
     </section>
@@ -69,25 +55,31 @@
                 <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
                     <i class="fa-regular fa-file-lines text-2xl"></i>
                 </span>
-                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Fogli di lavoro "Proof & Dragons"</strong> (stampati, forniti dall'insegnante - almeno un set per squadra: <a href="static/worksheets_2.0.0.pdf" download class="text-game-cyan hover:underline">download</a>).</span>
+                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Fogli di lavoro "Proof & Dragons"</strong>: stampati, forniti dall'insegnante - almeno un set per squadra: <a href="static/worksheets_2.0.0.pdf" download class="text-game-cyan hover:underline">download</a>.</span>
             </div>
             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3">
                 <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
                     <i class="fa-solid fa-pencil text-2xl"></i>
                 </span>
-                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Penne o matite</strong> (per i calcoli).</span>
+                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Penne o matite</strong>: per i calcoli.</span>
             </div>
             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3">
                 <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
                     <i class="fa-solid fa-dice-d20 text-2xl"></i>
                 </span>
-                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Dadi di Dungeons & Dragons</strong> 1d12 e 1d20 per gruppo.</span>
+                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Dadi da gioco</strong>: 1d12 e 1d20 per gruppo.</span>
             </div>
             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3">
                 <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
                      <i class="fa-solid fa-trophy text-2xl"></i>
                 </span>
-                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Premi</strong> (opzionale, per la squadra vincitrice).</span>
+                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Premi</strong>: opzionale, per la squadra vincitrice per ogni round.</span>
+            </div>
+             <div class="material-card bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 flex items-center space-x-3 md:col-span-2">
+                <span class="w-8 h-8 text-game-orange flex-shrink-0 flex items-center justify-center">
+                     <i class="fa-solid fa-desktop text-2xl"></i>
+                </span>
+                <span class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Applicazione web "Proof & Dragons"</strong>: proiettata su LIM o schermo condiviso, gestita dall'insegnante.</span>
             </div>
         </div>
     </section>
@@ -101,11 +93,15 @@
             </li>
             <li class="flex items-start">
                 <span class="bg-game-orange text-white w-10 h-10 rounded-full flex items-center justify-center text-xl mr-4 flex-shrink-0 font-display">2</span>
-                <div class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Distribuite i materiali:</strong> ogni squadra riceve un set completo di Fogli di Lavoro (Werkle's Root, Blocco 1, Blocco 2, Blocco 3), penne/matite, i dadi e una copia della Tabella ASCII.</div>
+                <div class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Impostazione dell'applicazione:</strong> l'insegnante avvia l'applicazione web "Proof & Dragons". All'inizio, verrà chiesto <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">"Quanti gruppi partecipano?"</strong>. L'insegnante inserisce il numero corretto (valore di default: 5). In base a questo numero, l'applicazione imposterà automaticamente la <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">difficoltà iniziale</strong> della partita, definendo il range da cui verranno estratti i "Divisori Attivi".</div>
             </li>
             <li class="flex items-start">
                 <span class="bg-game-orange text-white w-10 h-10 rounded-full flex items-center justify-center text-xl mr-4 flex-shrink-0 font-display">3</span>
-                <div class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">L'insegnante è il "Master":</strong> spiega le regole, annuncia i "Divisori Attivi" per ogni blocco, valida i blocchi minati e distribuisce i premi.</div>
+                <div class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">Distribuite i materiali:</strong> ogni squadra riceve un set completo di Fogli di Lavoro (Werkle's Root, Blocco 1, Blocco 2, Blocco 3), penne/matite, i dadi e una copia della Tabella ASCII.</div>
+            </li>
+            <li class="flex items-start">
+                <span class="bg-game-orange text-white w-10 h-10 rounded-full flex items-center justify-center text-xl mr-4 flex-shrink-0 font-display">4</span>
+                <div class="text-gray-700 dark:text-gray-300"><strong class="font-semibold text-gray-800 dark:text-gray-100">L'insegnante è il "Master":</strong> spiega le regole, gestisce l'applicazione web, valida i blocchi minati e distribuisce i premi.</div>
             </li>
         </ol>
     </section>
@@ -121,10 +117,10 @@
 
         <div class="werkles-root-card bg-red-50 dark:bg-red-900/30 border-2 border-game-red dark:border-game-red-dark p-6 rounded-xl shadow-2xl my-6">
             <img src="static/werkle.png" alt="Immagine di Werkle, il drago crittografo" class="w-20 h-auto float-right ml-4 -mt-4 sm:w-24" onerror="this.src='https://placehold.co/100x100/ef4444/ffffff?text=DRAGO&font=press-start-2p'; this.alt='Icona di un drago stilizzato';">
-            <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-red dark:text-game-red-light">Fase 1: il nome del vostro "Dungeon Pool" e la Werkle's Root!</h3>
+            <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-red dark:text-game-red-light">Fase 1: il nome del vostro "dungeon pool" e la Werkle's Root!</h3>
             <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">All'inizio della partita (solo una volta), ogni squadra deve:</p>
             <ul class="list-disc list-inside pl-4 space-y-2 text-gray-700 dark:text-gray-300">
-                <li>Scegliere un <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Nome per il proprio "Dungeon Pool"</strong> (massimo 10 lettere, senza spazi). Scrivetelo nell'apposito spazio sul "Foglio di Lavoro - Werkle's Root".</li>
+                <li>Scegliere un <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">nome per il proprio "Dungeon Pool"</strong> (massimo 10 lettere, senza spazi). Scrivetelo nell'apposito spazio sul "Foglio di Lavoro - Werkle's Root".</li>
                 <li><strong>Calcolare la propria Werkle's Root (WR):</strong>
                     <ol class="list-decimal list-inside pl-4 mt-2 space-y-1">
                         <li>Convertite ogni lettera del nome del vostro Dungeon Pool nel corrispondente codice ASCII utilizzando la tabella fornita. Scrivete i codici nelle caselle apposite.</li>
@@ -143,15 +139,15 @@
             <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-cyan dark:text-game-cyan-light">Fase 2: tentativo di mining del blocco corrente</h3>
             <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Per ogni blocco (Blocco 1, Blocco 2, Blocco 3):</p>
             <ol class="list-decimal list-inside pl-6 space-y-3 text-gray-700 dark:text-gray-300">
-                <li><strong>Divisori attivi:</strong> i giocatori fanno riferimento agli otto <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Divisori Attivi</strong> per il blocco corrente. Ogni squadra usa ogni divisore UNA sola volta per tentativo del blocco corrente. I divisori sono otto, uno per ogni spaizo.</li>
-                <li><strong>Scelta del Nonce:</strong> Ogni squadra lancia i dadi (1d12 e 1d20) e somma i valori ottenuti. Questa somma rappresenta il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Nonce</strong> che va annotato sul proprio foglio di lavoro nell'apposito spazio. Dovete rilanciare il Nonce e selezionare un nuovo divisore per ogni tentativo fallito!</li>
-                <li><strong>Selezione Transazioni Magiche (Solo per il Blocco 3):</strong>
+                <li><strong>Inizio del round e rivelazione dei divisori:</strong> l'insegnante, dopo aver dato eventuali spiegazioni, premerà il pulsante <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">"Rivela Divisori e Inizia Round"</strong> sull'applicazione. Solo da questo momento i <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Divisori Attivi</strong> per il blocco corrente (8 numeri casuali) saranno visibili e il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">conteggio del tempo</strong> per minare il blocco avrà ufficialmente inizio. Ogni squadra usa ogni divisore UNA sola volta per tentativo del blocco corrente.</li>
+                <li><strong>Scelta del nonce:</strong> ogni squadra lancia i dadi (1d12 e 1d20) e somma i valori ottenuti. Questa somma rappresenta il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Nonce</strong> che va annotato sul proprio foglio di lavoro nell'apposito spazio. Dovete rilanciare il Nonce e selezionare un nuovo divisore per ogni tentativo fallito!</li>
+                <li><strong>Selezione transazioni magiche (solo per il Blocco 3):</strong>
                     <p class="mb-1">Se state minando il Blocco 3, ogni squadra può scegliere fino a <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">due "Transazioni Magiche"</strong> da una lista fornita dall'app. Per ogni transazione, si considera il suo "valore" come la <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">lunghezza della sua descrizione</strong> (numero di caratteri, spazi inclusi). Per semplicità i valori sono indicati tra parentesi per ogni transazione.</p>
                     <p class="mb-1">Ogni transazione è associata a un'icona di un dolce, che rappresenta le 'fee' associate alla transazione e che viene guadagnata dalla Dungeon Pool che riesce a minare il blocco.</p>
                     <p class="bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md font-mono break-all text-sm sm:text-base text-game-indigo dark:text-game-indigo-light">ValoreTransazioni = LunghezzaDescrizioneTX1 + LunghezzaDescrizioneTX2</p>
                     <p class="mt-1">Scrivete le lunghezze sul "Foglio di Lavoro - Blocco 3". Se non selezionate transazioni, il loro valore è 0.</p>
                 </li>
-                <li><strong>Calcolo del "Proof":</strong> Utilizzate il foglio di lavoro corretto per il blocco che state tentando di minare:
+                <li><strong>Calcolo del "Proof":</strong> utilizzate il foglio di lavoro corretto per il blocco che state tentando di minare:
                     <ul class="list-disc list-inside pl-4 space-y-2 mt-2">
                         <li><strong>Blocco 1:</strong> (Foglio Blocco 1)
                             <p class="bg-gray-200 dark:bg-gray-700 p-3 my-2 rounded-md font-mono break-all text-sm sm:text-base text-game-indigo dark:text-game-indigo-light">Proof = (WR + Nonce) * 3</p>
@@ -182,19 +178,32 @@
             <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-green dark:text-game-green-light">Fase 3: annuncio del vincitore del blocco</h3>
             <ul class="list-disc list-inside pl-4 space-y-2 text-gray-700 dark:text-gray-300">
                 <li>La <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">prima squadra</strong> che calcola correttamente un `RestoCalcolato` che soddisfa la condizione di vittoria deve alzare la mano e annunciare "BLOCCO MINATO!".</li>
-                <li>L'insegnante verificherà i calcoli sul foglio di lavoro della squadra.</li>
+                <li>L'insegnante verificherà i calcoli sul foglio di lavoro della squadra utilizzando l'applicazione web (inserendo Nome Pool, Nonce e selezionando il Divisore usato).</li>
                 <li>Se i calcoli sono corretti, quella squadra <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">vince il blocco</strong>! Se sono previsti dei premi (coinbase), vengono consegnati al gruppo che ha minato il blocco. Se il blocco minato è il terzo, oltre al premio del blocco vanno consegnati anche i dolci (fee) associati alle transazioni incluse nel blocco minato.</li>
-                <li>Il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoCalcolato`</strong> della squadra vincitrice diventa il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoBloccoPrecedente`</strong> che TUTTE le squadre useranno per tentare di minare il blocco successivo. L'insegnante lo annuncerà.</li>
-                <li>L'insegnante può cogliere l'occasione per spiegare come avviene nella realtà il concatenamento dei blocchi tramite hashing (tra il blocco 1 e il blocco 2), oppure il concetto di mempool, spazio del blocco e costruzione del template (tra il blocco 2 e il blocco 3.</li>
-                <li>Si passa al tentativo di mining del blocco successivo (se non si è ancora arrivati al Blocco 3). Vengono visualizzati i nuovi Divisori Attivi.</li>
+                <li>Il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoCalcolato`</strong> della squadra vincitrice diventa il <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">`RestoBloccoPrecedente`</strong> che TUTTE le squadre useranno per tentare di minare il blocco successivo. L'insegnante lo annuncerà e sarà visibile nell'applicazione.</li>
+                <li>L'insegnante può cogliere l'occasione per spiegare come avviene nella realtà il concatenamento dei blocchi tramite hashing (tra il blocco 1 e il blocco 2), oppure il concetto di mempool, spazio del blocco e costruzione del template (tra il blocco 2 e il blocco 3).</li>
             </ul>
         </div>
+
+        <div class="bg-yellow-50 dark:bg-yellow-900/30 border-2 border-game-yellow dark:border-game-yellow-dark p-6 rounded-xl shadow-2xl my-6">
+            <h3 class="font-display text-xl sm:text-2xl mt-6 mb-3 text-game-yellow dark:text-game-yellow-light">Aggiustamento dinamico della difficoltà (dopo Blocco 1 e Blocco 2)</h3>
+            <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Dopo che il Blocco 1 o il Blocco 2 sono stati minati, l'applicazione <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">aggiusterà automaticamente la difficoltà</strong> per il round successivo in base al tempo impiegato per minare il blocco appena concluso. L'obiettivo è mantenere il tempo di mining per blocco intorno ai 5 minuti.</p>
+            <ul class="list-disc list-inside pl-4 space-y-2 text-gray-700 dark:text-gray-300">
+                <li>Se il tempo impiegato è stato <strong class="highlight font-semibold text-game-green dark:text-game-green-light">superiore a 5 minuti</strong>, la difficoltà per il prossimo blocco <strong class="highlight font-semibold text-game-green dark:text-game-green-light">diminuirà</strong> (il range dei divisori si abbasserà, rendendo più facile trovare un resto valido).</li>
+                <li>Se il tempo impiegato è stato <strong class="highlight font-semibold text-game-red dark:text-game-red-light">inferiore a 5 minuti</strong>, la difficoltà per il prossimo blocco <strong class="highlight font-semibold text-game-red dark:text-game-red-light">aumenterà</strong> (il range dei divisori si alzerà).</li>
+            </ul>
+            <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mt-3 mb-3">L'entità dell'aggiustamento è proporzionale alla differenza rispetto ai 5 minuti (circa 1 punto di range per ogni minuto di scarto), con un limite massimo di aggiustamento (ad esempio, +/- 5 punti sul range minimo). L'applicazione mostrerà un <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">messaggio colorato</strong> (verde se più facile, rosso se più difficile) sotto la griglia dei divisori per indicare se e come la difficoltà è stata modificata.</p>
+            <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">Questo simula come la difficoltà di mining di Bitcoin si aggiusta circa ogni due settimane per mantenere il tempo medio di generazione di un blocco intorno ai 10 minuti.</p>
+            <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300">Si passa quindi al tentativo di mining del blocco successivo. L'insegnante premerà nuovamente <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">"Rivela Divisori e Inizia Round"</strong> per visualizzare i nuovi Divisori Attivi (generati dal range eventualmente aggiustato) e far partire il tempo.</p>
+        </div>
+
     </section>
 
     <section id="sezione-fine" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.6s;">
         <h2 class="text-3xl sm:text-4xl mb-6 pb-3 border-b-2 border-game-red dark:border-game-red-dark text-game-red dark:text-game-red-light font-display">Fine della partita</h2>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">La partita termina quando <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">tutti e 3 i blocchi sono stati minati</strong>.</p>
         <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-3">L'insegnante conta quanti blocchi ha vinto ciascuna squadra. La squadra (o le squadre, in caso di parità) con il maggior numero di blocchi vinti è proclamata <strong class="highlight font-semibold text-game-cyan dark:text-game-cyan-light">Campione di Proof & Dragons</strong>! <span class="inline-block mx-1 text-2xl">👑</span></p>
+        <p class="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300">Per iniziare una nuova partita, l'insegnante può usare l'opzione "Ricomincia partita" dal menu dell'applicazione, che richiederà nuovamente il numero di gruppi partecipanti.</p>
     </section>
 
     <section id="sezione-faq" class="manual-section bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 mb-8 animate-fadeInUp" style="animation-delay: 0.8s;">

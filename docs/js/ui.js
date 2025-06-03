@@ -384,7 +384,7 @@ export const UIManager = {
 
         if (DOMElements.difficultyAdjustmentMessage) {
             if (lastTimeAdjustment !== 0 && timeTakenSeconds !== null) {
-                const verb = lastTimeAdjustment < 0 ? "diminuita (più facile)" : "aumentata (più difficile)"; // Logica colore invertita
+                const verb = lastTimeAdjustment < 0 ? "diminuita" : "aumentata";
                 const absAdjustment = Math.abs(lastTimeAdjustment);
                 const timeMinutes = Math.round(timeTakenSeconds / 60);
                 DOMElements.difficultyAdjustmentMessage.textContent = `Difficoltà ${verb} di ${absAdjustment} (tempo blocco: ~${timeMinutes} min).`;
