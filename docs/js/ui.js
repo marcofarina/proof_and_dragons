@@ -345,7 +345,7 @@ export const UIManager = {
                 false
             );
             this.updateVerificationInputsState(currentState.timewall.length, true);
-            this.displayMessage("Divisori rivelati! Il tempo scorre, corri!", "info");
+            this.displayMessage("Divisori rivelati! Il tempo scorre. Mina ora!", "info");
         }
     },
 
@@ -383,15 +383,20 @@ export const UIManager = {
         }
 
         if (DOMElements.difficultyAdjustmentMessage) {
-            if (lastTimeAdjustment !== 0 && timeTakenSeconds !== null) {
-                const verb = lastTimeAdjustment < 0 ? "diminuita" : "aumentata";
-                const absAdjustment = Math.abs(lastTimeAdjustment);
+            DOMElements.difficultyAdjustmentMessage.textContent = ''; // Pulisci sempre prima
+            DOMElements.difficultyAdjustmentMessage.className = 'text-center mt-1 text-base font-semibold'; // Classi base
+
+            if (timeTakenSeconds !== null) { // Mostra un messaggio solo se un blocco è stato minato
                 const timeMinutes = Math.round(timeTakenSeconds / 60);
-                DOMElements.difficultyAdjustmentMessage.textContent = `Difficoltà ${verb} di ${absAdjustment} (tempo blocco: ~${timeMinutes} min).`;
-                DOMElements.difficultyAdjustmentMessage.className = 'text-center mt-1 text-base font-semibold';
-                DOMElements.difficultyAdjustmentMessage.classList.add(lastTimeAdjustment < 0 ? 'positive-adjustment' : 'negative-adjustment');
-            } else {
-                DOMElements.difficultyAdjustmentMessage.textContent = '';
+                if (lastTimeAdjustment !== 0) {
+                    const verb = lastTimeAdjustment < 0 ? "diminuita (più facile)" : "aumentata (più difficile)";
+                    const absAdjustment = Math.abs(lastTimeAdjustment);
+                    DOMElements.difficultyAdjustmentMessage.textContent = `Difficoltà ${verb} di ${absAdjustment} (tempo blocco: ~${timeMinutes} min).`;
+                    DOMElements.difficultyAdjustmentMessage.classList.add(lastTimeAdjustment < 0 ? 'positive-adjustment' : 'negative-adjustment');
+                } else {
+                    DOMElements.difficultyAdjustmentMessage.textContent = `Difficoltà invariata (tempo blocco: ~${timeMinutes} min).`;
+                    // Nessuna classe di colore specifica per "invariata"
+                }
             }
         }
     },
@@ -447,7 +452,7 @@ export const UIManager = {
                 } else if (i + 1 === 3) transactionsHTML = 'Nessuna Selezionata';
                 let remainderHTML;
                 if (i < GameConstants.MAX_BLOCKS -1) {
-                    remainderHTML = `<div class="mt-2 mb-1 p-3 border-2 border-yellow-500 dark:border-yellow-400 rounded-lg bg-yellow-50 dark:bg-gray-600/50 shadow-inner"><p class="text-base font-semibold text-gray-700 dark:text-gray-200 text-center">Resto per Blocco successivo:</p><p class="text-3xl font-bold text-yellow-600 dark:text-yellow-300 text-center tracking-wider">${block.remainder}</p></div>`;
+                    remainderHTML = `<div class="mt-2 mb-1 p-3 border-2 border-yellow-500 dark:border-yellow-400 rounded-lg bg-yellow-50 dark:bg-gray-600/50 shadow-inner"><p class="text-base font-semibold text-gray-700 dark:text-gray-200 text-center">Resto per blocco successivo:</p><p class="text-3xl font-bold text-yellow-600 dark:text-yellow-300 text-center tracking-wider">${block.remainder}</p></div>`;
                 } else {
                     remainderHTML = `<p><strong class="text-gray-700 dark:text-gray-200">Resto vincente:</strong> <span class="font-semibold text-orange-600 dark:text-orange-300">${block.remainder}</span></p>`;
                 }
@@ -519,7 +524,7 @@ export const UIManager = {
             DOMElements.calculationDetailsBox.appendChild(createFormulaLine('Resto Calcolato', `${details.proofValue} % ${details.selectedDivisor}`, details.calculatedRemainder));
             DOMElements.calculationDetailsBox.appendChild(createFormulaLine('Soglia Target', `${details.selectedDivisor} - ${GameConstants.TARGET_REMAINDER_OFFSET}`, details.targetRemainderValue));
             const outcomeLine = document.createElement('p');
-            outcomeLine.innerHTML = `<strong class="text-gray-700 dark:text-gray-200">Esito:</strong> Resto calcolato (${details.calculatedRemainder}) &ge; Soglia Target (${details.targetRemainderValue})?<br><span class="font-bold ${details.isSuccess ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}">${details.isSuccess ? 'SUCCESSO' : 'FALLIMENTO'}</span>`;
+            outcomeLine.innerHTML = `<strong class="text-gray-700 dark:text-gray-200">Esito:</strong> Resto calcolato (${details.calculatedRemainder}) &ge; Soglia target (${details.targetRemainderValue})?<br><span class="font-bold ${details.isSuccess ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}">${details.isSuccess ? 'SUCCESSO' : 'FALLIMENTO'}</span>`;
             DOMElements.calculationDetailsBox.appendChild(outcomeLine);
         }
 
