@@ -1,0 +1,17 @@
+[
+  {
+    "code": "it",
+    "name": "Italiano 🇮🇹",
+    "filePath": "./locales/it.json"
+  },
+  {
+    "code": "en",
+    "name": "English 🇬🇧",
+    "filePath": "./locales/en.json"
+  },
+  {
+    "code": "es",
+    "name": "Español 🇪🇸",
+    "filePath": "./locales/es.json"
+  }
+]
