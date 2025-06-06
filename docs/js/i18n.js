@@ -28,12 +28,10 @@ const I18nManager = {
             if (!response.ok) {
                 throw new Error(`File ${path} non trovato (status: ${response.status})`);
             }
-
             if (!this.translations[lang]) {
                 this.translations[lang] = {};
             }
             this.translations[lang][namespace] = await response.json();
-
             this.loadedNamespaces.add(namespace);
             return true;
         } catch (error) {
@@ -68,7 +66,7 @@ const I18nManager = {
         await this.loadNamespaces(Array.from(this.loadedNamespaces));
 
         this.updateUI();
-        this.updateLanguageMenuActiveState();
+        this.updateLanguageSelectors();
 
         const event = new CustomEvent('languageChange', { detail: { currentLanguage: this.currentLanguage } });
         document.dispatchEvent(event);
@@ -85,28 +83,20 @@ const I18nManager = {
     t(key, params = {}) {
         const keyParts = key.split('.');
         if (keyParts.length < 2) {
-            console.warn(`[I18nManager] Chiave i18n "${key}" non valida. Deve includere un namespace (es. 'common.appTitle').`);
+            console.warn(`[I18nManager] Chiave i18n "${key}" non valida. Deve includere un namespace.`);
             return key;
         }
         const namespace = keyParts[0];
         const actualKey = keyParts.slice(1).join('.');
         const langTranslations = this.translations[this.currentLanguage];
-
-        if (!langTranslations || !langTranslations[namespace]) {
-            return key;
-        }
-
+        if (!langTranslations || !langTranslations[namespace]) return key;
         let text = actualKey.split('.').reduce((obj, k) => obj && obj[k], langTranslations[namespace]);
-
         if (text === undefined) {
             if (namespace !== 'common' && langTranslations['common']) {
                 text = actualKey.split('.').reduce((obj, k) => obj && obj[k], langTranslations['common']);
             }
-            if (text === undefined) {
-                return key;
-            }
+            if (text === undefined) return key;
         }
-
         for (const param in params) {
             text = text.replace(new RegExp(`{{${param}}}`, 'g'), params[param]);
         }
@@ -160,8 +150,8 @@ const I18nManager = {
 
         await this.loadNamespaces(requiredNamespaces);
 
-        await this.populateLanguageMenu();
-        this.setupMenuListeners();
+        this.populateAllSelectors();
+        this.setupAllListeners();
         return this;
     },
 
@@ -183,9 +173,9 @@ const I18nManager = {
     },
 
     /**
-     * Imposta i listener per il menu delle lingue.
+     * Imposta i listener per i selettori di lingua.
      */
-    setupMenuListeners() {
+    setupAllListeners() {
         const langToggle = document.getElementById('languageToggle');
         if (langToggle) {
             langToggle.addEventListener('click', (e) => {
@@ -202,44 +192,65 @@ const I18nManager = {
                 }
             }
         });
-    },
-
-    /**
-     * Popola il menu a tendina delle lingue basandosi sul manifest.
-     */
-    async populateLanguageMenu() {
-        const languageMenu = document.getElementById('languageMenu');
-        if (!languageMenu) return;
-        languageMenu.innerHTML = '';
-
-        for (const langInfo of this.availableLanguagesFromManifest) {
-            const langItem = document.createElement('a');
-            langItem.href = '#';
-            langItem.dataset.langCode = langInfo.code;
-            langItem.className = 'block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer whitespace-nowrap';
-            langItem.textContent = langInfo.name;
-            langItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.setLanguage(langInfo.code);
+        const modalSelector = document.getElementById('modalLanguageSelector');
+        if (modalSelector) {
+            modalSelector.addEventListener('change', (e) => {
+                this.setLanguage(e.target.value);
             });
-            languageMenu.appendChild(langItem);
         }
-        this.updateLanguageMenuActiveState();
     },
 
     /**
-     * Aggiorna lo stile (es. grassetto) per la lingua attualmente attiva nel menu.
+     * Popola entrambi i selettori di lingua (menu e select del modale).
      */
-    updateLanguageMenuActiveState() {
+    populateAllSelectors() {
         const languageMenu = document.getElementById('languageMenu');
-        if (!languageMenu) return;
-        Array.from(languageMenu.children).forEach(item => {
-            item.classList.toggle('font-bold', item.dataset.langCode === this.currentLanguage);
-        });
+        if (languageMenu) {
+            languageMenu.innerHTML = '';
+            this.availableLanguagesFromManifest.forEach(langInfo => {
+                const langItem = document.createElement('a');
+                langItem.href = '#';
+                langItem.dataset.langCode = langInfo.code;
+                langItem.className = 'block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer whitespace-nowrap';
+                langItem.textContent = langInfo.name;
+                langItem.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.setLanguage(langInfo.code);
+                });
+                languageMenu.appendChild(langItem);
+            });
+        }
+        const modalSelector = document.getElementById('modalLanguageSelector');
+        if (modalSelector) {
+            modalSelector.innerHTML = '';
+            this.availableLanguagesFromManifest.forEach(langInfo => {
+                const option = document.createElement('option');
+                option.value = langInfo.code;
+                option.textContent = langInfo.name;
+                modalSelector.appendChild(option);
+            });
+        }
+        this.updateLanguageSelectors();
     },
 
     /**
-     * Apre/chiude il menu a tendina delle lingue.
+     * Aggiorna lo stato visivo di entrambi i selettori di lingua.
+     */
+    updateLanguageSelectors() {
+        const languageMenu = document.getElementById('languageMenu');
+        if (languageMenu) {
+            Array.from(languageMenu.children).forEach(item => {
+                item.classList.toggle('font-bold', item.dataset.langCode === this.currentLanguage);
+            });
+        }
+        const modalSelector = document.getElementById('modalLanguageSelector');
+        if (modalSelector) {
+            modalSelector.value = this.currentLanguage;
+        }
+    },
+
+    /**
+     * Apre/chiude il menu a tendina dell'header.
      */
     toggleLanguageMenu() {
         this.isLanguageMenuOpen = !this.isLanguageMenuOpen;
@@ -252,7 +263,7 @@ const I18nManager = {
     },
 
     /**
-     * Chiude forzatamente il menu delle lingue.
+     * Chiude forzatamente il menu a tendina dell'header.
      */
     closeLanguageMenu() {
         this.isLanguageMenuOpen = false;
@@ -264,3 +275,5 @@ const I18nManager = {
         }
     }
 };
+
+// NON chiamare init() qui. Verrà chiamato dalla pagina specifica.

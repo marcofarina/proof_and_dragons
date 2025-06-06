@@ -4,7 +4,8 @@
     "howManyGroups": "¿Cuántos grupos participan?",
     "numGroupsLabel": "Número de grupos:",
     "numGroupsError": "Introduce un número válido (1-20).",
-    "startGameButton": "Iniciar juego"
+    "startGameButton": "Iniciar juego",
+    "languageLabel": "Seleccionar idioma:"
   },
   "verification": {
     "title": "Verificar Intento",

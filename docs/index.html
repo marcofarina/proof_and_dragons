@@ -17,6 +17,13 @@
 <div id="groupInputModal" class="modal-overlay">
     <div class="modal-content text-gray-900 dark:text-gray-100">
         <h2 data-i18n-key="index.modal.groupInputTitle" class="text-2xl font-semibold mb-4 text-center text-cyan-600 dark:text-cyan-400"></h2>
+
+        <div class="mb-4">
+            <label for="modalLanguageSelector" data-i18n-key="index.modal.languageLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"></label>
+            <select id="modalLanguageSelector" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500">
+            </select>
+        </div>
+
         <p data-i18n-key="index.modal.howManyGroups" class="mb-3 text-center"></p>
         <div>
             <label for="numGroupsInput" data-i18n-key="index.modal.numGroupsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"></label>
@@ -52,7 +59,7 @@
         <button id="fullscreenToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Toggle Fullscreen">
             <span id="fullscreenIconExpand" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-solid fa-expand text-xl"></i></span>
             <span id="fullscreenIconCompress" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-solid fa-compress text-xl"></i></span>
-            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="tooltips.fullscreen"></span>
+            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="common.tooltips.fullscreen"></span>
         </button>
 
         <button id="themeToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Toggle Light/Dark Theme" aria-pressed="false">
@@ -77,7 +84,6 @@
 </header>
 
 <main class="flex-grow grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 p-4 sm:p-5" style="visibility: hidden;">
-
     <div id="verificationModule" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-1">
         <h2 data-i18n-key="index.verification.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-cyan-500 dark:border-cyan-600 pb-2 text-cyan-600 dark:text-cyan-400"></h2>
         <form id="verifyForm" class="space-y-3 sm:space-y-4">
@@ -92,7 +98,6 @@
             <button type="button" id="verifyAttempt" data-i18n-key="index.verification.verifyButton" class="w-full bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75"></button>
         </form>
     </div>
-
     <div id="divisorDisplayContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-2 flex flex-col">
         <h2 data-i18n-key="index.divisors.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-purple-500 dark:border-purple-600 pb-2 text-purple-600 dark:text-purple-400"></h2>
         <button id="revealDivisorsButton" data-i18n-key="index.divisors.revealButton" class="my-4 w-full bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"></button>
@@ -100,19 +105,16 @@
          <p class="text-xs text-center mt-2 text-gray-500 dark:text-gray-400"><span data-i18n-key="index.divisors.rangeInfoLabel"></span> <span id="divisorRangeInfo">N/D</span></p>
          <p id="difficultyAdjustmentMessage" class="text-center mt-1 text-base font-semibold"></p>
     </div>
-
     <div id="mempoolContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-3 flex flex-col">
         <h2 data-i18n-key="index.mempool.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-teal-500 dark:border-teal-600 pb-2 text-teal-600 dark:text-teal-400"><span data-i18n-key="index.mempool.subtitle" class="text-sm text-gray-600 dark:text-gray-400"></span></h2>
         <div id="mempoolGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 flex-grow"></div>
     </div>
-
     <section id="calculationDetailsContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border-2 border-gray-300 dark:border-gray-700 lg:order-4">
         <h2 data-i18n-key="index.calculation.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-indigo-500 dark:border-indigo-600 pb-2 text-indigo-600 dark:text-indigo-400"></h2>
         <div id="calculationDetailsBox" class="space-y-1 text-gray-800 dark:text-gray-100" aria-live="polite">
             <p data-i18n-key="index.calculation.initialMessage" class="text-gray-500 dark:text-gray-400"></p>
         </div>
     </section>
-
     <div id="timewallContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:col-span-2 lg:order-5 min-h-[320px] lg:min-h-0">
         <h2 data-i18n-key="index.timewall.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-orange-500 dark:border-orange-600 pb-2 text-orange-600 dark:text-orange-400"></h2>
         <div id="timewallChainContainer" class="pb-2">
@@ -126,34 +128,20 @@
 <script src="./js/i18n.js"></script>
 <script type="module">
   import { UIManager } from './js/ui.js';
-
   async function initializeApp() {
-    // 1. Inizializza I18nManager e carica i namespace necessari per questa pagina
     await I18nManager.init(['common', 'index']);
-
-    // 2. Traduci tutti gli elementi statici nella pagina
     I18nManager.updateUI();
-
-    // 3. Inizializza l'UIManager, che ora può usare le traduzioni caricate
     UIManager.init();
-
-    // 4. Aggiungi il listener per i cambi di lingua successivi
     document.addEventListener('languageChange', () => {
-        console.log("[index.html] Evento 'languageChange' ricevuto, aggiorno contenuti dinamici.");
         if (UIManager && UIManager.refreshDynamicContentForLanguageChange) {
             UIManager.refreshDynamicContentForLanguageChange();
         }
     });
-
-    // 5. Esegui un refresh iniziale per il contenuto dinamico
     if (typeof UIManager !== 'undefined' && UIManager.refreshDynamicContentForLanguageChange) {
         UIManager.refreshDynamicContentForLanguageChange();
     }
   }
-
-  // Esegui l'inizializzazione quando il DOM è pronto
   document.addEventListener('DOMContentLoaded', initializeApp);
-
 </script>
 </body>
 </html>
