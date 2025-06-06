@@ -1,6 +1,6 @@
 {
   "modal": {
-    "groupInputTitle": "Game Setup",
+    "groupInputTitle": "Game setup",
     "howManyGroups": "How many groups are playing?",
     "numGroupsLabel": "Number of groups:",
     "numGroupsError": "Enter a valid number (1-20).",
@@ -8,7 +8,7 @@
     "languageLabel": "Select language:"
   },
   "verification": {
-    "title": "Verify Attempt",
+    "title": "Verify attempt",
     "poolNameLabel": "Pool Name (max 10, no spaces):",
     "poolNamePlaceholder": "E.g. Satoshi",
     "nonceLabel": "Nonce (2-32):",
@@ -16,9 +16,9 @@
     "verifyButton": "Verify"
   },
   "divisors": {
-    "title": "Select Divisor",
-    "revealButton": "Reveal Divisors & Start Round",
-    "rangeInfoLabel": "Divisor Range:"
+    "title": "Select divisor",
+    "revealButton": "Reveal divisors & start round",
+    "rangeInfoLabel": "Divisor range:"
   },
   "mempool": {
     "title": "Mempool",
@@ -28,15 +28,15 @@
     "missingIcon": "[missing icon]"
   },
   "calculation": {
-    "title": "Calculation Details",
+    "title": "Calculation details",
     "initialMessage": "Perform a verification to see calculation details.",
     "notApplicable": "N/A",
     "noneSelected": "None",
     "success": "SUCCESS",
     "failure": "FAILURE",
     "labels": {
-      "poolNameInput": "Pool Name Entered",
-      "nonceInput": "Nonce Entered",
+      "poolNameInput": "Pool Name entered",
+      "nonceInput": "Nonce entered",
       "selectedDivisor": "Selected Divisor",
       "poolName": "Pool Name",
       "selectedDivisorD": "Selected Divisor (D)",
@@ -49,14 +49,14 @@
       "targetRemainder": "Target Threshold",
       "outcome": "Outcome",
       "outcomeComparison": "Calculated Remainder ({{calculated}}) ≥ Target Threshold ({{target}})?",
-      "asciiSumOf": "ASCII Sum of"
+      "asciiSumOf": "ASCII sum of"
     }
   },
   "timewall": {
     "title": "Timewall",
     "blockNotYetMined": "Block #{{number}} not yet mined",
     "txNotApplicable": "N/A",
-    "txNoneSelected": "None Selected",
+    "txNoneSelected": "None selected",
     "remainderForNextBlockLabel": "Remainder for Next Block:",
     "winningRemainderLabel": "Winning Remainder:",
     "blockLabel": "Block #{{number}}",

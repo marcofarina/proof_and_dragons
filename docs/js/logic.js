@@ -17,10 +17,6 @@ export const GameConstants = {
         { id: 'tx5', descriptionKey: 'common.gameConstants.transactions.tx5_desc', feeIconPath: './icons/fee5.png' },
         { id: 'tx6', descriptionKey: 'common.gameConstants.transactions.tx6_desc', feeIconPath: './icons/fee6.png' },
     ],
-    TX_ICON_PATHS: [
-        './icons/fee1.png', './icons/fee2.png', './icons/fee3.png',
-        './icons/fee4.png', './icons/fee5.png', './icons/fee6.png'
-    ],
     BASE_MIN_DIVISOR: 11,
     MIN_DIVISOR_ABSOLUTE: 8,
     MAX_DIVISOR_ABSOLUTE: 40,
@@ -40,7 +36,7 @@ let gameState = {
     currentlySelectedTxs: [],
     timewall: [],
     lastWinningRemainder: null,
-    numberOfGroups: 1,
+    numberOfGroups: GameConstants.BASE_GROUPS_FOR_DIFFICULTY,
     currentMinDivisor: GameConstants.BASE_MIN_DIVISOR,
     currentMaxDivisor: GameConstants.BASE_MIN_DIVISOR + GameConstants.DIVISOR_RANGE_SPAN,
     blockStartTimestamp: null,
@@ -94,13 +90,10 @@ export const GameLogic = {
     },
 
     initializeMempoolData() {
-        const shuffledIcons = [...GameConstants.TX_ICON_PATHS];
-        Utils.shuffleArray(shuffledIcons);
-        gameState.mempool = GameConstants.BASE_TX_DATA.map((txBase, index) => ({
-            id: txBase.id,
-            descriptionKey: txBase.descriptionKey,
-            feeIconPath: shuffledIcons[index % shuffledIcons.length]
-        }));
+        const shuffledTxData = [...GameConstants.BASE_TX_DATA];
+        Utils.shuffleArray(shuffledTxData);
+        gameState.mempool = shuffledTxData;
+        console.log("[GameLogic] Mempool inizializzata con dati transazione mischiati:", gameState.mempool);
     },
 
     setInitialDifficultyByGroups(numGroups) {

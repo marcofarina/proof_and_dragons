@@ -3,12 +3,8 @@
   "tooltips": {
     "languageSelector": "Seleziona lingua",
     "github": "Repository GitHub",
-    "kofi": "Offrimi una pinta di <strong><i>grog</i></strong> 🍺",
+    "support": "Offrimi una pinta di <strong><i>grog</i></strong> 🍺",
     "fullscreen": "Attiva/disattiva schermo intero",
-    "theme": {
-      "nox": "Nox!",
-      "lumos": "Lumos!"
-    },
     "menuToggle": "Apri/Chiudi menu"
   },
   "menu": {
