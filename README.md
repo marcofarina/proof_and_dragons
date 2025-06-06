@@ -1,24 +1,25 @@
+[Read the documentation in Italian](README_it.md)
+
 <picture>
   <source srcset="/docs/static/logo_white.svg" media="(prefers-color-scheme: dark)">
   <source srcset="/docs/static/logo_black.svg" media="(prefers-color-scheme: light)">
   <img src="/docs/static/logo_white.svg" alt="Logo">
 </picture>
 
-**Proof & Dragons** è un'applicazione web interattiva progettata come companion app dell'omonimo gioco didattico. Attraverso diverse metafore ludiche, gli utenti possono sperimentare in modo semplificato come i miner competono per aggiungere blocchi a una blockchain.
+**Proof & Dragons** is an interactive web application designed as a companion app for the educational game of the same name. Through various playful metaphors, users can experience in a simplified way how miners compete to add blocks to a blockchain.
 
-## Contesto didattico
+## Educational context
 
-Questo progetto è stato sviluppato come risorsa educativa per studenti di scuole secondarie di secondo grado (età 15-18 anni) per illustrare:
+This project was developed as an educational resource for high school students (ages 15-18) to illustrate:
 
-* I principi base del Proof-of-Work.
-* Come la difficoltà di mining e il nonce influenzano la creazione di un blocco.
-* La struttura di una catena di blocchi (Timewall).
-* Il concetto di "mempool" e la selezione delle transazioni (semplificata).
+* The basic principles of Proof-of-Work.
+* How mining difficulty and the nonce affect block creation.
+* The structure of a blockchain (the Timewall).
+* The concept of a "mempool" and transaction selection (in a simplified manner).
 
-L'obiettivo è fornire una comprensione pratica e interattiva di concetti che possono apparire astratti, stimolando la curiosità verso Bitcoin.
+The goal is to provide a practical and interactive understanding of concepts that may seem abstract, sparking curiosity about Bitcoin.
 
-Per i docenti è disponibile un [manuale del gioco](https://rainbowbits.cloud/proof_and_dragons/manuale.html) che spiega come utilizzare l'applicazione e integrare il gioco nella didattica.
-
+A [game manual (in Italian)](https://rainbowbits.cloud/proof_and_dragons/manuale.html) is available for teachers, explaining how to use the application and integrate the game into their teaching activities.
 
 <div align="center">
   <a href="https://rainbowbits.cloud/proof_and_dragons/manuale.html" target="_blank" style="
@@ -33,110 +34,68 @@ Per i docenti è disponibile un [manuale del gioco](https://rainbowbits.cloud/pr
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
   " onmouseover="this.style.backgroundColor='#3730A3'" onmouseout="this.style.backgroundColor='#4F46E5'">
-    Vai al Manuale del gioco
+    Go to the Game Manual (Italian)
   </a>
 </div>
 
+## Main features
 
-## Funzionalità principali
-L'applicazione viene usata dal docente o dal facilitatore per verificare automaticamente i calcoli degli studenti durante il gioco "Proof & Dragons" e fornire un feedback visivo su quello che succede durante la partita. Le funzionalità principali includono:
+The application is used by the teacher or facilitator to automatically verify students' calculations during the "Proof & Dragons" game and provide visual feedback on what is happening during the match. Key features include:
 
-* **Visualizzazione del processo di mining:** il docente inserisce il nome del gruppo ("Nome Pool") e il nonce per validare un tentativo di mining.
-* **Selezione del divisore (difficoltà):** all'avvio l'applicazione fornisce un set casuale di divisori (range 11-22), uno per ogni slot del template cartaceo su cui svolgono i calcoli i partecipanti. Prima di ogni validazione il docente deve selezionare un "divisore", che rappresenta la difficoltà target.
-* **Calcolo del "Proof":** una formula semplificata calcola un valore "Proof" basato sul nome del pool, il nonce, il resto del blocco precedente (se presente) e, per il blocco finale, il valore delle transazioni selezionate.
-* **Verifica del resto:** il "Proof" viene diviso per il divisore selezionato. Se il resto è maggiore o uguale a una soglia target (`divisore - 3`), il blocco è considerato "minato".
-* **Timewall (Blockchain):** i blocchi minati con successo vengono aggiunti al "Timewall", mostrando i dettagli di ogni blocco.
-* **Mempool (semplificata):** per il terzo blocco, gli utenti possono selezionare fino a due "transazioni" (rappresentate da descrizioni e icone) dalla mempool, il cui valore (lunghezza della descrizione) contribuisce al calcolo del Proof.
-* **Dettaglio calcoli:** ogni passaggio del calcolo per la verifica del tentativo di mining viene visualizzato in tempo reale.
-* **Tema chiaro/scuro:** possibilità di cambiare tema per una migliore esperienza visiva.
-* **Menu interattivo:** accesso al manuale del gioco (#TODO), repository GitHub e opzione per ricominciare la partita.
-* **Feedback utente:** messaggi informativi, di successo o di errore guidano l'utente.
-* **Responsive design:** l'interfaccia si adatta a diverse dimensioni di schermo, ma è progettata principalmente per l'uso su TV e monitor di grandi dimensioni. È possibile attivare la modalità a schermo intero premendo il tasto `F`.
+* **Mining process visualization:** The teacher inputs the group's name ("Pool Name") and the nonce to validate a mining attempt.
+* **Dynamic difficulty adjustment:**
+    * **Initial difficulty:** Set at the beginning of the game based on the number of participating groups.
+    * **Time-based adjustment:** After a block is mined, the difficulty for the next round is automatically adjusted based on the time taken, with the goal of keeping the block time around 5 minutes.
+* **Proof calculation:** A simplified formula calculates a "Proof" value based on the pool name, nonce, the remainder of the previous block (if any), and, for the final block, the value of selected transactions.
+* **Remainder verification:** The "Proof" is divided by a chosen divisor. If the remainder is greater than or equal to a target threshold (`divisor - 3`), the block is considered "mined".
+* **Timewall (Blockchain):** Successfully mined blocks are added to the "Timewall," showing the details of each block.
+* **Simplified Mempool:** For the third block, users can select up to two "transactions" from the mempool, whose value (the length of their description) contributes to the Proof calculation.
+* **Calculation details:** Each step of the calculation for verifying a mining attempt is displayed in real-time.
+* **Internationalization (i18n):** The interface supports multiple languages (Italian, English, Spanish) with a language selector, and the structure is ready to easily add more.
+* **Light/Dark Theme:** Ability to switch themes for a better viewing experience.
+* **Responsive Design:** The interface adapts to different screen sizes but is primarily designed for use on TVs and large monitors. Fullscreen mode can be activated by pressing the `F` key.
 
-## Come eseguire il progetto
+## How to run the project
+
 ### Online
+The app is available online on the [Rainbow Bits](https://rainbowbits.cloud/proof_and_dragons/) website.
 
-L'app è online sul sito [Rainbow Bits](https://rainbowbits.cloud/proof_and_dragons/).
-
-### In locale
-1.  **Clonare il repository (o scaricare i file):**
+### Locally
+1.  **Clone the repository (or download the files):**
     ```bash
-    git clone https://github.com/marcofarina/proof_and_dragons.git
+    git clone [https://github.com/marcofarina/proof_and_dragons.git](https://github.com/marcofarina/proof_and_dragons.git)
     cd proof_and_dragons
     ```
-    Oppure, se non si ha familiarità con Git, è possibile scaricare il progetto come file ZIP da GitHub e decomprimerlo in una cartella a scelta.
-2. **Aprire `index.html` nel browser:**
-    Fare doppio clic sul file `index.html` o aprirlo tramite il menu "File > Apri" del proprio browser web preferito (es. Chrome, Firefox, Edge, Safari).
+    Alternatively, if you are not familiar with Git, you can download the project as a ZIP file from GitHub and unzip it into a folder of your choice.
+2.  **Open `index.html` in your browser:**
+    Double-click the `index.html` file or open it via the "File > Open" menu of your favorite web browser (e.g., Chrome, Firefox, Edge, Safari).
 
-Non è richiesta alcuna installazione di dipendenze o build, poiché Tailwind CSS è caricato tramite CDN e il codice JavaScript è vanilla.
+No dependency installation or build process is required, as Tailwind CSS is loaded via a CDN and the JavaScript code is vanilla.
 
-## Logica del "gioco" Proof & Dragons (semplificata)
+## Contributions
 
-Il gioco simula il processo di mining attraverso i seguenti passaggi:
+Contributions are welcome! If you have ideas for improving the project, open an issue or submit a pull request.
 
-1.  **Inizializzazione:**
-    * Vengono generati 8 "divisori" casuali (numeri tra 11 e 22 — equivalente a 1d12+10).
-    * La "mempool" viene popolata con transazioni predefinite che saranno visualizzate dopo aver minato il secondo blocco.
-Quando un gruppo vuole verificare un tentavivo di mining il docente inserisce i dati:
+Some areas for improvement:
+* **Add more languages:** Thanks to the new i18n system, adding a new language is as simple as creating a new folder in `docs/locales`, adding the translated `common.json` and `index.json` files, and updating the `locales-manifest.json` file.
+* **Translate the manual:** The `manuale.html` page is currently only in Italian. It could be translated and integrated into the i18n system.
+* **Save game state:** Use `localStorage` to save the game state, allowing the user to resume it later.
+* **More complex animations:** Enhance CSS animations or introduce JavaScript animations to make the experience more engaging.
 
-2.  **Selezione del divisore:** si sceglie uno dei divisori disponibili. Questo rappresenta la difficoltà del blocco corrente.
-3.  **Input:** si inserisce:
-    * `Nome Pool`: una stringa (max 10 caratteri, no spazi).
-    * `Nonce`: un numero intero (tra 2 e 32).
-4.  **Selezione transazioni (solo per il Blocco 3):** ogni gruppo può selezionare fino a 2 transazioni dalla mempool.
-5.  **Calcolo del `WR` (Werkle Root - base):**
-    * `WR = Somma dei valori ASCII delle lettere del Nome Pool (maiuscolo) + 1500`
-6.  **Calcolo del `Proof`:**
-    * **Blocco 1:** `Proof = (WR + Nonce) * 3`
-    * **Blocco 2:** `Proof = (WR + Nonce + RestoDelBloccoPrecedente) * 3`
-    * **Blocco 3:** `Proof = (WR + Nonce + RestoDelBloccoPrecedente + ValoreTransazioni) * 3`
-        * `ValoreTransazioni`: Somma delle lunghezze delle descrizioni delle transazioni selezionate.
-7.  **Verifica del `CalculatedRemainder` (Resto calcolato dal gruppo):**
-    * `CalculatedRemainder = Proof % DivisoreSelezionato` (l'operatore modulo rappresenta il resto della divisione intera)
-8.  **Determinazione del successo:**
-    * `TargetRemainder = DivisoreSelezionato - 3`
-    * Se `CalculatedRemainder >= TargetRemainder`, il tentativo ha successo e il blocco viene "minato".
-    * Altrimenti, il tentativo fallisce.
-9.  **Aggiunta al Timewall:** se il blocco è minato con successo, viene aggiunto al Timewall con i suoi dettagli. Il `CalculatedRemainder` di questo blocco diventa il `RestoDelBloccoPrecedente` per il successivo.
-10. **Nuovo round:** se non si è raggiunto il massimo di 3 blocchi, vengono generati nuovi divisori e i gruppi possono tentare di minare il blocco successivo.
-11. **Fine partita:** dopo 3 blocchi minati, la partita termina. È possibile ricominciare tramite il menu.
+## License
 
-## Contributi
-
-I contributi sono benvenuti! Se hai idee per migliorare il progetto, apri una issue o invia una pull request.
-
-* **Internazionalizzazione (i18n):** strutturare il codice per supportare facilmente più lingue.
-* **Difficoltà dinamica:** introdurre un meccanismo per cui la difficoltà (valori dei divisori) si aggiusta automaticamente in base al "tempo" impiegato per minare i blocchi precedenti (simulando l'aggiustamento della difficoltà di Bitcoin), oppure in base al numero di gruppi che partecipano al gioco (input manuale).
-* **Introduzione di "fee" variabili:** associare valori di fee diversi alle transazioni e permettere al "miner" di selezionare le transazioni anche in base a queste.
-* **Salvataggio dello stato:** utilizzare `localStorage` per salvare lo stato della partita, permettendo all'utente di riprenderla in un secondo momento.
-* **Animazioni più complesse:** migliorare le animazioni CSS o introdurre animazioni JavaScript per rendere l'esperienza più coinvolgente.
-
-## Licenza
-
-Questo progetto è distribuito con licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
-
-Ciò significa che puoi **copiare, distribuire, modificare e riutilizzare** il materiale, **a condizione che**:
-
-- **Attribuzione**: venga sempre indicato in modo chiaro l'autore originale.
-- **Non commerciale**: non puoi utilizzare l’opera per scopi commerciali.
-- **Condividi allo stesso modo**: se modifichi o trasformi il materiale, devi distribuire il contributo con la **stessa licenza**.
-
-Per maggiori informazioni: [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it)
-
-### License (English)
-
-This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** license.
+This project is distributed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** license.
 
 You are free to **copy, distribute, remix, and reuse** the material, **under the following terms**:
 
-- **Attribution**: You must give appropriate credit to the original author.
-- **NonCommercial**: You may not use the material for commercial purposes.
-- **ShareAlike**: If you remix, transform, or build upon the material, you must distribute your contributions under the **same license**.
+-   **Attribution**: You must give appropriate credit to the original author.
+-   **NonCommercial**: You may not use the material for commercial purposes.
+-   **ShareAlike**: If you remix, transform, or build upon the material, you must distribute your contributions under the **same license**.
 
 More info: [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0)
 
 <div align="center">
   <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
-    <img alt="Licenza Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
   </a>
 </div>
