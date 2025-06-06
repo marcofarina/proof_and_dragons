@@ -1,27 +1,10 @@
 {
-  "appTitle": "Proof & Dragons",
   "modal": {
     "groupInputTitle": "Impostazioni partita",
     "howManyGroups": "Quanti gruppi partecipano?",
     "numGroupsLabel": "Numero di gruppi:",
     "numGroupsError": "Inserisci un numero valido (1-20).",
     "startGameButton": "Inizia partita"
-  },
-  "tooltips": {
-    "languageSelector": "Seleziona lingua",
-    "github": "Repository GitHub",
-    "kofi": "Offrimi una pinta di <strong><i>grog</i></strong> 🍺",
-    "fullscreen": "Attiva/disattiva schermo intero",
-    "theme": {
-      "nox": "Nox!",
-      "lumos": "Lumos!"
-    },
-    "menuToggle": "Apri/Chiudi menu"
-  },
-  "menu": {
-    "manualLink": "Manuale",
-    "rainbowBitsLink": "Rainbow Bits",
-    "resetGameButton": "Ricomincia partita"
   },
   "verification": {
     "title": "Verifica tentativo",
@@ -51,20 +34,20 @@
     "success": "SUCCESSO",
     "failure": "FALLIMENTO",
     "labels": {
-      "poolNameInput": "Nome Pool Inserito",
-      "nonceInput": "Nonce Inserito",
-      "selectedDivisor": "Divisore Selezionato",
+      "poolNameInput": "Nome Pool inserito",
+      "nonceInput": "Nonce inserito",
+      "selectedDivisor": "Divisore selezionato",
       "poolName": "Nome Pool",
-      "selectedDivisorD": "Divisore Selezionato (D)",
-      "prevBlockRemainder": "Resto Blocco Precedente",
-      "selectedTransactions": "Transazioni Selezionate",
+      "selectedDivisorD": "Divisore selezionato (D)",
+      "prevBlockRemainder": "Resto Blocco precedente",
+      "selectedTransactions": "Transazioni selezionate",
       "txValue": "Valore Transazioni (txValue)",
       "wr": "WR",
       "proof": "Proof",
-      "calculatedRemainder": "Resto Calcolato",
+      "calculatedRemainder": "Resto calcolato",
       "targetRemainder": "Soglia Target",
       "outcome": "Esito",
-      "outcomeComparison": "Resto calcolato ({{calculated}}) ≥ Soglia Target ({{target}})?" ,
+      "outcomeComparison": "Resto calcolato ({{calculated}}) ≥ Soglia Target ({{target}})?",
       "asciiSumOf": "Somma ASCII di"
     }
   },
@@ -72,7 +55,7 @@
     "title": "Timewall",
     "blockNotYetMined": "Blocco #{{number}} non ancora minato",
     "txNotApplicable": "N/A",
-    "txNoneSelected": "Nessuna Selezionata",
+    "txNoneSelected": "Nessuna selezionata",
     "remainderForNextBlockLabel": "Resto per Blocco successivo:",
     "winningRemainderLabel": "Resto vincente:",
     "blockLabel": "Blocco #{{number}}",
@@ -88,38 +71,13 @@
     "newGameStarted": "Nuova partita con {{numGroups}} gruppi! Rivela i divisori per iniziare il round.",
     "divisorsRevealed": "Divisori rivelati! Il tempo scorre, corri!",
     "divisorSelected": "Divisore {{divisorValue}} selezionato.",
-    "blockMinedSuccess": "Blocco Minato con Successo! Resto Calcolato: {{calculatedRemainder}} (Soglia: >= {{targetRemainderValue}})",
+    "blockMinedSuccess": "Blocco Minato con successo! Resto calcolato: {{calculatedRemainder}} (Soglia: >= {{targetRemainderValue}})",
     "allBlocksMined": "Tutti i {{maxBlocks}} blocchi minati! Sessione di gioco completa. Apri il menu per ricominciare.",
-    "attemptFailed": "Tentativo Fallito. Resto Calcolato ({{calculatedRemainder}}) è minore della Soglia Target (>= {{targetRemainderValue}}). Prova un nuovo Nonce!",
+    "attemptFailed": "Tentativo fallito. Resto Calcolato ({{calculatedRemainder}}) è minore della Soglia Target (>= {{targetRemainderValue}}). Prova un nuovo Nonce!",
     "maxBlocksReached": "Massimo di {{maxBlocks}} blocchi già minati. Sessione di gioco completa.",
     "difficultyDecreased": "Difficoltà diminuita",
     "difficultyIncreased": "Difficoltà aumentata",
     "difficultyByAmount": "di {{amount}}",
     "difficultyBlockTime": "tempo blocco: ~{{time}} min"
-  },
-  "errors": {
-    "noLanguagesConfigured": "Nessuna lingua configurata",
-    "gameEndedOrRoundNotStarted": "Gioco terminato o round non iniziato.",
-    "txOnlyBlock3": "Le transazioni possono essere selezionate solo per il Blocco 3.",
-    "maxTxSelected": "Puoi selezionare un massimo di {{maxTx}} transazioni.",
-    "revealDivisorsFirst": "Devi prima rivelare i divisori e iniziare il round!",
-    "poolNameMissing": "Nome Pool mancante.",
-    "poolNameTooLong": "Nome Pool: massimo {{maxLength}} caratteri.",
-    "poolNameSpaces": "Nome Pool: non deve contenere spazi.",
-    "selectDivisor": "Per favore, seleziona un Divisore.",
-    "nonceInvalid": "Il Nonce deve essere un numero valido tra {{min}} e {{max}}.",
-    "prevRemainderMissingBlock2": "Errore: Resto del blocco precedente non disponibile per il Blocco 2.",
-    "prevRemainderMissingBlock3": "Errore: Resto del blocco precedente non disponibile per il Blocco 3.",
-    "unexpectedError": "Si è verificato un errore imprevisto."
-  },
-  "gameConstants": {
-    "transactions": {
-      "tx1_desc": "Pergamena dell'Hashing Minore",
-      "tx2_desc": "Amuleto dell'Integrità della Catena",
-      "tx3_desc": "Pozione della Scoperta del Nonce",
-      "tx4_desc": "Mappa per Blocchi Dimenticati",
-      "tx5_desc": "Piccone Dorato dell'Efficienza",
-      "tx6_desc": "Registro in Scaglie di Drago"
-    }
   }
 }

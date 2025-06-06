@@ -16,179 +16,144 @@
 
 <div id="groupInputModal" class="modal-overlay">
     <div class="modal-content text-gray-900 dark:text-gray-100">
-        <h2 data-i18n-key="modal.groupInputTitle" class="text-2xl font-semibold mb-4 text-center text-cyan-600 dark:text-cyan-400">Impostazioni partita</h2>
-        <p data-i18n-key="modal.howManyGroups" class="mb-3 text-center">Quanti gruppi partecipano?</p>
+        <h2 data-i18n-key="index.modal.groupInputTitle" class="text-2xl font-semibold mb-4 text-center text-cyan-600 dark:text-cyan-400"></h2>
+        <p data-i18n-key="index.modal.howManyGroups" class="mb-3 text-center"></p>
         <div>
-            <label for="numGroupsInput" data-i18n-key="modal.numGroupsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Numero di gruppi:</label>
+            <label for="numGroupsInput" data-i18n-key="index.modal.numGroupsLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"></label>
             <input type="number" id="numGroupsInput" name="numGroupsInput" min="1" max="20" value="5" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-500 dark:placeholder-gray-400">
-            <p id="numGroupsError" data-i18n-key="modal.numGroupsError" class="text-red-500 text-xs mt-1 hidden">Inserisci un numero valido (1-20).</p>
+            <p id="numGroupsError" data-i18n-key="index.modal.numGroupsError" class="text-red-500 text-xs mt-1 hidden"></p>
         </div>
-        <button id="startGameButton" data-i18n-key="modal.startGameButton" class="mt-6 w-full bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75">
-            Inizia partita
-        </button>
+        <button id="startGameButton" data-i18n-key="index.modal.startGameButton" class="mt-6 w-full bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75"></button>
     </div>
 </div>
 
-
 <header class="p-4 sm:p-5 bg-gray-200 dark:bg-gray-800 shadow-lg flex justify-between items-center relative">
-    <h1 data-i18n-key="appTitle" class="text-3xl sm:text-4xl md:text-5xl font-game text-cyan-600 dark:text-cyan-400">Proof & Dragons</h1>
+    <h1 data-i18n-key="common.appTitle" class="text-3xl sm:text-4xl md:text-5xl font-game text-cyan-600 dark:text-cyan-400"></h1>
     <div class="flex items-center space-x-1 sm:space-x-2">
-
         <div class="relative">
             <button id="languageToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-expanded="false" aria-controls="languageMenu">
                 <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
                     <i class="fa-solid fa-language text-xl"></i>
                 </span>
-                <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="tooltips.languageSelector">Seleziona lingua</span>
+                <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="common.tooltips.languageSelector"></span>
             </button>
-            <div id="languageMenu" class="hidden absolute top-full right-0 mt-2 w-auto min-w-[150px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-300 dark:border-gray-700 z-20 py-1">
-                <!-- Language options will be populated here by I18nManager -->
-            </div>
+            <div id="languageMenu" class="hidden absolute top-full right-0 mt-2 w-auto min-w-[150px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-300 dark:border-gray-700 z-20 py-1"></div>
         </div>
 
         <a href="https://github.com/marcofarina/proof_and_dragons" target="_blank" rel="noopener noreferrer" aria-label="Repository GitHub" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500">
-            <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                <i class="fa-brands fa-github text-xl"></i>
-            </span>
-            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="tooltips.github">Repository GitHub</span>
+            <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-brands fa-github text-xl"></i></span>
+            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="common.tooltips.github"></span>
         </a>
         <a href="https://ko-fi.com/marcofarina" target="_blank" rel="noopener noreferrer" aria-label="Supporta il progetto" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500">
-            <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                <i class="fa-solid fa-heart-circle-bolt text-xl"></i>
-            </span>
-            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="tooltips.kofi">Offrimi una pinta di <strong><i>grog</i></strong> 🍺</span>
+            <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-solid fa-heart-circle-bolt text-xl"></i></span>
+            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="common.tooltips.kofi"></span>
         </a>
 
         <button id="fullscreenToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Toggle Fullscreen">
-            <span id="fullscreenIconExpand" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                <i class="fa-solid fa-expand text-xl"></i>
-            </span>
-            <span id="fullscreenIconCompress" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                <i class="fa-solid fa-compress text-xl"></i>
-            </span>
-            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="tooltips.fullscreen">Attiva/disattiva schermo intero</span>
+            <span id="fullscreenIconExpand" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-solid fa-expand text-xl"></i></span>
+            <span id="fullscreenIconCompress" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-solid fa-compress text-xl"></i></span>
+            <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="tooltips.fullscreen"></span>
         </button>
 
         <button id="themeToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-label="Toggle Light/Dark Theme" aria-pressed="false">
-            <span id="themeIconSun" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                <i class="fa-solid fa-moon text-xl"></i>
-            </span>
-            <span id="themeIconMoon" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                <i class="fa-regular fa-sun text-xl"></i>
-            </span>
+            <span id="themeIconSun" class="hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-solid fa-moon text-xl"></i></span>
+            <span id="themeIconMoon" class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center"><i class="fa-regular fa-sun text-xl"></i></span>
             <span class="tooltiptext tooltiptext-theme-light bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs">Nox!</span>
             <span class="tooltiptext tooltiptext-theme-dark bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs">Lumos!</span>
         </button>
         <button id="menuToggle" class="tooltip p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-200 dark:focus:ring-offset-gray-800 focus:ring-cyan-500" aria-controls="appMenu">
-             <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="tooltips.menuToggle">Apri/Chiudi menu</span>
+             <span class="tooltiptext bg-gray-700 text-white dark:bg-gray-600 px-2 py-1 rounded-md shadow-lg text-xs" data-i18n-key="common.tooltips.menuToggle"></span>
             <span class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
             </span>
         </button>
     </div>
     <div id="appMenu" class="hidden absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-300 dark:border-gray-700 z-20 p-4 space-y-3">
-        <a href="./manuale.html" id="manualLink" target="_blank" rel="noopener noreferrer" data-i18n-key="menu.manualLink" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Manuale</a>
+        <a href="./manuale.html" id="manualLink" target="_blank" rel="noopener noreferrer" data-i18n-key="common.menu.manualLink" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"></a>
         <a href="https://www.rainbowbits.cloud" id="rainbowBitsLink" target="_blank" rel="noopener noreferrer" class="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Rainbow Bits</a>
         <hr class="border-gray-300 dark:border-gray-600">
-        <button id="resetGameButton" data-i18n-key="menu.resetGameButton" class="w-full bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75">
-            Ricomincia partita
-        </button>
+        <button id="resetGameButton" data-i18n-key="common.menu.resetGameButton" class="w-full bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white text-base font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"></button>
     </div>
 </header>
 
 <main class="flex-grow grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 p-4 sm:p-5" style="visibility: hidden;">
 
     <div id="verificationModule" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-1">
-        <h2 data-i18n-key="verification.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-cyan-500 dark:border-cyan-600 pb-2 text-cyan-600 dark:text-cyan-400">Verifica tentativo</h2>
+        <h2 data-i18n-key="index.verification.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-cyan-500 dark:border-cyan-600 pb-2 text-cyan-600 dark:text-cyan-400"></h2>
         <form id="verifyForm" class="space-y-3 sm:space-y-4">
             <div>
-                <label for="poolName" data-i18n-key="verification.poolNameLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome Pool (max 10, no spazi):</label>
-                <input type="text" id="poolName" name="poolName" required maxlength="10" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-500 dark:placeholder-gray-400" data-i18n-attr="placeholder:verification.poolNamePlaceholder">
+                <label for="poolName" data-i18n-key="index.verification.poolNameLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"></label>
+                <input type="text" id="poolName" name="poolName" required maxlength="10" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-500 dark:placeholder-gray-400" data-i18n-attr="placeholder:index.verification.poolNamePlaceholder">
             </div>
             <div>
-                <label for="nonce" data-i18n-key="verification.nonceLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nonce (2-32):</label>
-                <input type="number" id="nonce" name="nonce" min="2" max="32" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-500 dark:placeholder-gray-400" data-i18n-attr="placeholder:verification.noncePlaceholder">
+                <label for="nonce" data-i18n-key="index.verification.nonceLabel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"></label>
+                <input type="number" id="nonce" name="nonce" min="2" max="32" required class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg p-2.5 text-base focus:ring-cyan-500 focus:border-cyan-500 placeholder-gray-500 dark:placeholder-gray-400" data-i18n-attr="placeholder:index.verification.noncePlaceholder">
             </div>
-            <button type="button" id="verifyAttempt" data-i18n-key="verification.verifyButton" class="w-full bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75">
-                Verifica
-            </button>
+            <button type="button" id="verifyAttempt" data-i18n-key="index.verification.verifyButton" class="w-full bg-cyan-500 hover:bg-cyan-600 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75"></button>
         </form>
     </div>
 
     <div id="divisorDisplayContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-2 flex flex-col">
-        <h2 data-i18n-key="divisors.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-purple-500 dark:border-purple-600 pb-2 text-purple-600 dark:text-purple-400">Seleziona divisore</h2>
-        <button id="revealDivisorsButton" data-i18n-key="divisors.revealButton" class="my-4 w-full bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75">
-            Rivela divisori e inizia round
-        </button>
-        <div id="divisorGrid" class="hidden-initial grid grid-cols-4 gap-2 sm:gap-3 justify-center max-w-md mx-auto">
-            </div>
-         <p class="text-xs text-center mt-2 text-gray-500 dark:text-gray-400"><span data-i18n-key="divisors.rangeInfoLabel">Range divisori:</span> <span id="divisorRangeInfo">N/D</span></p>
+        <h2 data-i18n-key="index.divisors.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-purple-500 dark:border-purple-600 pb-2 text-purple-600 dark:text-purple-400"></h2>
+        <button id="revealDivisorsButton" data-i18n-key="index.divisors.revealButton" class="my-4 w-full bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white text-lg font-semibold py-2.5 px-4 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"></button>
+        <div id="divisorGrid" class="hidden-initial grid grid-cols-4 gap-2 sm:gap-3 justify-center max-w-md mx-auto"></div>
+         <p class="text-xs text-center mt-2 text-gray-500 dark:text-gray-400"><span data-i18n-key="index.divisors.rangeInfoLabel"></span> <span id="divisorRangeInfo">N/D</span></p>
          <p id="difficultyAdjustmentMessage" class="text-center mt-1 text-base font-semibold"></p>
     </div>
 
     <div id="mempoolContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:order-3 flex flex-col">
-        <h2 data-i18n-key="mempool.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-teal-500 dark:border-teal-600 pb-2 text-teal-600 dark:text-teal-400">Mempool <span data-i18n-key="mempool.subtitle" class="text-sm text-gray-600 dark:text-gray-400">(max 2 per Blocco 3)</span></h2>
-        <div id="mempoolGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 flex-grow">
-            </div>
+        <h2 data-i18n-key="index.mempool.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-teal-500 dark:border-teal-600 pb-2 text-teal-600 dark:text-teal-400"><span data-i18n-key="index.mempool.subtitle" class="text-sm text-gray-600 dark:text-gray-400"></span></h2>
+        <div id="mempoolGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 flex-grow"></div>
     </div>
 
     <section id="calculationDetailsContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border-2 border-gray-300 dark:border-gray-700 lg:order-4">
-        <h2 data-i18n-key="calculation.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-indigo-500 dark:border-indigo-600 pb-2 text-indigo-600 dark:text-indigo-400">Dettaglio calcoli</h2>
+        <h2 data-i18n-key="index.calculation.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-indigo-500 dark:border-indigo-600 pb-2 text-indigo-600 dark:text-indigo-400"></h2>
         <div id="calculationDetailsBox" class="space-y-1 text-gray-800 dark:text-gray-100" aria-live="polite">
-            <p data-i18n-key="calculation.initialMessage" class="text-gray-500 dark:text-gray-400">Effettua una verifica per visualizzare i dettagli del calcolo.</p>
+            <p data-i18n-key="index.calculation.initialMessage" class="text-gray-500 dark:text-gray-400"></p>
         </div>
     </section>
 
     <div id="timewallContainer" class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-2xl border border-gray-300 dark:border-gray-700 lg:col-span-2 lg:order-5 min-h-[320px] lg:min-h-0">
-        <h2 data-i18n-key="timewall.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-orange-500 dark:border-orange-600 pb-2 text-orange-600 dark:text-orange-400">Timewall</h2>
+        <h2 data-i18n-key="index.timewall.title" class="text-2xl sm:text-3xl font-semibold mb-3 sm:mb-4 border-b-2 border-orange-500 dark:border-orange-600 pb-2 text-orange-600 dark:text-orange-400"></h2>
         <div id="timewallChainContainer" class="pb-2">
-            <div id="timewallChain" class="flex space-x-3 overflow-x-auto h-full">
-                </div>
+            <div id="timewallChain" class="flex space-x-3 overflow-x-auto h-full"></div>
         </div>
     </div>
 </main>
 
-<div id="messageArea" class="fixed bottom-5 right-5 text-white p-4 sm:p-5 rounded-lg shadow-xl max-w-sm sm:max-w-md text-base sm:text-lg z-50 transition-opacity duration-300 ease-out opacity-0" style="display: none;" aria-live="assertive">
-    </div>
+<div id="messageArea" class="fixed bottom-5 right-5 text-white p-4 sm:p-5 rounded-lg shadow-xl max-w-sm sm:max-w-md text-base sm:text-lg z-50 transition-opacity duration-300 ease-out opacity-0" style="display: none;" aria-live="assertive"></div>
 
 <script src="./js/i18n.js"></script>
 <script type="module">
   import { UIManager } from './js/ui.js';
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // UIManager.init() viene chiamato per primo per assicurarsi che UIManager sia definito
-    // prima che I18nManager.init() possa emettere l'evento 'languageChange'
-    // che UIManager deve ascoltare.
-    // Tuttavia, I18nManager deve essere disponibile per UIManager.init() se esso chiama I18nManager.t().
-    // Lo script i18n.js è incluso prima, quindi I18nManager è già definito.
+  async function initializeApp() {
+    // 1. Inizializza I18nManager e carica i namespace necessari per questa pagina
+    await I18nManager.init(['common', 'index']);
 
-    UIManager.init(); // Inizializza UIManager
+    // 2. Traduci tutti gli elementi statici nella pagina
+    I18nManager.updateUI();
 
-    // Aggiungi il listener per l'evento 'languageChange' emesso da I18nManager
-    document.addEventListener('languageChange', (event) => {
-        console.log(`[index.html] Evento 'languageChange' ricevuto. Nuova lingua: ${event.detail.currentLanguage}`);
-        if (UIManager && typeof UIManager.refreshDynamicContentForLanguageChange === 'function') {
+    // 3. Inizializza l'UIManager, che ora può usare le traduzioni caricate
+    UIManager.init();
+
+    // 4. Aggiungi il listener per i cambi di lingua successivi
+    document.addEventListener('languageChange', () => {
+        console.log("[index.html] Evento 'languageChange' ricevuto, aggiorno contenuti dinamici.");
+        if (UIManager && UIManager.refreshDynamicContentForLanguageChange) {
             UIManager.refreshDynamicContentForLanguageChange();
-        } else {
-            console.warn("[index.html] UIManager.refreshDynamicContentForLanguageChange non disponibile al momento dell'evento.");
         }
     });
 
-    // Se I18nManager.init() è già stato eseguito (probabile, dato l'ordine degli script)
-    // e ha già impostato una lingua, potrebbe essere necessario un refresh iniziale
-    // se l'evento 'languageChange' iniziale non è stato catturato perché il listener
-    // non era ancora pronto.
-    // Una chiamata esplicita qui dopo che UIManager è pronto assicura la sincronizzazione.
-    // Questo è particolarmente utile se I18nManager finisce il suo init() molto velocemente.
-    if (typeof I18nManager !== 'undefined' && I18nManager.currentLanguage && UIManager.refreshDynamicContentForLanguageChange) {
-        console.log("[index.html] Eseguo un refresh iniziale del contenuto dinamico.");
+    // 5. Esegui un refresh iniziale per il contenuto dinamico
+    if (typeof UIManager !== 'undefined' && UIManager.refreshDynamicContentForLanguageChange) {
         UIManager.refreshDynamicContentForLanguageChange();
     }
+  }
 
-  });
+  // Esegui l'inizializzazione quando il DOM è pronto
+  document.addEventListener('DOMContentLoaded', initializeApp);
+
 </script>
 </body>
 </html>
-

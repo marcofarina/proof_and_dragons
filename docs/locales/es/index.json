@@ -1,27 +1,10 @@
 {
-  "appTitle": "Proof & Dragons",
   "modal": {
     "groupInputTitle": "Configuración del juego",
     "howManyGroups": "¿Cuántos grupos participan?",
     "numGroupsLabel": "Número de grupos:",
     "numGroupsError": "Introduce un número válido (1-20).",
     "startGameButton": "Iniciar juego"
-  },
-  "tooltips": {
-    "languageSelector": "Seleccionar idioma",
-    "github": "Repositorio GitHub",
-    "kofi": "Invítame a una pinta de <strong><i>grog</i></strong> 🍺",
-    "fullscreen": "Activar/desactivar pantalla completa",
-    "theme": {
-      "nox": "¡Nox!",
-      "lumos": "¡Lumos!"
-    },
-    "menuToggle": "Abrir/Cerrar menú"
-  },
-  "menu": {
-    "manualLink": "Manual",
-    "rainbowBitsLink": "Rainbow Bits",
-    "resetGameButton": "Reiniciar juego"
   },
   "verification": {
     "title": "Verificar Intento",
@@ -64,7 +47,7 @@
       "calculatedRemainder": "Resto Calculado",
       "targetRemainder": "Umbral Objetivo",
       "outcome": "Resultado",
-      "outcomeComparison": "Resto Calculado ({{calculated}}) ≥ Umbral Objetivo ({{target}})?" ,
+      "outcomeComparison": "Resto Calculado ({{calculated}}) ≥ Umbral Objetivo ({{target}})?",
       "asciiSumOf": "Suma ASCII de"
     }
   },
@@ -96,30 +79,5 @@
     "difficultyIncreased": "Dificultad aumentada",
     "difficultyByAmount": "en {{amount}}",
     "difficultyBlockTime": "tiempo de bloque: ~{{time}} min"
-  },
-  "errors": {
-    "noLanguagesConfigured": "No hay idiomas configurados",
-    "gameEndedOrRoundNotStarted": "Juego terminado o ronda no iniciada.",
-    "txOnlyBlock3": "Las transacciones solo se pueden seleccionar para el Bloque 3.",
-    "maxTxSelected": "Puedes seleccionar un máximo de {{maxTx}} transacciones.",
-    "revealDivisorsFirst": "¡Debes revelar los divisores e iniciar la ronda primero!",
-    "poolNameMissing": "Falta el Nombre del Pool.",
-    "poolNameTooLong": "Nombre del Pool: máximo {{maxLength}} caracteres.",
-    "poolNameSpaces": "Nombre del Pool: no debe contener espacios.",
-    "selectDivisor": "Por favor, selecciona un Divisor.",
-    "nonceInvalid": "El Nonce debe ser un número válido entre {{min}} e {{max}}.",
-    "prevRemainderMissingBlock2": "Error: Resto del bloque anterior no disponible para el Bloque 2.",
-    "prevRemainderMissingBlock3": "Error: Resto del bloque anterior no disponible para el Bloque 3.",
-    "unexpectedError": "Ocurrió un error inesperado."
-  },
-  "gameConstants": {
-    "transactions": {
-      "tx1_desc": "Pergamino de Hashing Menor",
-      "tx2_desc": "Amuleto de Integridad de Cadena",
-      "tx3_desc": "Poción de Descubrimiento de Nonce",
-      "tx4_desc": "Mapa a Bloques Olvidados",
-      "tx5_desc": "Pico Dorado de Eficiencia",
-      "tx6_desc": "Libro Mayor de Escamas de Dragón"
-    }
   }
 }

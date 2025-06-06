@@ -1,0 +1,40 @@
+{
+  "appTitle": "Proof & Dragons",
+  "tooltips": {
+    "languageSelector": "Select language",
+    "github": "GitHub Repository",
+    "kofi": "Buy me a pint of <strong><i>grog</i></strong> 🍺",
+    "fullscreen": "Toggle fullscreen",
+    "menuToggle": "Open/Close menu"
+  },
+  "menu": {
+    "manualLink": "Manual",
+    "rainbowBitsLink": "Rainbow Bits",
+    "resetGameButton": "Restart game"
+  },
+  "errors": {
+    "noLanguagesConfigured": "No languages configured",
+    "gameEndedOrRoundNotStarted": "Game ended or round not started.",
+    "txOnlyBlock3": "Transactions can only be selected for Block 3.",
+    "maxTxSelected": "You can select a maximum of {{maxTx}} transactions.",
+    "revealDivisorsFirst": "You must reveal divisors and start the round first!",
+    "poolNameMissing": "Pool Name missing.",
+    "poolNameTooLong": "Pool Name: maximum {{maxLength}} characters.",
+    "poolNameSpaces": "Pool Name: must not contain spaces.",
+    "selectDivisor": "Please select a Divisor.",
+    "nonceInvalid": "Nonce must be a valid number between {{min}} and {{max}}.",
+    "prevRemainderMissingBlock2": "Error: Previous block remainder not available for Block 2.",
+    "prevRemainderMissingBlock3": "Error: Previous block remainder not available for Block 3.",
+    "unexpectedError": "An unexpected error occurred."
+  },
+  "gameConstants": {
+    "transactions": {
+      "tx1_desc": "Scroll of Minor Hashing",
+      "tx2_desc": "Amulet of Chain Integrity",
+      "tx3_desc": "Potion of Nonce Discovery",
+      "tx4_desc": "Map to Forgotten Blocks",
+      "tx5_desc": "Golden Pickaxe Efficiency",
+      "tx6_desc": "Dragonscale Ledger"
+    }
+  }
+}

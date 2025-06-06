@@ -2,143 +2,125 @@
 
 /**
  * @namespace I18nManager
- * @description Gestisce l'internazionalizzazione (i18n) dell'applicazione.
+ * @description Gestisce l'internazionalizzazione (i18n) dell'applicazione
+ * caricando file di traduzione suddivisi per namespace.
  */
 const I18nManager = {
     currentLanguage: 'it',
-    translations: {},
-    validLanguageFileStatus: {},
+    translations: {}, // Struttura: { lang: { namespace: {...} } }
+    loadedNamespaces: new Set(),
     availableLanguagesFromManifest: [],
     isLanguageMenuOpen: false,
 
-    async loadTranslations(lang) {
-        if (this.translations[lang] && Object.keys(this.translations[lang]).length > 0) {
-            return this.translations[lang];
+    /**
+     * Carica un singolo namespace di traduzione.
+     * @param {string} lang - Codice lingua (es. 'it').
+     * @param {string} namespace - Il nome del file JSON da caricare (es. 'common', 'index').
+     * @returns {Promise<boolean>} True se il caricamento ha avuto successo, false altrimenti.
+     */
+    async loadNamespace(lang, namespace) {
+        if (this.translations[lang] && this.translations[lang][namespace]) {
+            return true;
         }
         try {
-            const cacheBuster = `v=${new Date().getTime()}`;
-            const response = await fetch(`./locales/${lang}.json?${cacheBuster}`);
+            const path = `./locales/${lang}/${namespace}.json?v=${new Date().getTime()}`;
+            const response = await fetch(path);
             if (!response.ok) {
-                this.validLanguageFileStatus[lang] = false;
-                throw new Error(`File ${lang}.json non trovato o errore di caricamento (status: ${response.status})`);
+                throw new Error(`File ${path} non trovato (status: ${response.status})`);
             }
-            this.translations[lang] = await response.json();
-            this.validLanguageFileStatus[lang] = true;
-            return this.translations[lang];
+
+            if (!this.translations[lang]) {
+                this.translations[lang] = {};
+            }
+            this.translations[lang][namespace] = await response.json();
+
+            this.loadedNamespaces.add(namespace);
+            return true;
         } catch (error) {
-            console.error(`Errore durante il caricamento del file di traduzione ${lang}.json:`, error.message);
-            this.validLanguageFileStatus[lang] = false;
-            if (lang !== 'it') {
-                console.warn(`Tentativo di fallback alla lingua di default 'it'.`);
-                if (this.translations['it'] && Object.keys(this.translations['it']).length > 0) {
-                    return this.translations['it'];
-                }
-                return await this.loadTranslations('it');
-            }
-            this.translations[lang] = {};
-            return {};
+            console.error(`[I18nManager] Errore caricando il namespace '${namespace}' per '${lang}':`, error.message);
+            return false;
         }
     },
 
+    /**
+     * Carica un elenco di namespace per la lingua corrente.
+     * @param {string[]} namespaces - Array di namespace da caricare.
+     */
+    async loadNamespaces(namespaces = []) {
+        const promises = namespaces.map(ns => this.loadNamespace(this.currentLanguage, ns));
+        await Promise.all(promises);
+    },
+
+    /**
+     * Imposta la lingua e ricarica i namespace necessari.
+     * @param {string} lang - Il codice della nuova lingua.
+     */
     async setLanguage(lang) {
-        const langToggle = document.getElementById('languageToggle');
-        const targetLangInfo = this.availableLanguagesFromManifest.find(l => l.code === lang);
-
-        if (!lang || typeof lang !== 'string' || !targetLangInfo) {
-            console.warn(`Tentativo di impostare una lingua non valida o non presente nel manifest: ${lang}.`);
-            let fallbackLang = this.currentLanguage;
-            if (!this.availableLanguagesFromManifest.find(l => l.code === fallbackLang)) {
-                fallbackLang = 'it';
-            }
-            if (!this.availableLanguagesFromManifest.find(l => l.code === fallbackLang) && this.availableLanguagesFromManifest.length > 0) {
-                fallbackLang = this.availableLanguagesFromManifest[0].code;
-            }
-
-            if (this.availableLanguagesFromManifest.find(l => l.code === fallbackLang) && fallbackLang !== this.currentLanguage) {
-                 console.warn(`Fallback a '${fallbackLang}'.`);
-                 await this.setLanguageInternal(fallbackLang);
-            } else if (this.availableLanguagesFromManifest.find(l => l.code === fallbackLang)) {
-                 console.warn(`Mantenimento lingua corrente: '${this.currentLanguage}'.`);
-            } else {
-                console.error("Nessuna lingua valida disponibile per il fallback.");
-            }
-            if (langToggle) langToggle.setAttribute('aria-expanded', 'false');
-            this.closeLanguageMenu();
+        if (!lang || lang === this.currentLanguage || !this.availableLanguagesFromManifest.find(l => l.code === lang)) {
+            if (this.isLanguageMenuOpen) this.closeLanguageMenu();
             return;
         }
-        if (!(await this.checkLanguageFileExists(lang))) {
-            console.error(`File di traduzione per la lingua '${lang}' non trovato. Impossibile cambiare lingua.`);
-            this.closeLanguageMenu();
-            return;
-        }
-
-        await this.setLanguageInternal(lang);
-        if (langToggle) langToggle.setAttribute('aria-expanded', 'false');
-        this.closeLanguageMenu();
-    },
-
-    async setLanguageInternal(lang) {
-        console.log(`[I18nManager] setLanguageInternal: Inizio impostazione lingua a '${lang}'`);
-        await this.loadTranslations(lang);
         this.currentLanguage = lang;
+        localStorage.setItem('selectedLanguage', lang);
+        document.documentElement.lang = lang;
+        console.log(`[I18nManager] Lingua cambiata in '${lang}'. Ricarico i namespace...`);
 
-        if (this.translations[lang] && Object.keys(this.translations[lang]).length === 0 && lang !== 'it') {
-             if (this.translations['it'] && Object.keys(this.translations['it']).length > 0) {
-                 this.currentLanguage = 'it';
-                 console.log(`[I18nManager] setLanguageInternal: Fallback a 'it' perché '${lang}' era vuoto.`);
-             }
-        }
+        await this.loadNamespaces(Array.from(this.loadedNamespaces));
 
-        localStorage.setItem('selectedLanguage', this.currentLanguage);
-        console.log(`[I18nManager] Lingua impostata in localStorage: '${this.currentLanguage}'.`);
-        document.documentElement.lang = this.currentLanguage;
-
-        console.log("[I18nManager] Chiamata a updateUI() per elementi statici...");
         this.updateUI();
-        console.log("[I18nManager] Chiamata a updateLanguageMenuActiveState()...");
         this.updateLanguageMenuActiveState();
 
-        // Emetti un evento per notificare il cambio di lingua
-        console.log(`[I18nManager] Invio evento 'languageChange' per la lingua: ${this.currentLanguage}`);
-        const event = new CustomEvent('languageChange', {
-            detail: {
-                currentLanguage: this.currentLanguage
-            }
-        });
+        const event = new CustomEvent('languageChange', { detail: { currentLanguage: this.currentLanguage } });
         document.dispatchEvent(event);
 
-        console.log(`[I18nManager] setLanguageInternal: Fine impostazione lingua a '${this.currentLanguage}'`);
+        if (this.isLanguageMenuOpen) this.closeLanguageMenu();
     },
 
+    /**
+     * Recupera una stringa di traduzione usando una chiave con namespace.
+     * @param {string} key - La chiave, formato "namespace.path.to.key".
+     * @param {Object} [params={}] - Parametri per interpolazione.
+     * @returns {string} La stringa tradotta o la chiave stessa.
+     */
     t(key, params = {}) {
-        let effectiveLang = this.currentLanguage;
-        let langTranslations = this.translations[effectiveLang];
-        if ((!langTranslations || Object.keys(langTranslations).length === 0) && effectiveLang !== 'it') {
-            if (this.translations['it'] && Object.keys(this.translations['it']).length > 0) {
-                langTranslations = this.translations['it'];
-            } else {
-                langTranslations = {};
-            }
-        } else if (!langTranslations) {
-            langTranslations = {};
-        }
-        let text = key.split('.').reduce((obj, k) => obj && obj[k], langTranslations);
-        if (text === undefined) {
+        const keyParts = key.split('.');
+        if (keyParts.length < 2) {
+            console.warn(`[I18nManager] Chiave i18n "${key}" non valida. Deve includere un namespace (es. 'common.appTitle').`);
             return key;
         }
+        const namespace = keyParts[0];
+        const actualKey = keyParts.slice(1).join('.');
+        const langTranslations = this.translations[this.currentLanguage];
+
+        if (!langTranslations || !langTranslations[namespace]) {
+            return key;
+        }
+
+        let text = actualKey.split('.').reduce((obj, k) => obj && obj[k], langTranslations[namespace]);
+
+        if (text === undefined) {
+            if (namespace !== 'common' && langTranslations['common']) {
+                text = actualKey.split('.').reduce((obj, k) => obj && obj[k], langTranslations['common']);
+            }
+            if (text === undefined) {
+                return key;
+            }
+        }
+
         for (const param in params) {
             text = text.replace(new RegExp(`{{${param}}}`, 'g'), params[param]);
         }
         return text;
     },
 
+    /**
+     * Aggiorna gli elementi HTML statici con le traduzioni.
+     */
     updateUI() {
         document.querySelectorAll('[data-i18n-key]').forEach(el => {
             const key = el.dataset.i18nKey;
             const translation = this.t(key);
-            if (el.innerHTML !== translation) {
-                 el.innerHTML = translation;
-            }
+            if (el.innerHTML !== translation) el.innerHTML = translation;
         });
         document.querySelectorAll('[data-i18n-attr]').forEach(el => {
             const attrRules = el.dataset.i18nAttr.split(';');
@@ -146,193 +128,132 @@ const I18nManager = {
                 const [attrName, key] = rule.split(':');
                 if (attrName && key) {
                     const translation = this.t(key);
-                    if (el.getAttribute(attrName) !== translation) {
-                        el.setAttribute(attrName, translation);
-                    }
+                    if (el.getAttribute(attrName) !== translation) el.setAttribute(attrName, translation);
                 }
             });
         });
     },
 
-    async init() {
-        console.log("[I18nManager] Inizializzazione I18nManager...");
+    /**
+     * Inizializza il gestore, caricando il manifest e i namespace richiesti.
+     */
+    async init(requiredNamespaces = []) {
+        console.log("[I18nManager] Init con namespace richiesti:", requiredNamespaces);
         await this.loadManifest();
 
-        let savedLang = localStorage.getItem('selectedLanguage');
         let initialLang = 'it';
+        const savedLang = localStorage.getItem('selectedLanguage');
+        const browserLang = navigator.language.split('-')[0].toLowerCase();
 
-        if (savedLang && this.availableLanguagesFromManifest.find(l => l.code === savedLang) && (await this.checkLanguageFileExists(savedLang))) {
-            initialLang = savedLang;
-        } else {
-            const browserLang = navigator.language.split('-')[0].toLowerCase();
-            if (this.availableLanguagesFromManifest.find(l => l.code === browserLang) && (await this.checkLanguageFileExists(browserLang))) {
-                initialLang = browserLang;
-            } else if (this.availableLanguagesFromManifest.find(l => l.code === 'it') && (await this.checkLanguageFileExists('it'))) {
-                initialLang = 'it';
-            } else if (this.availableLanguagesFromManifest.length > 0) {
-                for (const langInfo of this.availableLanguagesFromManifest) {
-                    if (await this.checkLanguageFileExists(langInfo.code)) {
-                        initialLang = langInfo.code;
-                        break;
-                    }
-                }
-                 if (initialLang === 'it' && !(await this.checkLanguageFileExists('it')) && this.availableLanguagesFromManifest.length > 0) {
-                    console.warn("[I18nManager] File it.json non trovato, ma è il fallback principale.");
-                }
-            } else {
-                console.warn("[I18nManager] Manifest vuoto o non caricato, o nessuna lingua nel manifest ha un file JSON valido. Fallback a 'it'.");
-            }
+        const langExists = (langCode) => this.availableLanguagesFromManifest.some(l => l.code === langCode);
+
+        if (savedLang && langExists(savedLang)) initialLang = savedLang;
+        else if (browserLang && langExists(browserLang)) initialLang = browserLang;
+        else if (!langExists('it') && this.availableLanguagesFromManifest.length > 0) {
+            initialLang = this.availableLanguagesFromManifest[0].code;
         }
 
-        console.log(`[I18nManager] Lingua iniziale determinata: ${initialLang}`);
-        await this.populateLanguageMenu();
-        // setLanguageInternal emetterà l'evento 'languageChange'
-        await this.setLanguageInternal(initialLang);
+        this.currentLanguage = initialLang;
+        localStorage.setItem('selectedLanguage', initialLang);
+        document.documentElement.lang = initialLang;
+        console.log(`[I18nManager] Lingua iniziale impostata a '${initialLang}'.`);
 
+        await this.loadNamespaces(requiredNamespaces);
+
+        await this.populateLanguageMenu();
+        this.setupMenuListeners();
+        return this;
+    },
+
+    /**
+     * Carica il file manifest delle lingue.
+     */
+    async loadManifest() {
+        try {
+            const response = await fetch(`./locales/locales-manifest.json?v=${new Date().getTime()}`);
+            if (!response.ok) throw new Error(`Manifest non trovato`);
+            this.availableLanguagesFromManifest = await response.json();
+        } catch (error) {
+            console.error("[I18nManager] Errore caricando il manifest. Fallback:", error.message);
+            this.availableLanguagesFromManifest = [
+                { "code": "it", "name": "Italiano 🇮🇹" },
+                { "code": "en", "name": "English 🇬🇧" }
+            ];
+        }
+    },
+
+    /**
+     * Imposta i listener per il menu delle lingue.
+     */
+    setupMenuListeners() {
         const langToggle = document.getElementById('languageToggle');
         if (langToggle) {
             langToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.toggleLanguageMenu();
             });
-        } else {
-            console.warn("[I18nManager] Elemento 'languageToggle' non trovato nel DOM.");
         }
-
         document.addEventListener('click', (event) => {
-            const languageMenu = document.getElementById('languageMenu');
-            const languageToggle = document.getElementById('languageToggle');
-            if (this.isLanguageMenuOpen && languageMenu && languageToggle &&
-                !languageMenu.contains(event.target) && !languageToggle.contains(event.target)) {
-                this.closeLanguageMenu();
-            }
-        });
-        console.log("[I18nManager] I18nManager inizializzato.");
-    },
-
-    async loadManifest() {
-        try {
-            const cacheBuster = `v_manifest=${new Date().getTime()}`;
-            const response = await fetch(`./locales/locales-manifest.json?${cacheBuster}`);
-            if (!response.ok) {
-                throw new Error(`File locales-manifest.json non trovato o errore (status: ${response.status})`);
-            }
-            this.availableLanguagesFromManifest = await response.json();
-            console.log("[I18nManager] Manifest delle lingue caricato:", this.availableLanguagesFromManifest);
-            if (!Array.isArray(this.availableLanguagesFromManifest) || this.availableLanguagesFromManifest.some(l => !l.code || !l.name)) {
-                 console.error("[I18nManager] Formato del manifest delle lingue non valido.");
-                 this.availableLanguagesFromManifest = [];
-            }
-        } catch (error) {
-            console.error("[I18nManager] Errore durante il caricamento del manifest delle lingue:", error);
-            this.availableLanguagesFromManifest = [];
-            if (this.availableLanguagesFromManifest.length === 0) {
-                console.warn("[I18nManager] Fallback a lingue di default hardcoded a causa di errore nel manifest.");
-                this.availableLanguagesFromManifest = [
-                    { code: 'it', name: 'Italiano �🇹', filePath: './locales/it.json' },
-                    { code: 'en', name: 'English 🇬🇧', filePath: './locales/en.json' }
-                ];
-            }
-        }
-    },
-
-    async checkLanguageFileExists(lang) {
-        if (!lang || typeof lang !== 'string') return false;
-        try {
-            const cacheBuster = `v_check_exist=${new Date().getTime()}`;
-            const langInfo = this.availableLanguagesFromManifest.find(l => l.code === lang);
-            const filePath = langInfo && langInfo.filePath ? langInfo.filePath : `./locales/${lang}.json`;
-
-            const response = await fetch(`${filePath}?${cacheBuster}`);
-            this.validLanguageFileStatus[lang] = response.ok;
-            return response.ok;
-        } catch (error) {
-            this.validLanguageFileStatus[lang] = false;
-            return false;
-        }
-    },
-
-    updateLanguageMenuActiveState() {
-        const languageMenu = document.getElementById('languageMenu');
-        if (!languageMenu) return;
-
-        Array.from(languageMenu.children).forEach(item => {
-            if (item.dataset.langCode === this.currentLanguage) {
-                item.classList.add('font-bold');
-            } else {
-                item.classList.remove('font-bold');
+            if (this.isLanguageMenuOpen) {
+                const languageMenu = document.getElementById('languageMenu');
+                const languageToggle = document.getElementById('languageToggle');
+                if (languageMenu && languageToggle && !languageMenu.contains(event.target) && !languageToggle.contains(event.target)) {
+                    this.closeLanguageMenu();
+                }
             }
         });
     },
 
+    /**
+     * Popola il menu a tendina delle lingue basandosi sul manifest.
+     */
     async populateLanguageMenu() {
         const languageMenu = document.getElementById('languageMenu');
-        if (!languageMenu) {
-            console.warn("[I18nManager] Elemento 'languageMenu' non trovato per il popolamento.");
-            return;
-        }
+        if (!languageMenu) return;
         languageMenu.innerHTML = '';
 
-        if (this.availableLanguagesFromManifest.length === 0) {
-            console.warn("[I18nManager] Nessuna lingua disponibile dal manifest per popolare il menu.");
-            return;
-        }
-
-        let foundAnyValidLanguage = false;
         for (const langInfo of this.availableLanguagesFromManifest) {
-            if (await this.checkLanguageFileExists(langInfo.code)) {
-                foundAnyValidLanguage = true;
-                const langItem = document.createElement('a');
-                langItem.href = '#';
-                langItem.dataset.langCode = langInfo.code;
-                langItem.className = 'block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer whitespace-nowrap';
-                langItem.textContent = langInfo.name;
-
-                langItem.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.setLanguage(langInfo.code);
-                });
-                languageMenu.appendChild(langItem);
-            }
-        }
-
-        if (!foundAnyValidLanguage) {
-             console.warn("[I18nManager] Nessuna lingua valida con file JSON trovata per popolare il menu. Tentativo di aggiungere 'it' di default se esiste.");
-             if(await this.checkLanguageFileExists('it')) {
-                const langItem = document.createElement('a');
-                langItem.href = '#';
-                langItem.dataset.langCode = 'it';
-                langItem.className = 'block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer whitespace-nowrap';
-                const itLangInfo = this.availableLanguagesFromManifest.find(l=>l.code==='it');
-                langItem.textContent = itLangInfo ? itLangInfo.name : "Italiano";
-                langItem.addEventListener('click', (e) => {e.preventDefault(); this.setLanguage('it'); });
-                languageMenu.appendChild(langItem);
-             } else {
-                const item = document.createElement('div');
-                item.className = 'block px-4 py-2 text-sm text-gray-500 dark:text-gray-400';
-                // Assicurati che la chiave 'errors.noLanguagesConfigured' esista nei tuoi file JSON
-                item.textContent = this.t('errors.noLanguagesConfigured') || "Nessuna lingua";
-                languageMenu.appendChild(item);
-             }
+            const langItem = document.createElement('a');
+            langItem.href = '#';
+            langItem.dataset.langCode = langInfo.code;
+            langItem.className = 'block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer whitespace-nowrap';
+            langItem.textContent = langInfo.name;
+            langItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.setLanguage(langInfo.code);
+            });
+            languageMenu.appendChild(langItem);
         }
         this.updateLanguageMenuActiveState();
     },
 
+    /**
+     * Aggiorna lo stile (es. grassetto) per la lingua attualmente attiva nel menu.
+     */
+    updateLanguageMenuActiveState() {
+        const languageMenu = document.getElementById('languageMenu');
+        if (!languageMenu) return;
+        Array.from(languageMenu.children).forEach(item => {
+            item.classList.toggle('font-bold', item.dataset.langCode === this.currentLanguage);
+        });
+    },
+
+    /**
+     * Apre/chiude il menu a tendina delle lingue.
+     */
     toggleLanguageMenu() {
         this.isLanguageMenuOpen = !this.isLanguageMenuOpen;
         const languageMenu = document.getElementById('languageMenu');
         const langToggle = document.getElementById('languageToggle');
         if (languageMenu && langToggle) {
-            if (this.isLanguageMenuOpen) {
-                languageMenu.classList.remove('hidden');
-                langToggle.setAttribute('aria-expanded', 'true');
-            } else {
-                languageMenu.classList.add('hidden');
-                langToggle.setAttribute('aria-expanded', 'false');
-            }
+            languageMenu.classList.toggle('hidden', !this.isLanguageMenuOpen);
+            langToggle.setAttribute('aria-expanded', this.isLanguageMenuOpen);
         }
     },
 
+    /**
+     * Chiude forzatamente il menu delle lingue.
+     */
     closeLanguageMenu() {
         this.isLanguageMenuOpen = false;
         const languageMenu = document.getElementById('languageMenu');
@@ -343,14 +264,3 @@ const I18nManager = {
         }
     }
 };
-
-// Assicurati che DOMContentLoaded sia gestito correttamente per l'inizializzazione.
-// Lo script viene eseguito quando il DOM è pronto o aggiunge un listener.
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        I18nManager.init();
-    });
-} else {
-    // Il DOM è già pronto
-    I18nManager.init();
-}

@@ -10,12 +10,12 @@ export const GameConstants = {
     NONCE_MAX: 32,
     MAX_TX_FOR_BLOCK_3: 2,
     BASE_TX_DATA: [
-        { id: 'tx1', descriptionKey: 'gameConstants.transactions.tx1_desc', feeIconPath: './icons/fee1.png' },
-        { id: 'tx2', descriptionKey: 'gameConstants.transactions.tx2_desc', feeIconPath: './icons/fee2.png' },
-        { id: 'tx3', descriptionKey: 'gameConstants.transactions.tx3_desc', feeIconPath: './icons/fee3.png' },
-        { id: 'tx4', descriptionKey: 'gameConstants.transactions.tx4_desc', feeIconPath: './icons/fee4.png' },
-        { id: 'tx5', descriptionKey: 'gameConstants.transactions.tx5_desc', feeIconPath: './icons/fee5.png' },
-        { id: 'tx6', descriptionKey: 'gameConstants.transactions.tx6_desc', feeIconPath: './icons/fee6.png' },
+        { id: 'tx1', descriptionKey: 'common.gameConstants.transactions.tx1_desc', feeIconPath: './icons/fee1.png' },
+        { id: 'tx2', descriptionKey: 'common.gameConstants.transactions.tx2_desc', feeIconPath: './icons/fee2.png' },
+        { id: 'tx3', descriptionKey: 'common.gameConstants.transactions.tx3_desc', feeIconPath: './icons/fee3.png' },
+        { id: 'tx4', descriptionKey: 'common.gameConstants.transactions.tx4_desc', feeIconPath: './icons/fee4.png' },
+        { id: 'tx5', descriptionKey: 'common.gameConstants.transactions.tx5_desc', feeIconPath: './icons/fee5.png' },
+        { id: 'tx6', descriptionKey: 'common.gameConstants.transactions.tx6_desc', feeIconPath: './icons/fee6.png' },
     ],
     TX_ICON_PATHS: [
         './icons/fee1.png', './icons/fee2.png', './icons/fee3.png',
@@ -63,18 +63,18 @@ const Utils = {
 
 export const ValidationManager = {
     validatePoolName(name) {
-        if (!name) return { key: "errors.poolNameMissing" };
+        if (!name) return { key: "common.errors.poolNameMissing" };
         if (name.length > GameConstants.POOL_NAME_MAX_LENGTH) {
-            return { key: "errors.poolNameTooLong", params: { maxLength: GameConstants.POOL_NAME_MAX_LENGTH } };
+            return { key: "common.errors.poolNameTooLong", params: { maxLength: GameConstants.POOL_NAME_MAX_LENGTH } };
         }
-        if (name.includes(' ')) return { key: "errors.poolNameSpaces" };
+        if (name.includes(' ')) return { key: "common.errors.poolNameSpaces" };
         return null;
     },
     validateNonce(nonceStr) {
         const nonce = parseInt(nonceStr, 10);
         if (isNaN(nonce) || nonce < GameConstants.NONCE_MIN || nonce > GameConstants.NONCE_MAX) {
             return {
-                key: "errors.nonceInvalid",
+                key: "common.errors.nonceInvalid",
                 params: { min: GameConstants.NONCE_MIN, max: GameConstants.NONCE_MAX }
             };
         }
@@ -101,24 +101,19 @@ export const GameLogic = {
             descriptionKey: txBase.descriptionKey,
             feeIconPath: shuffledIcons[index % shuffledIcons.length]
         }));
-        console.log("[GameLogic] Mempool initializzata con descriptionKeys:", gameState.mempool);
     },
 
     setInitialDifficultyByGroups(numGroups) {
         gameState.numberOfGroups = numGroups;
         let minDivTarget = GameConstants.BASE_MIN_DIVISOR +
                        (numGroups - GameConstants.BASE_GROUPS_FOR_DIFFICULTY) * GameConstants.DIFFICULTY_ADJUSTMENT_PER_GROUP;
-
         let actualMinDiv = Math.max(GameConstants.MIN_DIVISOR_ABSOLUTE, minDivTarget);
         actualMinDiv = Math.min(actualMinDiv, GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN);
-
         if (GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN < GameConstants.MIN_DIVISOR_ABSOLUTE) {
             actualMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
         }
-
         let actualMaxDiv = actualMinDiv + GameConstants.DIVISOR_RANGE_SPAN;
         actualMaxDiv = Math.min(actualMaxDiv, GameConstants.MAX_DIVISOR_ABSOLUTE);
-
         if (actualMinDiv >= actualMaxDiv) {
             actualMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
             actualMaxDiv = Math.min(GameConstants.MIN_DIVISOR_ABSOLUTE + 1, GameConstants.MAX_DIVISOR_ABSOLUTE);
@@ -127,12 +122,11 @@ export const GameLogic = {
                 actualMinDiv = GameConstants.MAX_DIVISOR_ABSOLUTE;
             }
         }
-
         gameState.currentMinDivisor = actualMinDiv;
         gameState.currentMaxDivisor = actualMaxDiv;
         gameState.lastTimeAdjustmentAmount = 0;
         gameState.timeTakenForLastBlockSeconds = null;
-        console.log(`Difficoltà iniziale per ${numGroups} gruppi: Range Divisori [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
+        console.log(`[GameLogic] Difficoltà iniziale per ${numGroups} gruppi: Range Divisori [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
     },
 
     applyTimedDifficultyShift(timeTakenSeconds) {
@@ -141,50 +135,42 @@ export const GameLogic = {
         let difficultyShift = Math.round(deviationMinutes * GameConstants.TIME_ADJUSTMENT_SENSITIVITY_PER_MINUTE);
         difficultyShift = Math.max(-GameConstants.MAX_TIME_BASED_DIFFICULTY_SHIFT, Math.min(GameConstants.MAX_TIME_BASED_DIFFICULTY_SHIFT, difficultyShift));
         let newMinDivisor = gameState.currentMinDivisor - difficultyShift;
-
         let actualNewMinDiv = Math.max(GameConstants.MIN_DIVISOR_ABSOLUTE, newMinDivisor);
         actualNewMinDiv = Math.min(actualNewMinDiv, GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN);
         if (GameConstants.MAX_DIVISOR_ABSOLUTE - GameConstants.DIVISOR_RANGE_SPAN < GameConstants.MIN_DIVISOR_ABSOLUTE) {
             actualNewMinDiv = GameConstants.MIN_DIVISOR_ABSOLUTE;
         }
-
         gameState.currentMinDivisor = actualNewMinDiv;
         gameState.currentMaxDivisor = gameState.currentMinDivisor + GameConstants.DIVISOR_RANGE_SPAN;
         gameState.currentMaxDivisor = Math.min(gameState.currentMaxDivisor, GameConstants.MAX_DIVISOR_ABSOLUTE);
-         if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) {
+        if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) {
             gameState.currentMinDivisor = GameConstants.MIN_DIVISOR_ABSOLUTE;
             gameState.currentMaxDivisor = Math.min(GameConstants.MIN_DIVISOR_ABSOLUTE + 1, GameConstants.MAX_DIVISOR_ABSOLUTE);
-             if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) {
+            if (gameState.currentMinDivisor >= gameState.currentMaxDivisor) {
                 gameState.currentMaxDivisor = GameConstants.MAX_DIVISOR_ABSOLUTE;
                 gameState.currentMinDivisor = GameConstants.MAX_DIVISOR_ABSOLUTE;
             }
         }
         gameState.lastTimeAdjustmentAmount = -difficultyShift;
         gameState.timeTakenForLastBlockSeconds = timeTakenSeconds;
-        console.log(`Tempo impiegato: ${timeTakenSeconds.toFixed(1)}s. Deviazione: ${deviationMinutes.toFixed(1)}min. Shift difficoltà (su min_divisor): ${-difficultyShift}. Nuovo range: [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
+        console.log(`[GameLogic] Tempo impiegato: ${timeTakenSeconds.toFixed(1)}s. Deviazione: ${deviationMinutes.toFixed(1)}min. Shift difficoltà (su min_divisor): ${-difficultyShift}. Nuovo range: [${gameState.currentMinDivisor}-${gameState.currentMaxDivisor}]`);
     },
 
     generateRandomDivisors() {
         const divisors = new Set();
         const min = gameState.currentMinDivisor;
         const max = gameState.currentMaxDivisor;
-
         if (min > max) {
             Utils.logError("Range dei divisori non valido (min > max):", `Min: ${min}, Max: ${max}. Uso fallback.`);
             gameState.availableDivisors = [GameConstants.BASE_MIN_DIVISOR];
             return;
         }
-
         const uniqueNumbersInRange = max - min + 1;
         const numToGenerate = Math.min(GameConstants.NUM_DIVISORS_TO_GENERATE, uniqueNumbersInRange);
-
         if (numToGenerate <= 0) {
              Utils.logError("Non ci sono numeri unici nel range per generare divisori:", `Min: ${min}, Max: ${max}.`);
-             if (min === max) {
-                 divisors.add(min);
-             } else {
-                divisors.add(GameConstants.BASE_MIN_DIVISOR);
-             }
+             if (min === max) divisors.add(min);
+             else divisors.add(GameConstants.BASE_MIN_DIVISOR);
         } else {
             while (divisors.size < numToGenerate) {
                 divisors.add(Math.floor(Math.random() * uniqueNumbersInRange) + min);
@@ -197,7 +183,7 @@ export const GameLogic = {
         if (!gameState.divisorsRevealedAndTimerStarted) {
             gameState.blockStartTimestamp = Date.now();
             gameState.divisorsRevealedAndTimerStarted = true;
-            console.log("Timer del round avviato e divisori rivelati.");
+            console.log("[GameLogic] Timer del round avviato e divisori rivelati.");
             return true;
         }
         return false;
@@ -219,10 +205,7 @@ export const GameLogic = {
         gameState.selectedDivisor = null;
         gameState.currentlySelectedTxs = [];
         gameState.divisorsRevealedAndTimerStarted = false;
-
-        if (!isFullReset) {
-            // Mantieni
-        } else {
+        if (isFullReset) {
             gameState.lastTimeAdjustmentAmount = 0;
             gameState.timeTakenForLastBlockSeconds = null;
         }
@@ -240,11 +223,11 @@ export const GameLogic = {
 
     selectTransactionLogic(tx) {
         if (gameState.timewall.length >= GameConstants.MAX_BLOCKS || !gameState.divisorsRevealedAndTimerStarted) {
-            return { success: false, messageKey: "errors.gameEndedOrRoundNotStarted" };
+            return { success: false, messageKey: "common.errors.gameEndedOrRoundNotStarted" };
         }
         const currentBlockNumber = gameState.timewall.length + 1;
         if (currentBlockNumber !== 3) {
-            return { success: false, messageKey: "errors.txOnlyBlock3" };
+            return { success: false, messageKey: "common.errors.txOnlyBlock3" };
         }
         const index = gameState.currentlySelectedTxs.findIndex(selected => selected.id === tx.id);
         if (index > -1) {
@@ -257,7 +240,7 @@ export const GameLogic = {
             } else {
                 return {
                     success: false,
-                    messageKey: "errors.maxTxSelected",
+                    messageKey: "common.errors.maxTxSelected",
                     messageParams: { maxTx: GameConstants.MAX_TX_FOR_BLOCK_3 }
                 };
             }
@@ -274,7 +257,6 @@ export const GameLogic = {
         return asciiSum + GameConstants.ASCII_SUM_OFFSET;
     },
 
-    // Rimosso il parametro currentLanguage, I18nManager.t() usa I18nManager.currentLanguage
     calculateTxValue() {
         if (gameState.currentlySelectedTxs.length === 0) return 0;
         if (typeof I18nManager === 'undefined' || typeof I18nManager.t !== 'function') {
@@ -289,9 +271,8 @@ export const GameLogic = {
 
     attemptMineBlock(poolName, nonceStr) {
         if (!gameState.divisorsRevealedAndTimerStarted) {
-            return { errorKey: "errors.revealDivisorsFirst", isSuccess: false };
+            return { errorKey: "common.errors.revealDivisorsFirst", isSuccess: false };
         }
-
         const currentBlockNumberForAttempt = gameState.timewall.length + 1;
         let calculationDetails = {
             poolName: poolName || '',
@@ -306,14 +287,12 @@ export const GameLogic = {
             calculatedRemainder: 0, targetRemainderValue: 0, txValue: 0,
             isGameEnd: false,
         };
-
         if (currentBlockNumberForAttempt > GameConstants.MAX_BLOCKS) {
-            calculationDetails.errorKey = "messages.maxBlocksReached";
+            calculationDetails.errorKey = "index.messages.maxBlocksReached";
             calculationDetails.errorParams = { maxBlocks: GameConstants.MAX_BLOCKS };
             calculationDetails.isGameEnd = true;
             return calculationDetails;
         }
-
         const poolNameValidationError = ValidationManager.validatePoolName(poolName);
         if (poolNameValidationError) {
             calculationDetails.errorKey = poolNameValidationError.key;
@@ -321,7 +300,7 @@ export const GameLogic = {
             return calculationDetails;
         }
         if (gameState.selectedDivisor === null) {
-            calculationDetails.errorKey = "errors.selectDivisor";
+            calculationDetails.errorKey = "common.errors.selectDivisor";
             return calculationDetails;
         }
         const nonceValidationError = ValidationManager.validateNonce(nonceStr);
@@ -332,21 +311,16 @@ export const GameLogic = {
         }
         const nonce = parseInt(nonceStr, 10);
         calculationDetails.nonce = nonce;
-
         if (currentBlockNumberForAttempt === 3 && gameState.currentlySelectedTxs.length > GameConstants.MAX_TX_FOR_BLOCK_3) {
-             calculationDetails.errorKey = "errors.maxTxSelected";
+             calculationDetails.errorKey = "common.errors.maxTxSelected";
              calculationDetails.errorParams = { maxTx: GameConstants.MAX_TX_FOR_BLOCK_3 };
              return calculationDetails;
         }
-
         const WR = this.calculateWR(poolName);
         calculationDetails.WR = WR;
         calculationDetails.asciiSum = WR - GameConstants.ASCII_SUM_OFFSET;
-
-        // Chiamata a calculateTxValue aggiornata (senza parametro)
         const txValue = (currentBlockNumberForAttempt === 3) ? this.calculateTxValue() : 0;
         calculationDetails.txValue = txValue;
-
         let Proof;
         let proofFormula = "";
         if (currentBlockNumberForAttempt === 1) {
@@ -354,14 +328,14 @@ export const GameLogic = {
             proofFormula = `(${WR} + ${nonce}) * ${GameConstants.PROOF_MULTIPLIER}`;
         } else if (currentBlockNumberForAttempt === 2) {
             if (gameState.lastWinningRemainder === null) {
-                 calculationDetails.errorKey = "errors.prevRemainderMissingBlock2";
+                 calculationDetails.errorKey = "common.errors.prevRemainderMissingBlock2";
                  return calculationDetails;
             }
             Proof = (WR + nonce + gameState.lastWinningRemainder) * GameConstants.PROOF_MULTIPLIER;
             proofFormula = `(${WR} + ${nonce} + ${gameState.lastWinningRemainder}) * ${GameConstants.PROOF_MULTIPLIER}`;
         } else {
              if (gameState.lastWinningRemainder === null) {
-                 calculationDetails.errorKey = "errors.prevRemainderMissingBlock3";
+                 calculationDetails.errorKey = "common.errors.prevRemainderMissingBlock3";
                  return calculationDetails;
             }
             Proof = (WR + nonce + gameState.lastWinningRemainder + txValue) * GameConstants.PROOF_MULTIPLIER;
@@ -374,14 +348,11 @@ export const GameLogic = {
         let TargetRemainder = gameState.selectedDivisor - GameConstants.TARGET_REMAINDER_OFFSET;
         TargetRemainder = Math.max(0, TargetRemainder);
         calculationDetails.targetRemainderValue = TargetRemainder;
-
         const isSuccess = (CalculatedRemainder >= TargetRemainder);
         calculationDetails.isSuccess = isSuccess;
-
         if (isSuccess) {
             const timeTakenSeconds = (Date.now() - gameState.blockStartTimestamp) / 1000;
             gameState.timeTakenForLastBlockSeconds = timeTakenSeconds;
-
             const winningRemainderForBlock = CalculatedRemainder;
             const newBlockEntry = {
                 id: `block-${Date.now()}-${gameState.timewall.length + 1}`,
@@ -395,7 +366,6 @@ export const GameLogic = {
             };
             gameState.timewall.push(newBlockEntry);
             gameState.lastWinningRemainder = winningRemainderForBlock;
-
             if (gameState.timewall.length < GameConstants.MAX_BLOCKS) {
                 this.applyTimedDifficultyShift(timeTakenSeconds);
                 this.resetGameForNextBlockLogic(false);
@@ -411,4 +381,3 @@ export const GameLogic = {
 };
 
 GameLogic.initializeMempoolData();
-

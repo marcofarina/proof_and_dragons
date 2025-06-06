@@ -1,0 +1,44 @@
+{
+  "appTitle": "Proof & Dragons",
+  "tooltips": {
+    "languageSelector": "Seleziona lingua",
+    "github": "Repository GitHub",
+    "kofi": "Offrimi una pinta di <strong><i>grog</i></strong> 🍺",
+    "fullscreen": "Attiva/disattiva schermo intero",
+    "theme": {
+      "nox": "Nox!",
+      "lumos": "Lumos!"
+    },
+    "menuToggle": "Apri/Chiudi menu"
+  },
+  "menu": {
+    "manualLink": "Manuale",
+    "rainbowBitsLink": "Rainbow Bits",
+    "resetGameButton": "Ricomincia partita"
+  },
+  "errors": {
+    "noLanguagesConfigured": "Nessuna lingua configurata",
+    "gameEndedOrRoundNotStarted": "Gioco terminato o round non iniziato.",
+    "txOnlyBlock3": "Le transazioni possono essere selezionate solo per il Blocco 3.",
+    "maxTxSelected": "Puoi selezionare un massimo di {{maxTx}} transazioni.",
+    "revealDivisorsFirst": "Devi prima rivelare i divisori e iniziare il round!",
+    "poolNameMissing": "Nome Pool mancante.",
+    "poolNameTooLong": "Nome Pool: massimo {{maxLength}} caratteri.",
+    "poolNameSpaces": "Nome Pool: non deve contenere spazi.",
+    "selectDivisor": "Per favore, seleziona un Divisore.",
+    "nonceInvalid": "Il Nonce deve essere un numero valido tra {{min}} e {{max}}.",
+    "prevRemainderMissingBlock2": "Errore: Resto del blocco precedente non disponibile per il Blocco 2.",
+    "prevRemainderMissingBlock3": "Errore: Resto del blocco precedente non disponibile per il Blocco 3.",
+    "unexpectedError": "Si è verificato un errore imprevisto."
+  },
+  "gameConstants": {
+    "transactions": {
+      "tx1_desc": "Pergamena dell'Hashing Minore",
+      "tx2_desc": "Amuleto dell'Integrità della Catena",
+      "tx3_desc": "Pozione della Scoperta del Nonce",
+      "tx4_desc": "Mappa per Blocchi Dimenticati",
+      "tx5_desc": "Piccone Dorato dell'Efficienza",
+      "tx6_desc": "Registro in Scaglie di Drago"
+    }
+  }
+}

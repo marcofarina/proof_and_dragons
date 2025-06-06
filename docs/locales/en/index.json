@@ -1,0 +1,83 @@
+{
+  "modal": {
+    "groupInputTitle": "Game Setup",
+    "howManyGroups": "How many groups are playing?",
+    "numGroupsLabel": "Number of groups:",
+    "numGroupsError": "Enter a valid number (1-20).",
+    "startGameButton": "Start Game"
+  },
+  "verification": {
+    "title": "Verify Attempt",
+    "poolNameLabel": "Pool Name (max 10, no spaces):",
+    "poolNamePlaceholder": "E.g. Satoshi",
+    "nonceLabel": "Nonce (2-32):",
+    "noncePlaceholder": "E.g. 16",
+    "verifyButton": "Verify"
+  },
+  "divisors": {
+    "title": "Select Divisor",
+    "revealButton": "Reveal Divisors & Start Round",
+    "rangeInfoLabel": "Divisor Range:"
+  },
+  "mempool": {
+    "title": "Mempool",
+    "subtitle": "(max 2 for Block 3)",
+    "availableForBlock3": "Available for Block 3",
+    "notActiveForBlock": "Mempool not active for this block",
+    "missingIcon": "[missing icon]"
+  },
+  "calculation": {
+    "title": "Calculation Details",
+    "initialMessage": "Perform a verification to see calculation details.",
+    "notApplicable": "N/A",
+    "noneSelected": "None",
+    "success": "SUCCESS",
+    "failure": "FAILURE",
+    "labels": {
+      "poolNameInput": "Pool Name Entered",
+      "nonceInput": "Nonce Entered",
+      "selectedDivisor": "Selected Divisor",
+      "poolName": "Pool Name",
+      "selectedDivisorD": "Selected Divisor (D)",
+      "prevBlockRemainder": "Previous Block Remainder",
+      "selectedTransactions": "Selected Transactions",
+      "txValue": "Transactions Value (txValue)",
+      "wr": "WR",
+      "proof": "Proof",
+      "calculatedRemainder": "Calculated Remainder",
+      "targetRemainder": "Target Threshold",
+      "outcome": "Outcome",
+      "outcomeComparison": "Calculated Remainder ({{calculated}}) ≥ Target Threshold ({{target}})?",
+      "asciiSumOf": "ASCII Sum of"
+    }
+  },
+  "timewall": {
+    "title": "Timewall",
+    "blockNotYetMined": "Block #{{number}} not yet mined",
+    "txNotApplicable": "N/A",
+    "txNoneSelected": "None Selected",
+    "remainderForNextBlockLabel": "Remainder for Next Block:",
+    "winningRemainderLabel": "Winning Remainder:",
+    "blockLabel": "Block #{{number}}",
+    "poolLabel": "Pool:",
+    "nonceLabel": "Nonce:",
+    "divisorUsedLabel": "Divisor Used:",
+    "prevRemainderLabel": "Prev. Remainder:",
+    "transactionsLabel": "Transactions:"
+  },
+  "messages": {
+    "fullscreenError": "Fullscreen not available or denied. ({{errorMessage}})",
+    "exitFullscreenError": "Could not exit fullscreen. ({{errorMessage}})",
+    "newGameStarted": "New game with {{numGroups}} groups! Reveal divisors to start the round.",
+    "divisorsRevealed": "Divisors revealed! Time is ticking, hurry!",
+    "divisorSelected": "Divisor {{divisorValue}} selected.",
+    "blockMinedSuccess": "Block Mined Successfully! Calculated Remainder: {{calculatedRemainder}} (Threshold: >= {{targetRemainderValue}})",
+    "allBlocksMined": "All {{maxBlocks}} blocks mined! Game session complete. Open the menu to restart.",
+    "attemptFailed": "Attempt Failed. Calculated Remainder ({{calculatedRemainder}}) is less than Target Threshold (>= {{targetRemainderValue}}). Try a new Nonce!",
+    "maxBlocksReached": "Maximum of {{maxBlocks}} blocks already mined. Game session complete.",
+    "difficultyDecreased": "Difficulty decreased",
+    "difficultyIncreased": "Difficulty increased",
+    "difficultyByAmount": "by {{amount}}",
+    "difficultyBlockTime": "block time: ~{{time}} min"
+  }
+}
